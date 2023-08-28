@@ -8,8 +8,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['username', 'password', 
-                #   'first_name', 'last_name', 'birth_date', 'gender', 'degree', 'phone', 'email', 'address'
-                  ]
+                  'first_name', 'last_name', 
+                  'birth_date', 'gender', 
+                  'degree', 'phone', 
+                  'email', 'address'
+                ]
 
     def validate(self, data):
         # Kiểm tra xác thực cho từng trường dữ liệu

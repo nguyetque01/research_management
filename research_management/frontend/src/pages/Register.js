@@ -38,27 +38,32 @@ const degrees = [
     label: "Phó giáo sư",
   },
   {
-    value: "4",
+    value: "5",
     label: "Giáo sư",
   },
 ];
 
 function Register() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [birthDate, setBirthDate] = useState(null);
-  const [gender, setGender] = useState("");
-  const [degree, setDegree] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [policyAgreement, setPolicyAgreement] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    first_name: "",
+    last_name: "",
+    birth_date: null,
+    gender: "",
+    degree: "",
+    email: "",
+    phone: "",
+    address: "",
+    // total_study_hours: 0,
+    // is_approved: true,
+  });
 
-  const [showSuccessNotification, setShowSuccessNotification] = useState(false);
-  const [showErrorNotification, setShowErrorNotification] = useState(false);
+  const [policyAgreement, setPolicyAgreement] = useState(false);
+  const [notification, setNotification] = useState({
+    type: "success",
+    message: "",
+  });
 
   const [errors, setErrors] = useState({
     username: "",
@@ -76,22 +81,23 @@ function Register() {
 
   const validateForm = () => {
     const newErrors = {
-      username: username ? "" : "Vui lòng nhập tên đăng nhập",
-      password: password ? "" : "Vui lòng nhập mật khẩu",
-      firstName: firstName ? "" : "Vui lòng nhập tên",
-      lastName: lastName ? "" : "Vui lòng nhập họ",
-      birthDate: birthDate ? "" : "Vui lòng chọn ngày sinh",
-      gender: gender ? "" : "Vui lòng chọn giới tính",
-      degree: degree ? "" : "Vui lòng chọn học vị/học hàm",
-      phone: validatePhone(phone) ? "" : "Số điện thoại không hợp lệ",
-      email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+      username: formData.username ? "" : "Vui lòng nhập tên đăng nhập",
+      password: formData.password ? "" : "Vui lòng nhập mật khẩu",
+      first_name: formData.first_name ? "" : "Vui lòng nhập tên",
+      last_name: formData.last_name ? "" : "Vui lòng nhập họ",
+      birth_date: formData.birth_date ? "" : "Vui lòng chọn ngày sinh",
+      gender: formData.gender ? "" : "Vui lòng chọn giới tính",
+      degree: formData.degree ? "" : "Vui lòng chọn học vị/học hàm",
+      phone: validatePhone(formData.phone) ? "" : "Số điện thoại không hợp lệ",
+      email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
         ? ""
         : "Vui lòng nhập địa chỉ email hợp lệ",
-      address: address ? "" : "Vui lòng nhập địa chỉ",
+      address: formData.address ? "" : "Vui lòng nhập địa chỉ",
       policyAgreement: policyAgreement
         ? ""
         : "Vui lòng đồng ý với chính sách và điều khoản",
     };
+
     setErrors(newErrors);
     return Object.values(newErrors).every((error) => error === "");
   };
@@ -107,23 +113,30 @@ function Register() {
     }
 
     try {
-      await axios.post(`${DEFAULT_BACKEND_URL}/api/register/`, {
-        username: username,
-        password: password,
-        first_name: firstName,
-        last_name: lastName,
-        birth_date: birthDate,
-        gender: gender,
-        degree: degree,
-        phone: phone,
-        email: email,
-        address: address,
+      const formattedData = {
+        ...formData,
+        birth_date: formData.birth_date?.toISOString().split("T")[0], // Convert birth_date to ISO string
+      };
+      console.log(formattedData);
+
+      await axios.post(`${DEFAULT_BACKEND_URL}/api/register/`, formattedData);
+      setNotification({
+        type: "success",
+        message: "Đăng ký thành công",
       });
-      setShowSuccessNotification(true);
     } catch (error) {
-      setShowErrorNotification(true);
-      setErrorMessage("Đã xảy ra lỗi khi đăng ký. Vui lòng thử lại sau.");
+      setNotification({
+        type: "error",
+        message: "Đã xảy ra lỗi khi đăng ký. Vui lòng thử lại sau.",
+      });
     }
+  };
+
+  const handleChange = (field, value) => {
+    setFormData({
+      ...formData,
+      [field]: value,
+    });
   };
 
   return (
@@ -143,8 +156,10 @@ function Register() {
                 fullWidth
                 type="text"
                 label="Tên đăng nhập"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={formData.username}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
                 InputProps={{
                   startAdornment: <AccountCircle />,
                 }}
@@ -157,8 +172,10 @@ function Register() {
                 fullWidth
                 type="password"
                 label="Mật khẩu"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
                 InputProps={{
                   startAdornment: <LockOutlined />,
                 }}
@@ -171,10 +188,12 @@ function Register() {
                 fullWidth
                 type="text"
                 label="Họ"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                error={errors.lastName !== ""}
-                helperText={errors.lastName}
+                value={formData.last_name}
+                onChange={(e) =>
+                  setFormData({ ...formData, last_name: e.target.value })
+                }
+                error={errors.last_name !== ""}
+                helperText={errors.last_name}
               />
             </Grid>
             <Grid item xs={6}>
@@ -182,19 +201,23 @@ function Register() {
                 fullWidth
                 type="text"
                 label="Tên"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                error={errors.firstName !== ""}
-                helperText={errors.firstName}
+                value={formData.first_name}
+                onChange={(e) =>
+                  setFormData({ ...formData, first_name: e.target.value })
+                }
+                error={errors.first_name !== ""}
+                helperText={errors.first_name}
               />
             </Grid>
             <Grid item xs={6}>
               <DatePicker
                 label="Ngày sinh"
-                value={birthDate}
-                onChange={(newValue) => setBirthDate(newValue)}
-                error={errors.birthDate !== null}
-                helperText={errors.birthDate}
+                value={formData.birth_date}
+                onChange={(newValue) =>
+                  setFormData({ ...formData, birth_date: newValue })
+                }
+                error={errors.birth_date !== null}
+                helperText={errors.birth_date}
               />
             </Grid>
             <Grid item xs={6}>
@@ -205,21 +228,23 @@ function Register() {
                 <div className="radio-buttons">
                   <label
                     className={`radio-label ${
-                      gender === "M" ? "selected" : ""
+                      formData.gender === "M" ? "selected" : ""
                     }`}
                   >
                     <input
                       type="radio"
                       name="gender"
                       value="M"
-                      checked={gender === "M"}
-                      onChange={(e) => setGender(e.target.value)}
+                      checked={formData.gender === "M"}
+                      onChange={(e) =>
+                        setFormData({ ...formData, gender: e.target.value })
+                      }
                     />
                     Nam
                   </label>
                   <label
                     className={`radio-label ${
-                      gender === "F" ? "selected" : ""
+                      formData.gender === "F" ? "selected" : ""
                     }`}
                     style={{ marginLeft: "20px" }}
                   >
@@ -227,8 +252,10 @@ function Register() {
                       type="radio"
                       name="gender"
                       value="F"
-                      checked={gender === "F"}
-                      onChange={(e) => setGender(e.target.value)}
+                      checked={formData.gender === "F"}
+                      onChange={(e) =>
+                        setFormData({ ...formData, gender: e.target.value })
+                      }
                     />
                     Nữ
                   </label>
@@ -240,14 +267,17 @@ function Register() {
                 )}
               </div>
             </Grid>
+
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel id="degree-label">Học vị/ Học hàm</InputLabel>
                 <Select
                   labelId="degree-label"
                   id="degree"
-                  value={degree}
-                  onChange={(e) => setDegree(e.target.value)}
+                  value={formData.degree}
+                  onChange={(e) =>
+                    setFormData({ ...formData, degree: e.target.value })
+                  }
                   label="Học vị/ Học hàm"
                 >
                   {degrees.map((option) => (
@@ -263,36 +293,45 @@ function Register() {
                 )}
               </FormControl>
             </Grid>
+
             <Grid item xs={12}>
               <TextField
                 fullWidth
                 type="text"
                 label="Số điện thoại"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
                 error={errors.phone !== ""}
                 helperText={errors.phone}
               />
             </Grid>
+
             <Grid item xs={12}>
               <TextField
                 fullWidth
                 type="email"
                 label="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 error={errors.email !== ""}
                 helperText={errors.email}
               />
             </Grid>
+
             <Grid item xs={12}>
               <TextField
                 fullWidth
                 multiline
                 rows={2}
                 label="Địa chỉ"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                value={formData.address}
+                onChange={(e) =>
+                  setFormData({ ...formData, address: e.target.value })
+                }
               />
             </Grid>
           </Grid>
@@ -310,6 +349,11 @@ function Register() {
                   Chính sách và điều khoản
                 </Link>
               </label>
+              {errors.policyAgreement && (
+                <Typography variant="caption" color="error">
+                  Vui lòng đồng ý với chính sách và điều khoản
+                </Typography>
+              )}
             </div>
           </Grid>
           <div
@@ -323,11 +367,6 @@ function Register() {
               <Button variant="outlined">Đăng nhập</Button>
             </Link>
           </div>
-          {errorMessage && (
-            <Typography variant="body2" className="error-message">
-              {errorMessage}
-            </Typography>
-          )}
           <div className="options" style={{ marginTop: "20px" }}>
             <Link to="/" className="back-link">
               <ArrowForward />
@@ -338,24 +377,13 @@ function Register() {
       </div>
       <Footer />
       <Snackbar
-        open={showSuccessNotification || showErrorNotification}
+        open={notification.message !== ""}
         autoHideDuration={3000}
-        onClose={() => {
-          setShowSuccessNotification(false);
-          setShowErrorNotification(false);
-        }}
+        onClose={() => setNotification({ type: "success", message: "" })}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert
-          variant="filled"
-          severity={showSuccessNotification ? "success" : "error"}
-          // sx={{
-          //   backgroundColor: showSuccessNotification ? "#4CAF50" : "#FF5722",
-          // }}
-        >
-          {showSuccessNotification
-            ? "Đăng ký thành công"
-            : "Đã xảy ra lỗi khi đăng ký. Vui lòng thử lại sau."}
+        <Alert variant="filled" severity={notification.type}>
+          {notification.message}
         </Alert>
       </Snackbar>
     </div>
