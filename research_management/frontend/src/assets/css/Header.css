@@ -1,0 +1,51 @@
+/* Header.css */
+.header-container {
+  margin-bottom: 12px;
+}
+
+.header-title {
+  font-size: 1.4rem;
+  color: white;
+  text-decoration: none;
+  margin-right: 20px;
+  display: inline-block;
+}
+
+.header-navigation {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.header-button {
+  color: white;
+  text-transform: none;
+  font-size: 1rem;
+  margin: 0 10px;
+}
+
+.header-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.account-icon {
+  font-size: 1.5rem;
+  margin-right: 5px;
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+  .header-title {
+    font-size: 1.4rem;
+    margin-right: 10px;
+  }
+
+  .header-button {
+    font-size: 0.9rem;
+    margin: 0 5px;
+  }
+
+  .account-icon {
+    font-size: 1.3rem;
+  }
+}

@@ -1,33 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Register from './components/Register';
-import Login from './components/Login';
-import UserList from './components/UserList';
-import Dashboard from './components/Dashboard';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import UserList from "./pages/UserList";
+import Article from "./pages/Article";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       setIsLoggedIn(true);
     }
   }, []);
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/register" Component={Register} />
-        <Route path="/login" Component={Login} />
-        {isLoggedIn ? (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Router>
+        <Routes>
+          <Route path="/" Component={Dashboard} />
           <Route path="/dashboard" Component={Dashboard} />
-        ) : (
-          <Route path="/dashboard" element={<p>Vui lòng đăng nhập để truy cập trang này.</p>} />
-        )}
-        <Route path="/users" Component={UserList} />
-      </Routes>
-    </Router>
+          <Route path="/login" Component={Login} />
+          <Route path="/register" Component={Register} />
+          <Route path="/users" Component={UserList} />
+          <Route path="/articles/:articleId" component={Article} />
+        </Routes>
+      </Router>
+    </LocalizationProvider>
   );
 }
 

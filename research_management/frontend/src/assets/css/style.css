@@ -1,0 +1,5 @@
+/* Button */
+.button-primary {
+  background-color: var(--primary-color);
+  color: white;
+}

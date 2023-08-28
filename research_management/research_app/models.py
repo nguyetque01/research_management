@@ -31,7 +31,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     # New fields for your additional attributes
     birth_date = models.DateField(null=True, blank=True)
-    gender = models.CharField(max_length=1, choices=[('M', 'Nam'), ('F', 'Nữ')], null=True, blank=True)
+    gender = models.CharField(max_length=1, 
+                              choices=[('M', 'Nam'), ('F', 'Nữ')], null=True, blank=True)
     degree = models.CharField(max_length=100, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
@@ -39,7 +40,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     USERNAME_FIELD = "username"
-    # REQUIRED_FIELDS = ["email", "first_name", "last_name"]
+    REQUIRED_FIELDS = [ "first_name", "last_name", "email"]
 
     def __str__(self):
         return self.username

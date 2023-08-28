@@ -1,25 +1,16 @@
-/* Register.css */
-
 .register-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: #f4f4f4;
+  /* height: 100vh; */
 }
 
 .register-box {
+  width: 500px;
+  padding: 20px;
   background-color: #fff;
-  border-radius: 8px;
-  padding: 40px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-}
-
-.register-box h2 {
-  font-size: 24px;
-  margin-bottom: 20px;
+  border-radius: 4px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 .form-control {
@@ -63,4 +54,68 @@ select.form-control {
   margin-top: 15px;
   font-size: 14px;
   color: #dc3545;
+}
+
+/* CSS cho radio button */
+.radio-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.radio-label {
+  display: inline-block;
+  margin-right: 20px;
+  cursor: pointer;
+  position: relative;
+}
+
+.radio-label input[type="radio"] {
+  display: none;
+}
+
+.radio-label::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  margin-right: 6px;
+  position: relative;
+  top: 2px;
+}
+
+.radio-label.selected::before {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+/* CSS cho checkbox đồng ý chính sách và điều khoản */
+.policy-checkbox {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.policy-checkbox input[type="checkbox"] {
+  width: 16px; /* Điều chỉnh chiều rộng của checkbox */
+  height: 16px; /* Điều chỉnh chiều cao của checkbox */
+  margin-right: 8px;
+}
+
+.policy-link {
+  color: #007bff;
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+.policy-link:hover {
+  text-decoration: underline;
+}
+
+.options {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }

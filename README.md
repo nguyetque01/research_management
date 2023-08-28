@@ -9,7 +9,7 @@ The Research Management Project is a web application built using Django and Reac
 ### Backend (Django)
 
 1. Clone the project repository: `git clone <https://github.com/nguyetque01/research_management.git`>
-2. Navigate to the backend directory: `cd research-management/backend`
+2. Navigate to the directory: `cd research-management`
 3. Create and activate a virtual environment (optional)
 4. Install the required dependencies: `pip install -r requirements.txt`
 5. Apply migrations: `python manage.py migrate`
