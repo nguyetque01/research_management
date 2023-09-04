@@ -1,0 +1,11 @@
+.result-text {
+  font-size: 1rem; /* Kích thước font ban đầu */
+  opacity: 0; /* Ẩn kết quả ban đầu */
+  transform: scale(0.8); /* Thu nhỏ kết quả ban đầu */
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; /* Hiệu ứng chuyển đổi */
+}
+
+.result-text.show {
+  opacity: 1; /* Hiện kết quả */
+  transform: scale(1); /* Phóng to kết quả */
+}

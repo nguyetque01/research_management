@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import ResearchTopics from "./pages/ResearchTopics";
 import UserList from "./pages/UserList";
 import Article from "./pages/Article";
+import AITool from "./pages/AITool";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
@@ -30,6 +31,7 @@ function App() {
           <Route path="/research-topics" Component={ResearchTopics} />
           <Route path="/users" Component={UserList} />
           <Route path="/articles/:articleId" component={Article} />
+          <Route path="/ai-tool" Component={AITool} />
         </Routes>
       </Router>
     </LocalizationProvider>

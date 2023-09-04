@@ -97,6 +97,9 @@ function Header() {
             <MenuItem component={Link} to="/references" onClick={handleClose}>
               Tài liệu tham khảo
             </MenuItem>
+            <MenuItem component={Link} to="/ai-tool" onClick={handleClose}>
+              Công cụ hỗ trợ
+            </MenuItem>
           </Menu>
           <div className="login-section">
             <Button
