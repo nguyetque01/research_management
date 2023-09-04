@@ -29,7 +29,7 @@ function Dashboard() {
     {
       id: 1,
       title: "Bài viết 1",
-      image: "../assets/img/research.webp",
+      image: require("../assets/img/research.webp"),
       summary: "Tóm tắt bài viết 1",
       content: "Nội dung bài viết 1",
       author: "Tác giả 1",
@@ -41,7 +41,7 @@ function Dashboard() {
     {
       id: 2,
       title: "Bài viết 2",
-      image: "../assets/img/research.webp",
+      image: require("../assets/img/research.webp"),
       summary: "Tóm tắt bài viết 2",
       content: "Nội dung bài viết 2",
       author: "Tác giả 2",
@@ -68,10 +68,10 @@ function Dashboard() {
           <Grid item xs={12} md={6}>
             <Authors authors={authors} />
           </Grid>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12} md={6}>
             <ResearchTopics topics={researchTopics} />
           </Grid>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12} md={6}>
             <Articles articles={articles} />{" "}
           </Grid>
         </Grid>

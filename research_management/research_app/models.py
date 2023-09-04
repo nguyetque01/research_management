@@ -49,10 +49,12 @@ class CustomUser(AbstractBaseUser):
 
 # Research Topic (Đề tài nghiên cứu)
 class ResearchTopic(models.Model):
-    topic_code = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=255)
     category = models.ForeignKey("Category", on_delete=models.CASCADE)
-    study_hours_required = models.PositiveIntegerField()
+    description = models.TextField(null=True, blank=True)
+    study_hours = models.PositiveIntegerField()
+    approval_status = models.CharField(max_length=20, choices=[("Pending", "Chưa kiểm phê duyệt"), ("Approved", "Đã kiểm phê duyệt")], default="Pending")
+    study_status = models.CharField(max_length=20, choices=[("InProgress", "Đang tiến hành"), ("Completed", "Đã hoàn thành")], default="InProgress")
     # ...
 
 # Research (Bài nghiên cứu)
@@ -60,24 +62,20 @@ class Research(models.Model):
     topic = models.ForeignKey(ResearchTopic, on_delete=models.CASCADE)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="authored_research")
     reviewer = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name="reviewed_research")
-    approval_status = models.CharField(max_length=20, choices=[("Pending", "Chưa kiểm phê duyệt"), ("Approved", "Đã kiểm phê duyệt")])
-    study_status = models.CharField(max_length=20, choices=[("InProgress", "Đang tiến hành"), ("Completed", "Đã hoàn thành")])
     release_date = models.DateField(null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
+    abstract = models.TextField(null=True, blank=True)
     keywords = models.CharField(max_length=255, null=True, blank=True)
     pdf_file = models.FileField(upload_to="research_pdfs/", null=True, blank=True)
     # ...
 
 # Category (Danh mục)
 class Category(models.Model):
-    category_code = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to="category_images/", null=True, blank=True)
     # ...
 
 # Article (Bài viết)
 class Article(models.Model):
-    article_code = models.CharField(max_length=10, unique=True)
     title = models.CharField(max_length=255)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     publication_date = models.DateField()
@@ -90,7 +88,6 @@ class Article(models.Model):
 
 # Reference (Tài liệu tham khảo)
 class Reference(models.Model):
-    reference_code = models.CharField(max_length=10, unique=True)
     title = models.CharField(max_length=255)
     image = models.ImageField(upload_to="reference_images/", null=True, blank=True)
     url = models.URLField()

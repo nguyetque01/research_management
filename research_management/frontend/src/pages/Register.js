@@ -55,8 +55,6 @@ function Register() {
     email: "",
     phone: "",
     address: "",
-    // total_study_hours: 0,
-    // is_approved: true,
   });
 
   const [policyAgreement, setPolicyAgreement] = useState(false);
@@ -132,13 +130,6 @@ function Register() {
     }
   };
 
-  const handleChange = (field, value) => {
-    setFormData({
-      ...formData,
-      [field]: value,
-    });
-  };
-
   return (
     <div>
       <Header />
@@ -192,8 +183,8 @@ function Register() {
                 onChange={(e) =>
                   setFormData({ ...formData, last_name: e.target.value })
                 }
-                error={errors.last_name !== ""}
-                helperText={errors.last_name}
+                error={errors.lastName !== ""}
+                helperText={errors.lastName}
               />
             </Grid>
             <Grid item xs={6}>
@@ -205,8 +196,8 @@ function Register() {
                 onChange={(e) =>
                   setFormData({ ...formData, first_name: e.target.value })
                 }
-                error={errors.first_name !== ""}
-                helperText={errors.first_name}
+                error={errors.firstName !== ""}
+                helperText={errors.firstName}
               />
             </Grid>
             <Grid item xs={6}>
@@ -216,8 +207,8 @@ function Register() {
                 onChange={(newValue) =>
                   setFormData({ ...formData, birth_date: newValue })
                 }
-                error={errors.birth_date !== null}
-                helperText={errors.birth_date}
+                error={errors.birthDate !== null}
+                helperText={errors.birthDate}
               />
             </Grid>
             <Grid item xs={6}>

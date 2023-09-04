@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, ResearchTopic
 
 class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -38,4 +38,9 @@ class LoginSerializer(serializers.Serializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
+        fields = '__all__'
+
+class ResearchTopicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ResearchTopic
         fields = '__all__'

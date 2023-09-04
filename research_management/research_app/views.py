@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import authenticate
-from .models import CustomUser
-from .serializers import RegistrationSerializer, LoginSerializer, CustomUserSerializer
+from .models import CustomUser, ResearchTopic
+from .serializers import RegistrationSerializer, LoginSerializer, CustomUserSerializer, ResearchTopicSerializer
 
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
@@ -42,4 +42,10 @@ class ListUsersAPIView(APIView):
     def get(self, request):
         users = CustomUser.objects.all()
         serializer = CustomUserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class ResearchTopicListAPIView(APIView):
+    def get(self, request):
+        research_topics = ResearchTopic.objects.all()
+        serializer = ResearchTopicSerializer(research_topics, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

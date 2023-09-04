@@ -80,17 +80,13 @@ function Header() {
           >
             <MenuItem
               component={Link}
-              to="/research-register"
-              onClick={handleClose}
-            >
-              Đăng ký đề tài
-            </MenuItem>
-            <MenuItem
-              component={Link}
               to="/research-topics"
               onClick={handleClose}
             >
-              Danh sách đề tài
+              Đề tài nghiên cứu
+            </MenuItem>
+            <MenuItem component={Link} to="/researchs" onClick={handleClose}>
+              Bài nghiên cứu
             </MenuItem>
             <MenuItem component={Link} to="/articles" onClick={handleClose}>
               Bài viết

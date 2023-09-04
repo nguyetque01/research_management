@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ResearchTopics from "./pages/ResearchTopics";
 import UserList from "./pages/UserList";
 import Article from "./pages/Article";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -26,6 +27,7 @@ function App() {
           <Route path="/dashboard" Component={Dashboard} />
           <Route path="/login" Component={Login} />
           <Route path="/register" Component={Register} />
+          <Route path="/research-topics" Component={ResearchTopics} />
           <Route path="/users" Component={UserList} />
           <Route path="/articles/:articleId" component={Article} />
         </Routes>
