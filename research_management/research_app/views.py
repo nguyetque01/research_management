@@ -17,6 +17,13 @@ class RegistrationAPIView(APIView):
             if user:
                 token, created = Token.objects.get_or_create(user=user)
                 return Response({'token': token.key}, status=status.HTTP_201_CREATED)
+        
+        errors = serializer.errors
+        if "username" in errors and "custom user with this username already exists." in errors["username"]:
+            return Response({"error": "Tên đăng nhập đã tồn tại"}, status=status.HTTP_400_BAD_REQUEST)
+        if "email" in errors and "custom user with this email already exists." in errors["email"]:
+            return Response({"error": "Email đã tồn tại"}, status=status.HTTP_400_BAD_REQUEST)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginAPIView(APIView):

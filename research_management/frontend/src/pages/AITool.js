@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 import { Send } from "@mui/icons-material";
 import "../assets/css/AITool.css";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 function AITool() {
   const [generatedText, setGeneratedText] = useState("");
@@ -56,52 +58,56 @@ function AITool() {
   }, [showResult]);
 
   return (
-    <Container maxWidth="md">
-      <Paper elevation={3} style={{ padding: "20px", borderRadius: "10px" }}>
-        <Typography variant="h4" gutterBottom>
-          AI Text Generator
-        </Typography>
-        <TextField
-          variant="outlined"
-          label="Nhập yêu cầu"
-          multiline
-          rows={4}
-          fullWidth
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          style={{ marginBottom: "16px" }}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<Send />}
-          onClick={handleGenerateText}
-          style={{ marginRight: "16px" }}
-        >
-          Tạo văn bản
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={() => {
-            setInputText("");
-            setShowResultLabel(false); // Ẩn chữ "Kết quả"
-            setShowResult(false); // Ẩn kết quả
-          }}
-        >
-          Xóa
-        </Button>
-        <Box mt={3}>
-          {showResultLabel && (
-            <Typography variant="h6" gutterBottom>
-              Kết quả:
-            </Typography>
-          )}
-          <div className={showResult ? "result-text show" : "result-text"}>
-            {generatedText}
-          </div>
-        </Box>
-      </Paper>
-    </Container>
+    <div>
+      <Header />
+      <Container maxWidth="md">
+        <Paper elevation={3} style={{ padding: "20px", borderRadius: "10px" }}>
+          <Typography variant="h4" gutterBottom>
+            AI Text Generator
+          </Typography>
+          <TextField
+            variant="outlined"
+            label="Nhập yêu cầu"
+            multiline
+            rows={4}
+            fullWidth
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            style={{ marginBottom: "16px" }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<Send />}
+            onClick={handleGenerateText}
+            style={{ marginRight: "16px" }}
+          >
+            Tạo văn bản
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setInputText("");
+              setShowResultLabel(false); // Ẩn chữ "Kết quả"
+              setShowResult(false); // Ẩn kết quả
+            }}
+          >
+            Xóa
+          </Button>
+          <Box mt={3}>
+            {showResultLabel && (
+              <Typography variant="h6" gutterBottom>
+                Kết quả:
+              </Typography>
+            )}
+            <div className={showResult ? "result-text show" : "result-text"}>
+              {generatedText}
+            </div>
+          </Box>
+        </Paper>
+      </Container>
+      <Footer />
+    </div>
   );
 }
 

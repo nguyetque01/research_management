@@ -66,8 +66,8 @@ function Register() {
   const [errors, setErrors] = useState({
     username: "",
     password: "",
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     birthDate: "",
     gender: "",
     degree: "",
@@ -86,7 +86,9 @@ function Register() {
       birth_date: formData.birth_date ? "" : "Vui lòng chọn ngày sinh",
       gender: formData.gender ? "" : "Vui lòng chọn giới tính",
       degree: formData.degree ? "" : "Vui lòng chọn học vị/học hàm",
-      phone: validatePhone(formData.phone) ? "" : "Số điện thoại không hợp lệ",
+      phone: /^0[0-9]{9}$/.test(formData.phone)
+        ? ""
+        : "Số điện thoại không hợp lệ",
       email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
         ? ""
         : "Vui lòng nhập địa chỉ email hợp lệ",
@@ -100,13 +102,8 @@ function Register() {
     return Object.values(newErrors).every((error) => error === "");
   };
 
-  const validatePhone = (phone) => {
-    const phonePattern = /^0[0-9]{9}$/;
-    return phonePattern.test(phone);
-  };
-
   const handleRegister = async () => {
-    if (!validateForm()) {
+    if (validateForm()) {
       return;
     }
 
@@ -115,18 +112,32 @@ function Register() {
         ...formData,
         birth_date: formData.birth_date?.toISOString().split("T")[0], // Convert birth_date to ISO string
       };
-      console.log(formattedData);
-
+      // const formattedData = formData;
       await axios.post(`${DEFAULT_BACKEND_URL}/api/register/`, formattedData);
       setNotification({
         type: "success",
         message: "Đăng ký thành công",
       });
     } catch (error) {
-      setNotification({
-        type: "error",
-        message: "Đã xảy ra lỗi khi đăng ký. Vui lòng thử lại sau.",
-      });
+      if (error.response.status) {
+        // Kiểm tra xem phản hồi lỗi có mã trạng thái 400 không (Bad Request)
+        if (error.response.status === 400) {
+          const responseData = error.response.data;
+          // Kiểm tra xem dữ liệu phản hồi có chứa lỗi cho email hoặc tên người dùng trùng lặp không
+          if (responseData.error) {
+            console.log(responseData);
+            setNotification({
+              type: "error",
+              message: responseData.error,
+            });
+          }
+        }
+      } else {
+        setNotification({
+          type: "error",
+          message: "Đã xảy ra lỗi khi đăng ký. Vui lòng thử lại sau.",
+        });
+      }
     }
   };
 
@@ -183,8 +194,8 @@ function Register() {
                 onChange={(e) =>
                   setFormData({ ...formData, last_name: e.target.value })
                 }
-                error={errors.lastName !== ""}
-                helperText={errors.lastName}
+                error={errors.last_name !== ""}
+                helperText={errors.last_name}
               />
             </Grid>
             <Grid item xs={6}>
@@ -196,13 +207,14 @@ function Register() {
                 onChange={(e) =>
                   setFormData({ ...formData, first_name: e.target.value })
                 }
-                error={errors.firstName !== ""}
-                helperText={errors.firstName}
+                error={errors.first_name !== ""}
+                helperText={errors.first_name}
               />
             </Grid>
             <Grid item xs={6}>
               <DatePicker
                 label="Ngày sinh"
+                format="DD/MM/YYYY"
                 value={formData.birth_date}
                 onChange={(newValue) =>
                   setFormData({ ...formData, birth_date: newValue })
@@ -370,7 +382,7 @@ function Register() {
       <Snackbar
         open={notification.message !== ""}
         autoHideDuration={3000}
-        onClose={() => setNotification({ type: "success", message: "" })}
+        onClose={() => setNotification({ type: "", message: "" })}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert variant="filled" severity={notification.type}>
