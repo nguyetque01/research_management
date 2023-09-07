@@ -25,12 +25,13 @@ function Login() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [errors, setErrors] = useState({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const [errors, setErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
   const [showSuccessNotification, setShowSuccessNotification] = useState(false);
   const [showErrorNotification, setShowErrorNotification] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   async function handleLogin() {
     setErrors({});
 

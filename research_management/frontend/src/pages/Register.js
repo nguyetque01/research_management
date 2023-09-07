@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Button,
   TextField,
@@ -44,6 +44,8 @@ const degrees = [
 ];
 
 function Register() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -112,13 +114,17 @@ function Register() {
         ...formData,
         birth_date: formData.birth_date?.toISOString().split("T")[0], // Convert birth_date to ISO string
       };
-      // const formattedData = formData;
+
       await axios.post(`${DEFAULT_BACKEND_URL}/api/register/`, formattedData);
+
       setNotification({
         type: "success",
         message: "Đăng ký thành công",
       });
-      window.location.href = "/dashboard";
+
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
     } catch (error) {
       if (error.response.status) {
         // Kiểm tra xem phản hồi lỗi có mã trạng thái 400 không (Bad Request)
