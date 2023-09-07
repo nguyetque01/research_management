@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Button,
   TextField,
@@ -21,6 +21,8 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 function Login() {
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -29,8 +31,7 @@ function Login() {
   const [showSuccessNotification, setShowSuccessNotification] = useState(false);
   const [showErrorNotification, setShowErrorNotification] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const handleLogin = async () => {
+  async function handleLogin() {
     setErrors({});
 
     if (!validateLoginForm()) {
@@ -43,16 +44,73 @@ function Login() {
         password: password,
       });
 
-      localStorage.setItem("token", response.data.token);
-
-      setIsLoggedIn(true);
-      setShowSuccessNotification(true);
-      window.location.href = "/dashboard";
+      handleLoginResponse(response);
     } catch (error) {
-      setShowErrorNotification(true);
-      setErrorMessage("Tên đăng nhập hoặc mật khẩu không đúng.");
+      handleLoginError(error);
     }
-  };
+  }
+
+  async function handleLoginResponse(response) {
+    if (response.data && response.data.token) {
+      localStorage.setItem("token", response.data.token);
+      const token = localStorage.getItem("token");
+      console.log("Token:", token);
+
+      try {
+        const userProfileResponse = await axios.get(
+          `${DEFAULT_BACKEND_URL}/api/user-profile`,
+          {
+            headers: {
+              Authorization: `Token ${response.data.token}`,
+            },
+          }
+        );
+
+        handleUserProfileResponse(userProfileResponse);
+      } catch (error) {
+        handleUserProfileError(error);
+      }
+    } else {
+      setShowErrorNotification(true);
+      setErrorMessage("Lỗi khi đăng nhập: Không có token sau khi đăng nhập.");
+    }
+  }
+
+  function handleUserProfileResponse(userProfileResponse) {
+    if (userProfileResponse) {
+      console.log("Thông tin người dùng:", userProfileResponse.data);
+    }
+
+    setIsLoggedIn(true);
+    setShowSuccessNotification(true);
+
+    setTimeout(() => {
+      setShowSuccessNotification(false);
+      navigate("/dashboard");
+    }, 1000);
+  }
+
+  function handleUserProfileError(error) {
+    if (error.response) {
+      // Lỗi trong response từ server
+      console.error("Lỗi khi lấy thông tin người dùng:", error.response);
+    } else if (error.request) {
+      // Lỗi trong quá trình gửi request
+      console.error("Lỗi khi gửi request:", error.request);
+    } else {
+      // Lỗi khác
+      console.error("Lỗi:", error.message);
+    }
+  }
+
+  function handleLoginError(error) {
+    setShowErrorNotification(true);
+    if (error.response && error.response.status === 401) {
+      setErrorMessage("Tên đăng nhập hoặc mật khẩu không đúng.");
+    } else {
+      setErrorMessage("Đã xảy ra lỗi khi đăng nhập.");
+    }
+  }
 
   const validateLoginForm = () => {
     const newErrors = {
@@ -141,13 +199,8 @@ function Login() {
         <Alert
           variant="filled"
           severity={showSuccessNotification ? "success" : "error"}
-          // sx={{
-          //   backgroundColor: showSuccessNotification ? "#4CAF50" : "#FF5722",
-          // }}
         >
-          {showSuccessNotification
-            ? "Đăng nhập thành công"
-            : "Tên đăng nhập hoặc mật khẩu không đúng."}
+          {showSuccessNotification ? "Đăng nhập thành công" : errorMessage}
         </Alert>
       </Snackbar>
     </div>

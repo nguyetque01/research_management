@@ -118,6 +118,7 @@ function Register() {
         type: "success",
         message: "Đăng ký thành công",
       });
+      window.location.href = "/dashboard";
     } catch (error) {
       if (error.response.status) {
         // Kiểm tra xem phản hồi lỗi có mã trạng thái 400 không (Bad Request)

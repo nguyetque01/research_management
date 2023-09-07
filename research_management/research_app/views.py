@@ -6,6 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import authenticate
 from .models import CustomUser, ResearchTopic
 from .serializers import RegistrationSerializer, LoginSerializer, CustomUserSerializer, ResearchTopicSerializer
+from rest_framework.authentication import TokenAuthentication
 
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
@@ -39,7 +40,7 @@ class LoginAPIView(APIView):
         if user:
             token, created = Token.objects.get_or_create(user=user)
             return Response({'token': token.key}, status=status.HTTP_200_OK)
-
+            
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class ListUsersAPIView(APIView):
@@ -55,4 +56,13 @@ class ResearchTopicListAPIView(APIView):
     def get(self, request):
         research_topics = ResearchTopic.objects.all()
         serializer = ResearchTopicSerializer(research_topics, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class UserProfileView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        serializer = CustomUserSerializer(user)
+        print(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
