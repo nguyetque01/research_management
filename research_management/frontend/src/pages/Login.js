@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginSuccess } from "../actions/userActions"; // Import actions
+import { loginSuccess } from "../actions/userActions";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import {
   Button,
   TextField,
@@ -36,6 +36,12 @@ function Login() {
   const [errorMessage, setErrorMessage] = useState("");
   const [showSuccessNotification, setShowSuccessNotification] = useState(false);
   const [showErrorNotification, setShowErrorNotification] = useState(false);
+
+  // Kiểm tra xem người dùng đã đăng nhập hay chưa
+  if (isLoggedIn) {
+    // Nếu đã đăng nhập, chuyển hướng đến trang chính
+    return <Navigate to="/dashboard" />;
+  }
 
   async function handleLogin() {
     setErrors({});
