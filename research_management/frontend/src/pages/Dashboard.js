@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Container, Grid } from "@mui/material";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -8,6 +9,9 @@ import Articles from "../components/Articles";
 import Authors from "../components/Authors";
 
 function Dashboard() {
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  const userData = useSelector((state) => state.user.userData);
+
   const categories = [
     { id: 1, name: "Category 1" },
     { id: 2, name: "Category 2" },

@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loginSuccess } from "../actions/userActions"; // Import actions
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -22,10 +24,13 @@ import Footer from "../components/Footer";
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
 
   const [errors, setErrors] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
@@ -54,8 +59,6 @@ function Login() {
   async function handleLoginResponse(response) {
     if (response.data && response.data.token) {
       localStorage.setItem("token", response.data.token);
-      const token = localStorage.getItem("token");
-      console.log("Token:", token);
 
       try {
         const userProfileResponse = await axios.get(
@@ -79,10 +82,15 @@ function Login() {
 
   function handleUserProfileResponse(userProfileResponse) {
     if (userProfileResponse) {
-      console.log("Thông tin người dùng:", userProfileResponse.data);
+      setUserData(userProfileResponse.data);
+      localStorage.setItem(
+        "userData",
+        JSON.stringify(userProfileResponse.data)
+      );
     }
 
-    setIsLoggedIn(true);
+    dispatch(loginSuccess(userProfileResponse.data)); // Gửi action khi đăng nhập thành công
+
     setShowSuccessNotification(true);
 
     setTimeout(() => {
@@ -125,7 +133,7 @@ function Login() {
 
   return (
     <div>
-      <Header isLoggedIn={isLoggedIn} />
+      <Header />
       <div className="login-container">
         <div className="login-box">
           <Typography

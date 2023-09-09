@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import DEFAULT_BACKEND_URL from '../config';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import DEFAULT_BACKEND_URL from "../config";
 
 function UserList() {
   const backendUrl = DEFAULT_BACKEND_URL;
@@ -12,7 +12,7 @@ function UserList() {
         const response = await axios.get(`${backendUrl}/api/users/`);
         setUsers(response.data);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error("Error fetching users:", error);
       }
     }
 
@@ -23,9 +23,11 @@ function UserList() {
     <div className="user-list-container">
       <h2>Danh sách người dùng</h2>
       <ul>
-        {users.map(user => (
+        {users.map((user) => (
           <li key={user.id}>
-            <strong>Username:</strong> {user.username} | <strong>Email:</strong> {user.email} | <strong>Full Name:</strong> {user.first_name} {user.last_name}
+            <strong>Username:</strong> {user.username} | <strong>Email:</strong>{" "}
+            {user.email} | <strong>Full Name:</strong> {user.first_name}{" "}
+            {user.last_name}
           </li>
         ))}
       </ul>
