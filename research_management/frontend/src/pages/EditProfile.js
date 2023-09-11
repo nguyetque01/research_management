@@ -93,7 +93,6 @@ function EditProfile() {
           setIsLoading(false);
         } else {
           const errorData = await response.json();
-
           setNotification({
             type: "error",
             message:

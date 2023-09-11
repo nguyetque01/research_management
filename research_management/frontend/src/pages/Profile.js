@@ -9,6 +9,8 @@ import {
   Grid,
   Divider,
   Button,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import Header from "../components/Header";
@@ -52,6 +54,10 @@ function Profile() {
     address: "",
     avatar: null,
   });
+  const [notification, setNotification] = useState({
+    type: "success",
+    message: "",
+  });
 
   // Fetch user data from server
   useEffect(() => {
@@ -75,15 +81,20 @@ function Profile() {
           setIsLoading(false);
         } else {
           const errorData = await response.json();
-          alert(
-            errorData && errorData.error
-              ? `Có lỗi xảy ra: ${errorData.error}`
-              : "Có lỗi xảy ra khi lấy dữ liệu từ máy chủ."
-          );
+          setNotification({
+            type: "error",
+            message:
+              errorData && errorData.error
+                ? `Có lỗi xảy ra: ${errorData.error}`
+                : "Có lỗi xảy ra khi lấy dữ liệu từ máy chủ",
+          });
         }
       } catch (error) {
         console.error("Lỗi khi thực hiện request:", error);
-        alert("Có lỗi xảy ra khi lấy dữ liệu từ máy chủ.");
+        setNotification({
+          type: "error",
+          message: "Có lỗi xảy ra khi lấy dữ liệu từ máy chủ",
+        });
       }
     };
 
@@ -195,6 +206,16 @@ function Profile() {
         </Paper>
       </Container>
       <Footer />
+      <Snackbar
+        open={notification.message !== ""}
+        autoHideDuration={3000}
+        onClose={() => setNotification({ type: "", message: "" })}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert variant="filled" severity={notification.type}>
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
