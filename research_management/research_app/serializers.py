@@ -35,10 +35,15 @@ class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
 
-class CustomUserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = '__all__'
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'birth_date', 'gender', 'degree', 'email', 'phone', 'address', 'avatar']
 
 class ResearchTopicSerializer(serializers.ModelSerializer):
     class Meta:

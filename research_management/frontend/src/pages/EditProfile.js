@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useNavigate, Navigate } from "react-router-dom";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 import {
   Container,
   Paper,
@@ -15,13 +18,14 @@ import {
   Avatar,
   Box,
   IconButton,
+  Snackbar,
+  Alert,
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { Navigate } from "react-router-dom";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import dayjs from "dayjs";
+import { setUserData } from "../actions/userActions";
+import DEFAULT_BACKEND_URL from "../config.js";
 
 const degrees = [
   {
@@ -47,19 +51,82 @@ const degrees = [
 ];
 
 function EditProfile() {
-  const userData = useSelector((state) => state.user.userData);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const storedToken = localStorage.getItem("token");
+
+  // State
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
-    avatar: userData.avatar || "",
-    firstName: userData.first_name,
-    lastName: userData.last_name,
-    birthDate: dayjs(userData.birth_date).format("DD/MM/YYYY"),
-    gender: userData.gender,
-    degree: userData.degree || "",
-    email: userData.email || "",
-    phone: userData.phone || "",
-    address: userData.address || "",
+    first_name: "",
+    last_name: "",
+    birth_date: "",
+    gender: "",
+    degree: "",
+    email: "",
+    phone: "",
+    address: "",
+    avatar: null,
   });
+  const [notification, setNotification] = useState({
+    type: "success",
+    message: "",
+  });
+  // Fetch user data from server
+  useEffect(() => {
+    const fetchDataFromServer = async () => {
+      try {
+        const response = await fetch(
+          `${DEFAULT_BACKEND_URL}/api/user-profile`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Token ${storedToken}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const userDataFromServer = await response.json();
+          dispatch(setUserData(userDataFromServer));
+          setFormData(userDataFromServer);
+          setIsLoading(false);
+        } else {
+          const errorData = await response.json();
+
+          setNotification({
+            type: "error",
+            message:
+              errorData && errorData.error
+                ? `Có lỗi xảy ra: ${errorData.error}`
+                : "Có lỗi xảy ra khi lấy dữ liệu từ máy chủ",
+          });
+        }
+      } catch (error) {
+        console.error("Lỗi khi thực hiện request:", error);
+        setNotification({
+          type: "error",
+          message: "Có lỗi xảy ra khi lấy dữ liệu từ máy chủ",
+        });
+      }
+    };
+
+    fetchDataFromServer();
+
+    if (formData) {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Kiểm tra xem người dùng đã đăng nhập hay chưa
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!formData) {
+    // Nếu chưa đăng nhập, chuyển hướng họ đến trang đăng nhập
+    return <Navigate to="/login" />;
+  }
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
@@ -72,31 +139,59 @@ function EditProfile() {
     }
   };
 
-  useEffect(() => {
-    // Kiểm tra xem dữ liệu đã tải xong chưa
-    if (userData) {
-      setIsLoading(false);
+  const handleChange = (key, value) => {
+    setFormData({ ...formData, [key]: value });
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      const url = `${DEFAULT_BACKEND_URL}/api/update-profile/`;
+
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${storedToken}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const newData = { ...formData };
+        setFormData(newData);
+        dispatch({ type: "SET_USER_DATA", payload: newData });
+        setNotification({
+          type: "success",
+          message: "Cập nhật thông tin thành công",
+        });
+        setTimeout(() => {
+          navigate("/profile");
+        }, 1000);
+      } else {
+        const errorData = await response.json();
+        if (errorData && errorData.error) {
+          setNotification({
+            type: "error",
+            message: `Có lỗi xảy ra khi cập nhật thông tin cá nhân: ${errorData.error}`,
+          });
+        } else {
+          setNotification({
+            type: "error",
+            message: "Có lỗi xảy ra khi cập nhật thông tin cá nhân",
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Lỗi khi thực hiện request:", error);
+      setNotification({
+        type: "error",
+        message: "Có lỗi xảy ra khi cập nhật thông tin cá nhân",
+      });
     }
-  }, [userData]);
-
-  // Kiểm tra xem người dùng đã đăng nhập hay chưa
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!userData) {
-    // Nếu chưa đăng nhập, chuyển hướng họ đến trang đăng nhập
-    return <Navigate to="/login" />;
-  }
-
-  const handleSaveChanges = () => {
-    // Thực hiện lưu thay đổi thông tin cá nhân
-    // Gửi dữ liệu formData lên server hoặc thực hiện các thao tác cần thiết
   };
 
   const handleCancelChanges = () => {
-    // Thực hiện hủy bỏ các thay đổi và quay lại trang trước đó
-    // Có thể chuyển hướng hoặc hiển thị thông báo xác nhận
+    navigate("/profile");
   };
 
   return (
@@ -117,7 +212,7 @@ function EditProfile() {
             }}
           >
             <Avatar
-              alt={userData.username}
+              alt={formData.username}
               src={formData.avatar}
               sx={{
                 width: 120,
@@ -160,30 +255,24 @@ function EditProfile() {
               <TextField
                 fullWidth
                 label="Họ"
-                value={formData.lastName}
-                onChange={(e) =>
-                  setFormData({ ...formData, lastName: e.target.value })
-                }
+                value={formData.last_name}
+                onChange={(e) => handleChange("last_name", e.target.value)}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Tên"
-                value={formData.firstName}
-                onChange={(e) =>
-                  setFormData({ ...formData, firstName: e.target.value })
-                }
+                value={formData.first_name}
+                onChange={(e) => handleChange("first_name", e.target.value)}
               />
             </Grid>
             <Grid item xs={6}>
               <DatePicker
                 label="Ngày sinh"
                 format="DD/MM/YYYY"
-                // value={formData.birthDate}
-                // onChange={(newValue) =>
-                //   setFormData({ ...formData, birthDate: newValue })
-                // }
+                value={dayjs(formData.birth_date)}
+                onChange={(newValue) => handleChange("birth_date", newValue)}
               />
             </Grid>
             <Grid item xs={6}>
@@ -228,7 +317,6 @@ function EditProfile() {
                 </div>
               </div>
             </Grid>
-
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel id="degree-label">Học vị/ Học hàm</InputLabel>
@@ -236,9 +324,7 @@ function EditProfile() {
                   labelId="degree-label"
                   id="degree"
                   value={formData.degree}
-                  onChange={(e) =>
-                    setFormData({ ...formData, degree: e.target.value })
-                  }
+                  onChange={(e) => handleChange("degree", e.target.value)}
                   label="Học vị/ Học hàm"
                 >
                   {degrees.map((option) => (
@@ -254,9 +340,7 @@ function EditProfile() {
                 fullWidth
                 label="Email"
                 value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
+                onChange={(e) => handleChange("email", e.target.value)}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -264,9 +348,7 @@ function EditProfile() {
                 fullWidth
                 label="Số điện thoại"
                 value={formData.phone}
-                onChange={(e) =>
-                  setFormData({ ...formData, phone: e.target.value })
-                }
+                onChange={(e) => handleChange("phone", e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -276,9 +358,7 @@ function EditProfile() {
                 rows={2}
                 label="Địa chỉ"
                 value={formData.address}
-                onChange={(e) =>
-                  setFormData({ ...formData, address: e.target.value })
-                }
+                onChange={(e) => handleChange("address", e.target.value)}
               />
             </Grid>
           </Grid>
@@ -299,6 +379,16 @@ function EditProfile() {
         </Paper>
       </Container>
       <Footer />
+      <Snackbar
+        open={notification.message !== ""}
+        autoHideDuration={3000}
+        onClose={() => setNotification({ type: "", message: "" })}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert variant="filled" severity={notification.type}>
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

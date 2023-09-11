@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { Navigate, Link } from "react-router-dom";
 import {
   Container,
@@ -14,17 +13,86 @@ import {
 import { Edit } from "@mui/icons-material";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import dayjs from "dayjs";
+import DEFAULT_BACKEND_URL from "../config.js";
+
+const degrees = [
+  {
+    value: "1",
+    label: "Cử nhân/ Kỹ sư",
+  },
+  {
+    value: "2",
+    label: "Thạc sĩ",
+  },
+  {
+    value: "3",
+    label: "Tiến sĩ",
+  },
+  {
+    value: "4",
+    label: "Phó giáo sư",
+  },
+  {
+    value: "5",
+    label: "Giáo sư",
+  },
+];
 
 function Profile() {
-  const userData = useSelector((state) => state.user.userData);
   const [isLoading, setIsLoading] = useState(true);
+  const [userData, setUserData] = useState({
+    first_name: "",
+    last_name: "",
+    birth_date: "",
+    gender: "",
+    degree: "",
+    email: "",
+    phone: "",
+    address: "",
+    avatar: null,
+  });
 
+  // Fetch user data from server
   useEffect(() => {
-    // Kiểm tra xem dữ liệu đã tải xong chưa
+    const storedToken = localStorage.getItem("token");
+
+    const fetchDataFromServer = async () => {
+      try {
+        const response = await fetch(
+          `${DEFAULT_BACKEND_URL}/api/user-profile`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Token ${storedToken}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const userDataFromServer = await response.json();
+          setUserData(userDataFromServer);
+          setIsLoading(false);
+        } else {
+          const errorData = await response.json();
+          alert(
+            errorData && errorData.error
+              ? `Có lỗi xảy ra: ${errorData.error}`
+              : "Có lỗi xảy ra khi lấy dữ liệu từ máy chủ."
+          );
+        }
+      } catch (error) {
+        console.error("Lỗi khi thực hiện request:", error);
+        alert("Có lỗi xảy ra khi lấy dữ liệu từ máy chủ.");
+      }
+    };
+
+    fetchDataFromServer();
+
     if (userData) {
       setIsLoading(false);
     }
-  }, [userData]);
+  }, []);
 
   // Kiểm tra xem người dùng đã đăng nhập hay chưa
   if (isLoading) {
@@ -84,17 +152,28 @@ function Profile() {
           >
             <Grid item xs={12} sm={6}>
               <Typography>
-                <strong>Ngày sinh:</strong> {userData.birth_date}
+                <strong>Ngày sinh:</strong>{" "}
+                {dayjs(userData.birth_date).format("DD/MM/YYYY")}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography>
-                <strong>Giới tính:</strong> {userData.gender}
+                <strong>Giới tính:</strong>{" "}
+                {userData.gender === "M" ? "Nam" : "Nữ"}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography>
-                <strong>Địa chỉ:</strong> {userData.address}
+                <strong>Học hàm/ Học vị: </strong>
+                {degrees.map((item) =>
+                  item.value === userData.degree ? item.label : ""
+                )}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography>
+                <strong>Tổng số giờ nghiên cứu:</strong>{" "}
+                {userData.total_study_hours}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -109,13 +188,7 @@ function Profile() {
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography>
-                <strong>Học hàm/ Học vị:</strong> {userData.degree}
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography>
-                <strong>Tổng số giờ nghiên cứu:</strong>{" "}
-                {userData.total_study_hours}
+                <strong>Địa chỉ:</strong> {userData.address}
               </Typography>
             </Grid>
           </Grid>
