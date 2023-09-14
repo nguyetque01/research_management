@@ -52,10 +52,32 @@ class ResearchTopic(models.Model):
     name = models.CharField(max_length=255)
     category = models.ForeignKey("Category", on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
+    start_date = models.DateField()
     study_hours = models.PositiveIntegerField()
     approval_status = models.CharField(max_length=20, choices=[("Pending", "Chưa kiểm phê duyệt"), ("Approved", "Đã kiểm phê duyệt")], default="Pending")
     study_status = models.CharField(max_length=20, choices=[("InProgress", "Đang tiến hành"), ("Completed", "Đã hoàn thành")], default="InProgress")
-    # ...
+    ...
+    
+    # name = models.CharField(max_length=255)
+    # start_date = models.DateField()
+    # study_hours = models.PositiveIntegerField()
+    # approval_status = models.CharField(
+    #     max_length=20,
+    #     choices=[
+    #         ('Pending', 'Chưa kiểm phê duyệt'),
+    #         ('Approved', 'Đã kiểm phê duyệt'),
+    #     ],
+    #     default='Pending'
+    # )
+    # study_status = models.CharField(
+    #     max_length=20,
+    #     choices=[
+    #         ('InProgress', 'Đang tiến hành'),
+    #         ('Completed', 'Đã hoàn thành'),
+    #     ],
+    #     default='InProgress'
+    # )
+    # registration = models.BooleanField(default=False)
 
 # Research (Bài nghiên cứu)
 class Research(models.Model):
