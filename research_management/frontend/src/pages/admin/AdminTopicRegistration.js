@@ -23,6 +23,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Container,
 } from "@mui/material";
 import studyStatus from "../../data/studyStatus";
 import approvalStatus from "../../data/approvalStatus";
@@ -226,14 +227,15 @@ function AdminTopicRegistration() {
   // Hiển thị giao diện
   return (
     <div>
-      <AdminHeader />
-      <Grid container>
-        <Grid item xs={12} md={3}>
+      <Grid container spacing={20}>
+        <Grid item xs={2}>
           <AdminSidebar />
         </Grid>
-        <Grid item xs={12} md={8}>
-          <h2>Quản lý đăng ký đề tài</h2>
-          {/* <Button
+        <Grid item xs={10}>
+          <AdminHeader />
+          <Container>
+            <h2>Quản lý đăng ký đề tài</h2>
+            {/* <Button
             variant="contained"
             color="primary"
             // onClick={handleOpenModel}
@@ -241,89 +243,90 @@ function AdminTopicRegistration() {
           >
             Thêm đề tài nghiên cứu
           </Button> */}
-          <Modal
-            open={isTopicModalOpen}
-            onClose={handleCloseModal}
-            aria-labelledby="add-topic-modal-title"
-            aria-describedby="add-topic-modal-description"
-          >
-            <TopicForm
-              newTopic={newTopic}
-              setNewTopic={setNewTopic}
-              editingTopic={editingTopic}
-              setEditingTopic={setEditingTopic}
-              handleSubmit={handleSubmit}
+            <Modal
+              open={isTopicModalOpen}
               onClose={handleCloseModal}
-            />
-          </Modal>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>STT</TableCell>
-                  <TableCell>Tên đề tài</TableCell>
-                  <TableCell>Danh mục</TableCell>
-                  <TableCell>Mô tả</TableCell>
-                  <TableCell>Số giờ nghiên cứu</TableCell>
-                  <TableCell>Trạng thái phê duyệt</TableCell>
-                  <TableCell>Trạng thái nghiên cứu</TableCell>
-                  <TableCell>Thao tác</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {topics.map((topic, index) => (
-                  <TableRow key={topic.id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{topic.name}</TableCell>
-                    <TableCell>
-                      {
-                        categories.find(
-                          (category) => category.id === topic.category
-                        )?.name
-                      }
-                    </TableCell>
-                    <TableCell>{topic.description}</TableCell>
-                    <TableCell>{topic.study_hours}</TableCell>
-                    <TableCell>
-                      {
-                        approvalStatus.find(
-                          (status) => status.value === topic.approval_status
-                        )?.label
-                      }
-                    </TableCell>
-                    <TableCell>
-                      {
-                        studyStatus.find(
-                          (status) => status.value === topic.study_status
-                        )?.label
-                      }
-                    </TableCell>
-                    <TableCell>
-                      <div style={{ display: "flex", flexDirection: "row" }}>
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          size="small"
-                          onClick={() => handleEditTopic(topic.id)}
-                        >
-                          Sửa
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          color="error"
-                          size="small"
-                          onClick={() => openDeleteDialog(topic)}
-                          sx={{ marginLeft: "8px" }}
-                        >
-                          Xóa
-                        </Button>
-                      </div>
-                    </TableCell>
+              aria-labelledby="add-topic-modal-title"
+              aria-describedby="add-topic-modal-description"
+            >
+              <TopicForm
+                newTopic={newTopic}
+                setNewTopic={setNewTopic}
+                editingTopic={editingTopic}
+                setEditingTopic={setEditingTopic}
+                handleSubmit={handleSubmit}
+                onClose={handleCloseModal}
+              />
+            </Modal>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>STT</TableCell>
+                    <TableCell>Tên đề tài</TableCell>
+                    <TableCell>Danh mục</TableCell>
+                    <TableCell>Mô tả</TableCell>
+                    <TableCell>Số giờ nghiên cứu</TableCell>
+                    <TableCell>Trạng thái phê duyệt</TableCell>
+                    <TableCell>Trạng thái nghiên cứu</TableCell>
+                    <TableCell>Thao tác</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {topics.map((topic, index) => (
+                    <TableRow key={topic.id}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{topic.name}</TableCell>
+                      <TableCell>
+                        {
+                          categories.find(
+                            (category) => category.id === topic.category
+                          )?.name
+                        }
+                      </TableCell>
+                      <TableCell>{topic.description}</TableCell>
+                      <TableCell>{topic.study_hours}</TableCell>
+                      <TableCell>
+                        {
+                          approvalStatus.find(
+                            (status) => status.value === topic.approval_status
+                          )?.label
+                        }
+                      </TableCell>
+                      <TableCell>
+                        {
+                          studyStatus.find(
+                            (status) => status.value === topic.study_status
+                          )?.label
+                        }
+                      </TableCell>
+                      <TableCell>
+                        <div style={{ display: "flex", flexDirection: "row" }}>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            size="small"
+                            onClick={() => handleEditTopic(topic.id)}
+                          >
+                            Sửa
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            size="small"
+                            onClick={() => openDeleteDialog(topic)}
+                            sx={{ marginLeft: "8px" }}
+                          >
+                            Xóa
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Container>
         </Grid>
       </Grid>
       <Dialog

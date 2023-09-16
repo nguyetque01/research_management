@@ -9,63 +9,63 @@ import Articles from "../components/Articles";
 import Authors from "../components/Authors";
 
 function Dashboard() {
-  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
-  const userData = useSelector((state) => state.user.userData);
+  // const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  // const userData = useSelector((state) => state.user.userData);
 
-  const categories = [
-    { id: 1, name: "Category 1" },
-    { id: 2, name: "Category 2" },
-    { id: 3, name: "Category 3" },
-  ];
-  const researchTopics = [
-    {
-      id: 1,
-      title: "Topic 1",
-      summary: "Summary of Topic 1",
-    },
-    {
-      id: 2,
-      title: "Topic 2",
-      summary: "Summary of Topic 2",
-    },
-  ];
-  const articles = [
-    {
-      id: 1,
-      title: "Bài viết 1",
-      image: require("../assets/img/research.webp"),
-      summary: "Tóm tắt bài viết 1",
-      content: "Nội dung bài viết 1",
-      author: "Tác giả 1",
-      publishDate: "Ngày xuất bản 1",
-      quote: "Trích dẫn bài viết 1",
-      topic: "Chủ đề 1",
-      tags: ["Tag 1", "Tag 2"],
-    },
-    {
-      id: 2,
-      title: "Bài viết 2",
-      image: require("../assets/img/research.webp"),
-      summary: "Tóm tắt bài viết 2",
-      content: "Nội dung bài viết 2",
-      author: "Tác giả 2",
-      publishDate: "Ngày xuất bản 2",
-      quote: "Trích dẫn bài viết 2",
-      topic: "Chủ đề 2",
-      tags: ["Tag 3", "Tag 4"],
-    },
-  ];
-  const authors = [
-    { id: 1, name: "Author 1" },
-    { id: 2, name: "Author 2" },
-    { id: 3, name: "Author 3" },
-  ];
+  // const categories = [
+  //   { id: 1, name: "Category 1" },
+  //   { id: 2, name: "Category 2" },
+  //   { id: 3, name: "Category 3" },
+  // ];
+  // const researchTopics = [
+  //   {
+  //     id: 1,
+  //     title: "Topic 1",
+  //     summary: "Summary of Topic 1",
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Topic 2",
+  //     summary: "Summary of Topic 2",
+  //   },
+  // ];
+  // const articles = [
+  //   {
+  //     id: 1,
+  //     title: "Bài viết 1",
+  //     image: require("../assets/img/research.webp"),
+  //     summary: "Tóm tắt bài viết 1",
+  //     content: "Nội dung bài viết 1",
+  //     author: "Tác giả 1",
+  //     publishDate: "Ngày xuất bản 1",
+  //     quote: "Trích dẫn bài viết 1",
+  //     topic: "Chủ đề 1",
+  //     tags: ["Tag 1", "Tag 2"],
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Bài viết 2",
+  //     image: require("../assets/img/research.webp"),
+  //     summary: "Tóm tắt bài viết 2",
+  //     content: "Nội dung bài viết 2",
+  //     author: "Tác giả 2",
+  //     publishDate: "Ngày xuất bản 2",
+  //     quote: "Trích dẫn bài viết 2",
+  //     topic: "Chủ đề 2",
+  //     tags: ["Tag 3", "Tag 4"],
+  //   },
+  // ];
+  // const authors = [
+  //   { id: 1, name: "Author 1" },
+  //   { id: 2, name: "Author 2" },
+  //   { id: 3, name: "Author 3" },
+  // ];
 
   return (
     <div>
       <Header />
       <Container maxWidth="lg" className="dashboard-container">
-        <Grid container spacing={3}>
+        {/* <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <Categories categories={categories} />
           </Grid>
@@ -78,7 +78,7 @@ function Dashboard() {
           <Grid item xs={12} md={6}>
             <Articles articles={articles} />{" "}
           </Grid>
-        </Grid>
+        </Grid> */}
       </Container>
       <Footer />
     </div>

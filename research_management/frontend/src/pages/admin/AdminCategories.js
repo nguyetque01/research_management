@@ -6,6 +6,7 @@ import AdminHeader from "../../components/admin/AdminHeader";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import CategoryForm from "../../components/admin/CategoryForm";
 import {
+  Container,
   Button,
   Table,
   TableBody,
@@ -206,84 +207,86 @@ function AdminCategories() {
   // Hiển thị giao diện
   return (
     <div>
-      <AdminHeader />
-      <Grid container>
-        <Grid item xs={12} md={3}>
+      <Grid container spacing={20}>
+        <Grid item xs={2}>
           <AdminSidebar />
         </Grid>
-        <Grid item xs={12} md={8}>
-          <h2>Quản lý danh mục</h2>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenModel}
-            sx={{ marginBottom: "24px" }}
-          >
-            Thêm danh mục
-          </Button>
-          <Modal
-            open={isCategoryModalOpen}
-            onClose={handleCloseModal}
-            aria-labelledby="add-category-modal-title"
-            aria-describedby="add-category-modal-description"
-          >
-            <CategoryForm
-              newCategory={newCategory}
-              setNewCategory={setNewCategory}
-              editingCategory={editingCategory}
-              setEditingCategory={setEditingCategory}
-              handleSubmit={handleSubmit}
+        <Grid item xs={10}>
+          <AdminHeader />
+          <Container>
+            <h2>Quản lý danh mục</h2>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleOpenModel}
+              sx={{ marginBottom: "24px" }}
+            >
+              Thêm danh mục
+            </Button>
+            <Modal
+              open={isCategoryModalOpen}
               onClose={handleCloseModal}
-            />
-          </Modal>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>STT</TableCell>
-                  <TableCell>Tên danh mục</TableCell>
-                  <TableCell>Hình ảnh</TableCell>
-                  <TableCell>Thao tác</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {categories.map((category, index) => (
-                  <TableRow key={category.id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{category.name}</TableCell>
-                    <TableCell>
-                      {category.image && (
-                        <img
-                          src={`${backendUrl}${category.image}`}
-                          alt={category.name}
-                          width="100"
-                        />
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        size="small"
-                        onClick={() => handleEditCategory(category.id)}
-                      >
-                        Sửa
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        size="small"
-                        onClick={() => openDeleteDialog(category)}
-                        sx={{ marginLeft: "8px" }}
-                      >
-                        Xóa
-                      </Button>
-                    </TableCell>
+              aria-labelledby="add-category-modal-title"
+              aria-describedby="add-category-modal-description"
+            >
+              <CategoryForm
+                newCategory={newCategory}
+                setNewCategory={setNewCategory}
+                editingCategory={editingCategory}
+                setEditingCategory={setEditingCategory}
+                handleSubmit={handleSubmit}
+                onClose={handleCloseModal}
+              />
+            </Modal>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>STT</TableCell>
+                    <TableCell>Tên danh mục</TableCell>
+                    <TableCell>Hình ảnh</TableCell>
+                    <TableCell>Thao tác</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {categories.map((category, index) => (
+                    <TableRow key={category.id}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{category.name}</TableCell>
+                      <TableCell>
+                        {category.image && (
+                          <img
+                            src={`${backendUrl}${category.image}`}
+                            alt={category.name}
+                            width="100"
+                          />
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          size="small"
+                          onClick={() => handleEditCategory(category.id)}
+                        >
+                          Sửa
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          size="small"
+                          onClick={() => openDeleteDialog(category)}
+                          sx={{ marginLeft: "8px" }}
+                        >
+                          Xóa
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Container>
         </Grid>
       </Grid>
       <Dialog

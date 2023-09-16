@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../actions/userActions";
 import { Link } from "react-router-dom";
-import { Button, Menu, MenuItem, Avatar } from "@mui/material";
+import { Button, Menu, MenuItem, Avatar, Typography } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
 
 const Account = () => {
@@ -45,7 +45,9 @@ const Account = () => {
               src={userData.avatarUrl}
               sx={{ width: 36, height: 36, marginRight: "8px" }}
             />
-            {`${userData.last_name} ${userData.first_name}`}
+            <Typography fontSize={14}>
+              {`${userData.last_name} ${userData.first_name}`}
+            </Typography>
           </Button>
 
           <Menu
@@ -68,13 +70,13 @@ const Account = () => {
             >
               Thông tin cá nhân
             </MenuItem>
-            <MenuItem
+            {/* <MenuItem
               component={Link}
               to="/settings"
               onClick={handleAccountMenuClose}
             >
               Cài đặt
-            </MenuItem>
+            </MenuItem> */}
             <MenuItem component={Link} onClick={handleLogout}>
               Đăng xuất
             </MenuItem>

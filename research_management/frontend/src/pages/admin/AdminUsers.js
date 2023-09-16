@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Container,
 } from "@mui/material";
 import DEFAULT_BACKEND_URL from "../../config";
 import AdminHeader from "../../components/admin/AdminHeader";
@@ -254,42 +255,44 @@ function AdminUsers() {
   // Hiển thị giao diện
   return (
     <div>
-      <AdminHeader />
-      <Grid container>
-        <Grid item xs={12} md={3}>
+      <Grid container spacing={20}>
+        <Grid item xs={2}>
           <AdminSidebar />
         </Grid>
-        <Grid item xs={12} md={8}>
-          <h2>Quản lý tài khoản</h2>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenModel}
-            sx={{ marginBottom: "24px" }}
-          >
-            Thêm tài khoản
-          </Button>
-          <Modal
-            open={isUserModalOpen}
-            onClose={handleCloseModal}
-            aria-labelledby="add-user-modal-title"
-            aria-describedby="add-user-modal-description"
-          >
-            <UserForm
-              newUser={newUser}
-              setNewUser={setNewUser}
-              editingUser={editingUser}
-              setEditingUser={setEditingUser}
-              handleSubmit={handleSubmit}
+        <Grid item xs={10}>
+          <AdminHeader />
+          <Container>
+            <h2>Quản lý tài khoản</h2>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleOpenModel}
+              sx={{ marginBottom: "24px" }}
+            >
+              Thêm tài khoản
+            </Button>
+            <Modal
+              open={isUserModalOpen}
               onClose={handleCloseModal}
+              aria-labelledby="add-user-modal-title"
+              aria-describedby="add-user-modal-description"
+            >
+              <UserForm
+                newUser={newUser}
+                setNewUser={setNewUser}
+                editingUser={editingUser}
+                setEditingUser={setEditingUser}
+                handleSubmit={handleSubmit}
+                onClose={handleCloseModal}
+              />
+            </Modal>
+            <UserTable
+              users={users}
+              handleEditUser={handleEditUser}
+              openDeleteDialog={openDeleteDialog}
+              handleToggleActive={handleToggleActive}
             />
-          </Modal>
-          <UserTable
-            users={users}
-            handleEditUser={handleEditUser}
-            openDeleteDialog={openDeleteDialog}
-            handleToggleActive={handleToggleActive}
-          />
+          </Container>
           <Dialog
             open={isDeleteDialogOpen}
             onClose={closeDeleteDialog}
