@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import CustomUser, ResearchTopic
+from .models import CustomUser, ResearchTopic, Category
+
+##### REGISTRATION, LOGIN #####
 
 class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -19,8 +21,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
         if len(data['password']) < 8:
             raise serializers.ValidationError("Mật khẩu phải có ít nhất 8 ký tự.")
         
-        # Thêm các kiểm tra khác tùy theo yêu cầu của bạn
-        
         return data
 
     def create(self, validated_data):
@@ -35,6 +35,8 @@ class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
 
+##### USERS #####
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -45,7 +47,20 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['first_name', 'last_name', 'birth_date', 'gender', 'degree', 'email', 'phone', 'address', 'avatar']
 
+################################################################################################
+
+##### RESEARCH TOPICS #####
+
 class ResearchTopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResearchTopic
+        fields = '__all__'
+
+################################################################################################
+
+##### CATEGORIES #####
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
         fields = '__all__'

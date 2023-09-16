@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../actions/userActions";
+import React from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
   AppBar,
@@ -9,43 +8,13 @@ import {
   Button,
   Menu,
   MenuItem,
-  Avatar,
 } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
 import "../assets/css/Header.css";
+import Account from "../components/Account";
 
 function Header() {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
-  const userData = useSelector((state) => state.user.userData);
-
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [accountMenuAnchor, setAccountMenuAnchor] = useState(null);
-
-  const dispatch = useDispatch();
-
-  const handleLogout = () => {
-    // Gọi action logout khi đăng xuất
-    dispatch(logout());
-    // Xóa thông tin đăng nhập khỏi localStorage
-    localStorage.removeItem("token");
-    localStorage.removeItem("userData");
-  };
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleAccountMenuOpen = (event) => {
-    setAccountMenuAnchor(event.currentTarget);
-  };
-
-  const handleAccountMenuClose = () => {
-    setAccountMenuAnchor(null);
-  };
 
   return (
     <AppBar
@@ -60,7 +29,7 @@ function Header() {
           to="/"
           className="header-title"
         >
-          Research App
+          DNTU Research App
         </Typography>
         <div className="header-navigation">
           <Button
@@ -83,14 +52,10 @@ function Header() {
             color="inherit"
             className="header-button"
             sx={{ width: "20vh" }}
-            onClick={handleClick}
           >
             Nghiên cứu
           </Button>
           <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "left",
@@ -100,79 +65,28 @@ function Header() {
               horizontal: "left",
             }}
           >
-            <MenuItem
-              component={Link}
-              to="/research-topics"
-              onClick={handleClose}
-            >
+            <MenuItem component={Link} to="/research-topics">
               Đề tài nghiên cứu
             </MenuItem>
-            <MenuItem component={Link} to="/researchs" onClick={handleClose}>
+            <MenuItem component={Link} to="/researchs">
               Bài nghiên cứu
             </MenuItem>
-            <MenuItem component={Link} to="/articles" onClick={handleClose}>
+            <MenuItem component={Link} to="/articles">
               Bài viết
             </MenuItem>
-            <MenuItem component={Link} to="/authors" onClick={handleClose}>
+            <MenuItem component={Link} to="/authors">
               Tác giả
             </MenuItem>
-            <MenuItem component={Link} to="/references" onClick={handleClose}>
+            <MenuItem component={Link} to="/references">
               Tài liệu tham khảo
             </MenuItem>
-            <MenuItem component={Link} to="/ai-tool" onClick={handleClose}>
+            <MenuItem component={Link} to="/ai-tool">
               Công cụ hỗ trợ
             </MenuItem>
           </Menu>
           <div className="login-section">
-            {isLoggedIn && userData ? ( // Kiểm tra xem người dùng đã đăng nhập chưa
-              <div>
-                <Button
-                  color="inherit"
-                  component={Link}
-                  className="header-button"
-                  sx={{ display: "flex", alignItems: "center" }}
-                  onClick={handleAccountMenuOpen}
-                >
-                  <Avatar
-                    alt={userData.username}
-                    src={userData.avatarUrl}
-                    sx={{ width: 36, height: 36, marginRight: "8px" }}
-                  />
-                  {`${userData.last_name} ${userData.first_name}`}
-                </Button>
-
-                <Menu
-                  anchorEl={accountMenuAnchor}
-                  open={Boolean(accountMenuAnchor)}
-                  onClose={handleAccountMenuClose}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                >
-                  <MenuItem
-                    component={Link}
-                    to="/profile"
-                    onClick={handleAccountMenuClose}
-                  >
-                    Thông tin cá nhân
-                  </MenuItem>
-                  <MenuItem
-                    component={Link}
-                    to="/settings"
-                    onClick={handleAccountMenuClose}
-                  >
-                    Cài đặt
-                  </MenuItem>
-                  <MenuItem component={Link} onClick={handleLogout}>
-                    Đăng xuất
-                  </MenuItem>
-                </Menu>
-              </div>
+            {isLoggedIn ? (
+              <Account />
             ) : (
               <Button
                 color="inherit"

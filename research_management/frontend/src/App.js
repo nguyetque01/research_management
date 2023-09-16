@@ -6,11 +6,15 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ResearchTopics from "./pages/ResearchTopics";
-import UserList from "./pages/UserList";
 import Article from "./pages/Article";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import AITool from "./pages/AITool";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminTopicRegistration from "./pages/admin/AdminTopicRegistration";
+import AdminResearchTopics from "./pages/admin/AdminResearchTopics";
+import AdminCategories from "./pages/admin/AdminCategories";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
@@ -41,11 +45,24 @@ function App() {
           <Route path="/login" Component={Login} />
           <Route path="/register" Component={Register} />
           <Route path="/research-topics" Component={ResearchTopics} />
-          <Route path="/users" Component={UserList} />
           <Route path="/articles/:articleId" component={Article} />
           <Route path="/profile" Component={Profile} />
           <Route path="/edit-profile" Component={EditProfile} />
           <Route path="/ai-tool" Component={AITool} />
+
+          {/* Admin */}
+          <Route path="/admin/" Component={AdminDashboard} />
+          <Route path="/admin/dashboard" Component={AdminDashboard} />
+          <Route path="/admin/users" Component={AdminUsers} />
+          <Route
+            path="/admin/topic-registration"
+            Component={AdminTopicRegistration}
+          />
+          <Route
+            path="/admin/research-topics"
+            Component={AdminResearchTopics}
+          />
+          <Route path="/admin/categories" Component={AdminCategories} />
         </Routes>
       </Router>
     </LocalizationProvider>

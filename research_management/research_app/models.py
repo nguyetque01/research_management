@@ -1,7 +1,6 @@
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
-# Custom User Manager
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
         if not username:
@@ -23,8 +22,16 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(username, password, **extra_fields)
 
-# User (Người dùng)
-class CustomUser(AbstractBaseUser):
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    USER = "user"
+    ADMIN = "admin"
+    REVIEWER = "reviewer"
+    ROLE_CHOICES = [
+        (USER, "User"),
+        (ADMIN, "Admin"),
+        (REVIEWER, "Reviewer"),
+    ]
+
     username = models.CharField(max_length=30, unique=True)
     password = models.CharField(max_length=128)
     first_name = models.CharField(max_length=30)
@@ -37,7 +44,8 @@ class CustomUser(AbstractBaseUser):
     address = models.TextField(null=True, blank=True)
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
     total_study_hours = models.PositiveIntegerField(default=0)
-    is_approved = models.BooleanField(default=False)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default=USER)
+    is_active = models.BooleanField(default=True)
 
     objects = CustomUserManager()
 
@@ -47,6 +55,12 @@ class CustomUser(AbstractBaseUser):
     def __str__(self):
         return self.username
 
+    def has_perm(self, perm, obj=None):
+        return self.is_superuser
+
+    def has_module_perms(self, app_label):
+        return self.is_superuser
+    
 # Research Topic (Đề tài nghiên cứu)
 class ResearchTopic(models.Model):
     name = models.CharField(max_length=255)
