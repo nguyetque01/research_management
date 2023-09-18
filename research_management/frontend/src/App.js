@@ -3,18 +3,16 @@ import { useDispatch } from "react-redux";
 import { setUserLoginStatus, setUserData } from "./actions/userActions";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
+import About from "./pages/About";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ResearchTopics from "./pages/ResearchTopics";
-import Article from "./pages/Article";
+import ResearchsRegistration from "./pages/ResearchsRegistration";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import AITool from "./pages/AITool";
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminUsers from "./pages/admin/AdminUsers";
-import AdminTopicRegistration from "./pages/admin/AdminTopicRegistration";
-import AdminResearchTopics from "./pages/admin/AdminResearchTopics";
-import AdminCategories from "./pages/admin/AdminCategories";
+import AdminAccounts from "./pages/admin/AdminAccounts";
+import AdminResearchsRegistration from "./pages/admin/AdminResearchsRegistration";
+import AdminResearchs from "./pages/admin/AdminResearchs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
@@ -42,27 +40,25 @@ function App() {
         <Routes>
           <Route path="/" Component={Dashboard} />
           <Route path="/dashboard" Component={Dashboard} />
+          <Route path="/about" Component={About} />
           <Route path="/login" Component={Login} />
-          <Route path="/register" Component={Register} />
-          <Route path="/research-topics" Component={ResearchTopics} />
-          <Route path="/articles/:articleId" component={Article} />
+          <Route
+            path="/researchs/registration"
+            Component={ResearchsRegistration}
+          />
           <Route path="/profile" Component={Profile} />
-          <Route path="/edit-profile" Component={EditProfile} />
+          <Route path="/profile/edit" Component={EditProfile} />
           <Route path="/ai-tool" Component={AITool} />
 
           {/* Admin */}
           <Route path="/admin/" Component={AdminDashboard} />
           <Route path="/admin/dashboard" Component={AdminDashboard} />
-          <Route path="/admin/users" Component={AdminUsers} />
+          <Route path="/admin/accounts" Component={AdminAccounts} />
+          <Route path="/admin/researchs" Component={AdminResearchs} />
           <Route
-            path="/admin/topic-registration"
-            Component={AdminTopicRegistration}
+            path="/admin/researchs/registration"
+            Component={AdminResearchsRegistration}
           />
-          <Route
-            path="/admin/research-topics"
-            Component={AdminResearchTopics}
-          />
-          <Route path="/admin/categories" Component={AdminCategories} />
         </Routes>
       </Router>
     </LocalizationProvider>

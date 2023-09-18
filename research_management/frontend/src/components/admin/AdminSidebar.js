@@ -69,82 +69,82 @@ const menuData = [
   {
     text: "Quản lý tài khoản",
     icon: <AccountIcon />,
-    link: "/admin/users",
+    link: "/admin/accounts",
     children: [],
   },
   {
     text: "Đề tài các cấp",
     icon: <AssignmentIcon />,
-    link: "/admin/research-topics",
+    link: "/admin/researchs",
     children: [
       {
         text: "Quản lý đề tài",
-        link: "/admin/research-topics",
+        link: "/admin/researchs",
       },
       {
-        text: "Danh sách đăng ký",
-        link: "/admin/topic-registration",
+        text: "Quản lý đăng ký",
+        link: "/admin/researchs/registration",
       },
     ],
   },
   {
     text: "Hoạt động khoa học khác",
     icon: <LocalActivityIcon />,
-    link: "/admin/categories",
+    link: "/admin/activities",
     children: [
       {
         text: "Quản lý hoạt động",
-        link: "/admin/research-topics/subitem1",
+        link: "/admin/activities",
       },
       {
         text: "Danh sách kê khai",
-        link: "/admin/research-topics/subitem1",
+        link: "/admin/activities/declare",
       },
     ],
   },
   {
     text: "Tài nguyên KH",
     icon: <CategoryIcon />,
-    link: "/admin/categories",
+    link: "/admin/resourses",
     children: [
       {
         text: "Công trình nghiên cứu",
-        link: "/admin/research-topics/subitem2",
+        link: "/admin/resourses/researchs",
       },
       {
         text: "Bài báo khoa học",
-        link: "/admin/research-topics/subitem1",
+        link: "/admin/resourses/articles",
       },
       {
         text: "Sách do NXB phát hành",
-        link: "/admin/research-topics/subitem2",
+        link: "/admin/resourses/books",
       },
       {
         text: "Đề tài chuyển giao công nghệ",
-        link: "/admin/research-topics/subitem2",
+        link: "/admin/resourses/tranfers",
       },
       {
         text: "Giải thưởng NCKH",
-        link: "/admin/research-topics/subitem2",
+        link: "/admin/resourses/awards",
       },
     ],
   },
   {
     text: "Báo cáo",
     icon: <AssessmentIcon />,
-    link: "/admin/research-topics",
+    link: "/admin/reports",
     children: [
       {
         text: "Số giờ nghiên cứu cá nhân",
-        link: "/admin/research-topics/subitem2",
+        link: "/admin/reports/personal",
       },
       {
         text: "Số giờ nghiên cứu đơn vị",
-        link: "/admin/research-topics/subitem1",
+        link: "/admin/reports/department",
       },
       {
         text: "Báo cáo tổng hợp",
-        link: "/admin/research-topics/subitem2",
+        link: "/admin/reports/general",
       },
     ],
   },
@@ -152,7 +152,7 @@ const menuData = [
   {
     text: "Cài đặt",
     icon: <SettingsIcon />,
-    link: "/admin/research-topics",
+    link: "/admin/settings",
     children: [],
   },
 ];

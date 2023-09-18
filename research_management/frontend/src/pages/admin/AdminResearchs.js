@@ -4,9 +4,8 @@ import axios from "axios";
 import DEFAULT_BACKEND_URL from "../../config";
 import AdminHeader from "../../components/admin/AdminHeader";
 import AdminSidebar from "../../components/admin/AdminSidebar";
-import CategoryForm from "../../components/admin/CategoryForm";
+import TopicForm from "../../components/admin/ResearchTopicForm";
 import {
-  Container,
   Button,
   Table,
   TableBody,
@@ -24,37 +23,45 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Container,
 } from "@mui/material";
+import studyStatus from "../../data/studyStatus";
+import approvalStatus from "../../data/approvalStatus";
 
-function AdminCategories() {
+function AdminResearchs() {
   const backendUrl = DEFAULT_BACKEND_URL;
-  const defaultCategory = {
+  const defaultTopic = {
     name: "",
-    image: null,
+    category: "",
+    description: "",
+    study_hours: 0,
+    approval_status: "Pending",
+    study_status: "InProgress",
   };
+  const [topics, setTopics] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [newCategory, setNewCategory] = useState(defaultCategory);
-  const [editingCategory, setEditingCategory] = useState(null);
-  const [categoryToDelete, setCategoryToDelete] = useState(null);
-  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [newTopic, setNewTopic] = useState(defaultTopic);
+  const [editingTopic, setEditingTopic] = useState(null);
+  const [topicToDelete, setTopicToDelete] = useState(null);
+  const [isTopicModalOpen, setIsTopicModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [notification, setNotification] = useState({
     type: "success",
     message: "",
   });
 
-  // Gửi HTTP request để lấy danh sách danh mục từ backend
-  async function fetchCategories() {
+  // Gửi HTTP request để lấy danh sách đề tài từ backend
+  async function fetchTopics() {
     try {
-      const response = await axios.get(`${backendUrl}/api/categories/`);
-      setCategories(response.data);
+      const response = await axios.get(`${backendUrl}/api/research-topics/`);
+      setTopics(response.data);
     } catch (error) {
       if (error.response) {
         // Nếu có phản hồi từ máy chủ, xử lý lỗi dựa trên mã trạng thái HTTP
         if (error.response.status === 404) {
           setNotification({
             type: "error",
-            message: "Không tìm thấy danh mục",
+            message: "Không tìm thấy đề tài",
           });
         } else if (error.response.status === 401) {
           // Redirect đến trang đăng nhập
@@ -79,99 +86,112 @@ function AdminCategories() {
           message: "Lỗi không xác định",
         });
       }
+      console.error("Error fetching research topics:", error);
+    }
+  }
+
+  async function fetchCategories() {
+    try {
+      const response = await axios.get(`${backendUrl}/api/categories/`);
+      setCategories(response.data);
+    } catch (error) {
       console.error("Error fetching categories:", error);
     }
   }
 
-  // Sử dụng useEffect để tự động gọi hàm fetchCategories khi component được tạo
+  // Sử dụng useEffect để tự động gọi hàm fetchTopics khi component được tạo
   useEffect(() => {
+    fetchTopics();
     fetchCategories();
   }, []);
 
-  // Mở modal hiển thị form thêm/sửa danh mục
+  // Mở modal hiển thị form thêm/sửa đề tài
   const handleOpenModel = () => {
-    setIsCategoryModalOpen(true);
-    setEditingCategory(null);
-    setNewCategory(defaultCategory);
+    setIsTopicModalOpen(true);
+    setEditingTopic(null);
+    setNewTopic(defaultTopic);
   };
 
-  // Đóng modal hiển thị form thêm/sửa danh mục
+  // Đóng modal hiển thị form thêm/sửa đề tài
   const handleCloseModal = () => {
-    setIsCategoryModalOpen(false);
+    setIsTopicModalOpen(false);
   };
 
-  // Mở dialog xác nhận xóa danh mục
-  const openDeleteDialog = (category) => {
-    setCategoryToDelete(category);
+  // Mở dialog xác nhận xóa đề tài
+  const openDeleteDialog = (topic) => {
+    setTopicToDelete(topic);
     setIsDeleteDialogOpen(true);
   };
 
-  // Đóng dialog xác nhận xóa danh mục
+  // Đóng dialog xác nhận xóa đề tài
   const closeDeleteDialog = () => {
-    setCategoryToDelete(null);
+    setTopicToDelete(null);
     setIsDeleteDialogOpen(false);
   };
 
-  // Xử lý khi muốn xóa danh mục
-  const handleDeleteCategory = async (categoryId) => {
+  // Xử lý khi người dùng muốn xóa đề tài
+  const handleDeleteTopic = async (topicId) => {
     try {
-      await axios.delete(`${backendUrl}/api/category/${categoryId}/`);
+      await axios.delete(`${backendUrl}/api/research-topic/${topicId}/`);
       setNotification({
         type: "success",
-        message: "Xóa danh mục thành công",
+        message: "Xóa đề tài thành công",
       });
-      fetchCategories();
+      fetchTopics();
     } catch (error) {
-      console.error("Error deleting category:", error);
+      console.error("Error deleting research topic:", error);
       setNotification({
         type: "error",
-        message: "Xóa danh mục thất bại",
+        message: "Xóa đề tài thất bại",
       });
     }
   };
 
-  // Xử lý khi muốn chỉnh sửa danh mục
-  const handleEditCategory = async (categoryId) => {
+  // Xử lý khi người dùng muốn chỉnh sửa đề tài
+  const handleEditTopic = async (topicId) => {
     try {
       const response = await axios.get(
-        `${backendUrl}/api/category/${categoryId}/`
+        `${backendUrl}/api/research-topic/${topicId}/`
       );
-      setEditingCategory(response.data);
-      setIsCategoryModalOpen(true);
+      setEditingTopic(response.data);
+      setIsTopicModalOpen(true);
     } catch (error) {
-      console.error("Error fetching category by ID:", error);
+      console.error("Error fetching research topic by ID:", error);
       setNotification({
         type: "error",
-        message: "Không thể lấy thông tin danh mục",
+        message: "Không thể lấy thông tin đề tài",
       });
     }
   };
 
-  // Xử lý khi submit form thêm/sửa danh mục
+  // Xử lý khi người dùng submit form thêm/sửa đề tài
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (editingCategory) {
-        // Nếu đang chỉnh sửa danh mục
+      if (editingTopic) {
+        // Nếu đang chỉnh sửa đề tài
+        console.log(editingTopic);
         await axios.put(
-          `${backendUrl}/api/category/${editingCategory.id}/`,
-          editingCategory
+          `${backendUrl}/api/research-topic/${editingTopic.id}/`,
+          editingTopic
         );
-        setEditingCategory(null);
+        setEditingTopic(null);
         setNotification({
           type: "success",
-          message: "Cập nhật danh mục thành công",
+          message: "Cập nhật đề tài thành công",
         });
       } else {
-        // Nếu đang thêm danh mục mới
-        await axios.post(`${backendUrl}/api/category/`, newCategory);
+        console.log(newTopic);
+
+        // Nếu đang thêm đề tài mới
+        await axios.post(`${backendUrl}/api/research-topic/`, newTopic);
         setNotification({
           type: "success",
-          message: "Thêm danh mục thành công",
+          message: "Thêm đề tài thành công",
         });
       }
-      fetchCategories();
-      setIsCategoryModalOpen(false);
+      fetchTopics();
+      setIsTopicModalOpen(false);
     } catch (error) {
       if (error.response) {
         if (error.response.status === 400) {
@@ -200,7 +220,7 @@ function AdminCategories() {
           message: "Không thể kết nối đến máy chủ.",
         });
       }
-      console.error("Error submitting category:", error);
+      console.error("Error submitting research topic:", error);
     }
   };
 
@@ -214,26 +234,26 @@ function AdminCategories() {
         <Grid item xs={10}>
           <AdminHeader />
           <Container>
-            <h2>Quản lý danh mục</h2>
+            <h2>Quản lý đề tài nghiên cứu</h2>
             <Button
               variant="contained"
               color="primary"
               onClick={handleOpenModel}
               sx={{ marginBottom: "24px" }}
             >
-              Thêm danh mục
+              Thêm đề tài nghiên cứu
             </Button>
             <Modal
-              open={isCategoryModalOpen}
+              open={isTopicModalOpen}
               onClose={handleCloseModal}
-              aria-labelledby="add-category-modal-title"
-              aria-describedby="add-category-modal-description"
+              aria-labelledby="add-topic-modal-title"
+              aria-describedby="add-topic-modal-description"
             >
-              <CategoryForm
-                newCategory={newCategory}
-                setNewCategory={setNewCategory}
-                editingCategory={editingCategory}
-                setEditingCategory={setEditingCategory}
+              <TopicForm
+                newTopic={newTopic}
+                setNewTopic={setNewTopic}
+                editingTopic={editingTopic}
+                setEditingTopic={setEditingTopic}
                 handleSubmit={handleSubmit}
                 onClose={handleCloseModal}
               />
@@ -243,43 +263,63 @@ function AdminCategories() {
                 <TableHead>
                   <TableRow>
                     <TableCell>STT</TableCell>
-                    <TableCell>Tên danh mục</TableCell>
-                    <TableCell>Hình ảnh</TableCell>
+                    <TableCell>Tên đề tài</TableCell>
+                    <TableCell>Danh mục</TableCell>
+                    <TableCell>Mô tả</TableCell>
+                    <TableCell>Số giờ nghiên cứu</TableCell>
+                    <TableCell>Trạng thái phê duyệt</TableCell>
+                    <TableCell>Trạng thái nghiên cứu</TableCell>
                     <TableCell>Thao tác</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {categories.map((category, index) => (
-                    <TableRow key={category.id}>
+                  {topics.map((topic, index) => (
+                    <TableRow key={topic.id}>
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell>{category.name}</TableCell>
+                      <TableCell>{topic.name}</TableCell>
                       <TableCell>
-                        {category.image && (
-                          <img
-                            src={`${backendUrl}${category.image}`}
-                            alt={category.name}
-                            width="100"
-                          />
-                        )}
+                        {
+                          categories.find(
+                            (category) => category.id === topic.category
+                          )?.name
+                        }
+                      </TableCell>
+                      <TableCell>{topic.description}</TableCell>
+                      <TableCell>{topic.study_hours}</TableCell>
+                      <TableCell>
+                        {
+                          approvalStatus.find(
+                            (status) => status.value === topic.approval_status
+                          )?.label
+                        }
                       </TableCell>
                       <TableCell>
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          size="small"
-                          onClick={() => handleEditCategory(category.id)}
-                        >
-                          Sửa
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          color="error"
-                          size="small"
-                          onClick={() => openDeleteDialog(category)}
-                          sx={{ marginLeft: "8px" }}
-                        >
-                          Xóa
-                        </Button>
+                        {
+                          studyStatus.find(
+                            (status) => status.value === topic.study_status
+                          )?.label
+                        }
+                      </TableCell>
+                      <TableCell>
+                        <div style={{ display: "flex", flexDirection: "row" }}>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            size="small"
+                            onClick={() => handleEditTopic(topic.id)}
+                          >
+                            Sửa
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            size="small"
+                            onClick={() => openDeleteDialog(topic)}
+                            sx={{ marginLeft: "8px" }}
+                          >
+                            Xóa
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -295,12 +335,10 @@ function AdminCategories() {
         aria-labelledby="delete-dialog-title"
         aria-describedby="delete-dialog-description"
       >
-        <DialogTitle id="delete-dialog-title">
-          Xác nhận xóa danh mục
-        </DialogTitle>
+        <DialogTitle id="delete-dialog-title">Xác nhận xóa đề tài</DialogTitle>
         <DialogContent>
           <DialogContentText id="delete-dialog-description">
-            Bạn có chắc chắn muốn xóa danh mục {categoryToDelete?.name} không?
+            Bạn có chắc chắn muốn xóa đề tài {topicToDelete?.name} không?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -309,7 +347,7 @@ function AdminCategories() {
           </Button>
           <Button
             onClick={() => {
-              handleDeleteCategory(categoryToDelete?.id);
+              handleDeleteTopic(topicToDelete?.id);
               closeDeleteDialog();
             }}
             color="primary"
@@ -333,4 +371,4 @@ function AdminCategories() {
   );
 }
 
-export default AdminCategories;
+export default AdminResearchs;

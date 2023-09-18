@@ -20,7 +20,7 @@ import {
 import studyStatus from "../../data/studyStatus";
 import approvalStatus from "../../data/approvalStatus";
 
-function ResearchTopicForm({
+function ResearchForm({
   newTopic,
   setNewTopic,
   editingTopic,
@@ -214,4 +214,4 @@ function ResearchTopicForm({
   );
 }
 
-export default ResearchTopicForm;
+export default ResearchForm;

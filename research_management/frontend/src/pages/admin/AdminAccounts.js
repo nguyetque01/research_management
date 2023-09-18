@@ -21,7 +21,7 @@ import UserTable from "../../components/admin/UserTable";
 import UserForm from "../../components/admin/UserForm";
 import dayjs from "dayjs";
 
-function AdminUsers() {
+function AdminAccounts() {
   const backendUrl = DEFAULT_BACKEND_URL;
   // const defaultUser = {
   //   username: "",
@@ -340,4 +340,4 @@ function AdminUsers() {
   );
 }
 
-export default AdminUsers;
+export default AdminAccounts;

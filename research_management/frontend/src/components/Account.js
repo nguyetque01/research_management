@@ -79,7 +79,7 @@ const Account = (isAuthor) => {
               <>
                 <MenuItem
                   component={Link}
-                  to="/profile"
+                  to="/profile/background"
                   onClick={handleAccountMenuClose}
                   sx={{ minWidth: "200px" }}
                 >
@@ -87,7 +87,7 @@ const Account = (isAuthor) => {
                 </MenuItem>
                 <MenuItem
                   component={Link}
-                  to="/profile"
+                  to="/profile/activities"
                   onClick={handleAccountMenuClose}
                   sx={{ minWidth: "200px" }}
                 >
@@ -95,7 +95,7 @@ const Account = (isAuthor) => {
                 </MenuItem>
                 <MenuItem
                   component={Link}
-                  to="/profile"
+                  to="/profile/hour"
                   onClick={handleAccountMenuClose}
                   sx={{ minWidth: "200px" }}
                 >

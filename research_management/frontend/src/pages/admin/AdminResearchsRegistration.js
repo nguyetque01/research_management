@@ -28,7 +28,7 @@ import {
 import studyStatus from "../../data/studyStatus";
 import approvalStatus from "../../data/approvalStatus";
 
-function AdminTopicRegistration() {
+function AdminResearchsRegistration() {
   const backendUrl = DEFAULT_BACKEND_URL;
   const defaultTopic = {
     name: "",
@@ -371,4 +371,4 @@ function AdminTopicRegistration() {
   );
 }
 
-export default AdminTopicRegistration;
+export default AdminResearchsRegistration;

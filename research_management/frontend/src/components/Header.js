@@ -89,14 +89,14 @@ function Header() {
             >
               <MenuItem
                 component={Link}
-                to="/research-topics"
+                to="/manual"
                 onClick={handleMenu3Close}
               >
                 Hướng dẫn sử dụng
               </MenuItem>
               <MenuItem
                 component={Link}
-                to="/researchs"
+                to="/regulations"
                 onClick={handleMenu3Close}
               >
                 Quy định
@@ -126,14 +126,14 @@ function Header() {
             >
               <MenuItem
                 component={Link}
-                to="/research-topics"
+                to="/researchs/registration"
                 onClick={handleMenu1Close}
               >
                 Đăng ký đề tài
               </MenuItem>
               <MenuItem
                 component={Link}
-                to="/researchs"
+                to="/researchs/propose"
                 onClick={handleMenu1Close}
               >
                 Đề xuất đề tài
@@ -177,35 +177,31 @@ function Header() {
             >
               <MenuItem
                 component={Link}
-                to="/research-topics"
+                to="/activities/declare"
                 onClick={handleMenu2Close}
               >
                 Kê khai hoạt động
               </MenuItem>
               <MenuItem
                 component={Link}
-                to="/researchs"
+                to="/articles"
                 onClick={handleMenu2Close}
               >
                 Bài báo khoa học
               </MenuItem>
               <MenuItem
                 component={Link}
-                to="/researchs"
+                to="/transfers"
                 onClick={handleMenu2Close}
               >
                 Chuyển giao công nghệ
               </MenuItem>
-              <MenuItem
-                component={Link}
-                to="/researchs"
-                onClick={handleMenu2Close}
-              >
+              <MenuItem component={Link} to="/books" onClick={handleMenu2Close}>
                 Sách do NXB phát hành
               </MenuItem>
               <MenuItem
                 component={Link}
-                to="/researchs"
+                to="/awards"
                 onClick={handleMenu2Close}
               >
                 Giải thưởng NCKH

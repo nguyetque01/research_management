@@ -151,7 +151,7 @@ function Profile() {
             <Button
               variant="outlined"
               component={Link}
-              to="/edit-profile" // Điều hướng đến trang chỉnh sửa thông tin
+              to="/profile/edit" // Điều hướng đến trang chỉnh sửa thông tin
             >
               <Edit sx={{ marginRight: "8px" }} /> Chỉnh sửa thông tin
             </Button>
