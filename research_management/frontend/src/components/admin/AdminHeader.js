@@ -1,5 +1,11 @@
 import React from "react";
-import { AppBar, Toolbar, Typography, IconButton, Badge } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  // Typography,
+  IconButton,
+  // Badge
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Account from "../Account";
 
@@ -14,7 +20,7 @@ const AdminHeader = () => {
           Dashboard
         </Typography> */}
         <div style={{ flexGrow: 1 }} />
-        <Account />
+        <Account isAuthor={false} />
       </Toolbar>
     </AppBar>
   );

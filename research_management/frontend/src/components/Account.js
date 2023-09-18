@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../actions/userActions";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Menu, MenuItem, Avatar, Typography } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
 
-const Account = () => {
+const Account = (isAuthor) => {
+  const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const userData = useSelector((state) => state.user.userData);
-
   const [accountMenuAnchor, setAccountMenuAnchor] = useState(null);
 
   const dispatch = useDispatch();
@@ -19,6 +19,9 @@ const Account = () => {
     // Xóa thông tin đăng nhập khỏi localStorage
     localStorage.removeItem("token");
     localStorage.removeItem("userData");
+    setTimeout(() => {
+      navigate("/login");
+    }, 1);
   };
 
   const handleAccountMenuOpen = (event) => {
@@ -62,21 +65,47 @@ const Account = () => {
               vertical: "top",
               horizontal: "right",
             }}
+            sx={{ minWidth: "300px" }}
           >
             <MenuItem
               component={Link}
               to="/profile"
               onClick={handleAccountMenuClose}
+              sx={{ minWidth: "200px" }}
             >
               Thông tin cá nhân
             </MenuItem>
-            {/* <MenuItem
-              component={Link}
-              to="/settings"
-              onClick={handleAccountMenuClose}
-            >
-              Cài đặt
-            </MenuItem> */}
+            {isAuthor ? (
+              <>
+                <MenuItem
+                  component={Link}
+                  to="/profile"
+                  onClick={handleAccountMenuClose}
+                  sx={{ minWidth: "200px" }}
+                >
+                  Lý lịch khoa học
+                </MenuItem>
+                <MenuItem
+                  component={Link}
+                  to="/profile"
+                  onClick={handleAccountMenuClose}
+                  sx={{ minWidth: "200px" }}
+                >
+                  Hoạt động khoa học
+                </MenuItem>
+                <MenuItem
+                  component={Link}
+                  to="/profile"
+                  onClick={handleAccountMenuClose}
+                  sx={{ minWidth: "200px" }}
+                >
+                  Thống kê số giờ NCKH
+                </MenuItem>
+              </>
+            ) : (
+              <></>
+            )}
+
             <MenuItem component={Link} onClick={handleLogout}>
               Đăng xuất
             </MenuItem>

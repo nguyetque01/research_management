@@ -1,6 +1,7 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
 import Logo from "../assets/img/logo-dntu.webp";
+import Background from "../assets/img/header-banner.jpg";
 import { Link } from "react-router-dom";
 
 const Banner = () => {
@@ -8,6 +9,9 @@ const Banner = () => {
     <div
       elevation={3}
       style={{
+        backgroundImage: `url(${Background})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
         backgroundColor: "#fff",
         paddingTop: "8px",
         paddingBottom: "8px",
@@ -45,9 +49,10 @@ const Banner = () => {
             <Typography
               variant="subtitle1"
               style={{
-                color: "#000",
+                color: "#333",
                 fontSize: "16px",
                 fontWeight: "bold",
+                lineHeight: "24px",
               }}
             >
               Trường Đại học Công nghệ Đồng Nai
@@ -55,8 +60,9 @@ const Banner = () => {
             <Typography
               variant="subtitle2"
               style={{
-                color: "#000",
+                color: "#333",
                 fontSize: "16px",
+                lineHeight: "24px",
               }}
             >
               Khoa Công nghệ thông tin
@@ -67,14 +73,16 @@ const Banner = () => {
           <Typography
             variant="h4"
             style={{
-              color: "#000",
-              fontSize: "20px",
+              color: "#3F51B5",
+              fontSize: "22px",
               textAlign: "right",
               textTransform: "uppercase",
               fontWeight: "bold",
+              letterSpacing: "1px",
+              textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)",
             }}
           >
-            Hệ thống quản lý đề tài nghiên cứu khoa học
+            Hệ thống Quản lý Nghiên cứu khoa học
           </Typography>
         </Grid>
       </Grid>

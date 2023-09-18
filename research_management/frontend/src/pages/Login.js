@@ -11,16 +11,10 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import {
-  AccountCircle,
-  LockOutlined,
-  HelpOutline,
-  ArrowForward,
-} from "@mui/icons-material";
-import "../assets/css/Login.css";
+import { AccountCircle, LockOutlined, HelpOutline } from "@mui/icons-material";
 import DEFAULT_BACKEND_URL from "../config.js";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
+import "../assets/css/Login.css";
 
 function Login() {
   const navigate = useNavigate();
@@ -101,8 +95,12 @@ function Login() {
 
     setTimeout(() => {
       setShowSuccessNotification(false);
-      navigate("/dashboard");
-    }, 1000);
+      if (userProfileResponse?.data?.role === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/dashboard");
+      }
+    }, 1);
   }
 
   function handleUserProfileError(error) {
@@ -139,14 +137,51 @@ function Login() {
 
   return (
     <div>
-      <Header />
       <div className="login-container">
+        <div
+          className="login-header"
+          style={{
+            paddingTop: 20,
+            textAlign: "center",
+          }}
+        >
+          <div>
+            <Typography
+              variant="h1"
+              style={{
+                fontSize: 24,
+                textTransform: "uppercase",
+                fontWeight: 600,
+                color: "#3F51B5",
+              }}
+            >
+              Hệ thống quản lý nghiên cứu khoa học
+            </Typography>
+          </div>
+          <div>
+            <Typography
+              variant="subtitile1"
+              style={{
+                padding: 0,
+                margin: 0,
+                color: "#3F51B5",
+                fontSize: 16,
+              }}
+            >
+              Khoa Công nghệ thông tin - Trường Đại học Công nghệ Đồng Nai
+            </Typography>
+          </div>
+        </div>
         <div className="login-box">
           <Typography
             variant="h4"
-            style={{ marginBottom: "20px", marginTop: "20px" }}
+            style={{
+              marginBottom: "20px",
+              textTransform: "uppercase",
+              fontSize: 20,
+            }}
           >
-            Đăng nhập
+            Đăng nhập vào hệ thống
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -178,30 +213,30 @@ function Login() {
               />
             </Grid>
           </Grid>
-          <div
-            className="button-group"
-            style={{ marginTop: "20px", marginBottom: "20px" }}
-          >
+          <div className="button-group" style={{ marginTop: "20px" }}>
+            <Link to="/forgot-password" className="forgot-password-link">
+              <HelpOutline sx={{ marginRight: "2px" }} />
+              Quên mật khẩu
+            </Link>
             <Button variant="contained" onClick={handleLogin}>
               Đăng nhập
             </Button>
-            <Link to="/register">
-              <Button variant="outlined">Đăng ký</Button>
-            </Link>
-          </div>
-          <div className="login-options" style={{ marginTop: "20px" }}>
-            <Link to="/forgot-password" className="forgot-password-link">
-              <HelpOutline />
-              Quên mật khẩu
-            </Link>
-            <Link to="/" className="back-link">
-              <ArrowForward />
-              Quay về
-            </Link>
           </div>
         </div>
+        <Footer
+          style={{
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            minWidth: "100%",
+            paddingLeft: 0,
+            paddingRight: 0,
+          }}
+          textStyle={{ color: "rgba(255, 255, 255, 0.8)" }}
+          linkStyle={{
+            color: "rgba(255, 255, 255, 0.4)",
+            textDecorationColor: "rgba(255, 255, 255, 0.4)",
+          }}
+        />
       </div>
-      <Footer />
       <Snackbar
         open={showSuccessNotification || showErrorNotification}
         autoHideDuration={3000}

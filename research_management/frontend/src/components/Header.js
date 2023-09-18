@@ -6,13 +6,32 @@ import Account from "../components/Account";
 import Banner from "./Banner";
 
 function Header() {
-  const [researchMenuAnchor, setResearchMenuAnchor] = useState(null);
-  const handleResearchMenuOpen = (event) => {
-    setResearchMenuAnchor(event.currentTarget);
+  const [menu1Anchor, setMenu1Anchor] = useState(null);
+  const [menu2Anchor, setMenu2Anchor] = useState(null);
+  const [menu3Anchor, setMenu3Anchor] = useState(null);
+
+  const handleMenu1Open = (event) => {
+    setMenu1Anchor(event.currentTarget);
   };
 
-  const handleResearchMenuClose = () => {
-    setResearchMenuAnchor(null);
+  const handleMenu1Close = () => {
+    setMenu1Anchor(null);
+  };
+
+  const handleMenu2Open = (event) => {
+    setMenu2Anchor(event.currentTarget);
+  };
+
+  const handleMenu2Close = () => {
+    setMenu2Anchor(null);
+  };
+
+  const handleMenu3Open = (event) => {
+    setMenu3Anchor(event.currentTarget);
+  };
+
+  const handleMenu3Close = () => {
+    setMenu3Anchor(null);
   };
 
   return (
@@ -22,11 +41,22 @@ function Header() {
         position="static"
         className="header-container"
         sx={{
-          backgroundColor: "#0056b3",
+          backgroundColor: "#3f51b5",
         }}
       >
         <Toolbar>
           <div className="header-navigation">
+            {/* Trang chủ */}
+            <Button
+              color="inherit"
+              component={Link}
+              to="/dashboard"
+              className="header-button"
+            >
+              Trang chủ
+            </Button>
+
+            {/* Giới thiệu */}
             <Button
               color="inherit"
               component={Link}
@@ -35,18 +65,19 @@ function Header() {
             >
               Giới thiệu
             </Button>
+
+            {/* Văn bản và quy định */}
             <Button
               color="inherit"
               className="header-button"
-              onClick={handleResearchMenuOpen}
-              sx={{ width: "20vh" }}
+              onClick={handleMenu3Open}
             >
-              Nghiên cứu
+              Hướng dẫn
             </Button>
             <Menu
-              anchorEl={researchMenuAnchor}
-              open={Boolean(researchMenuAnchor)}
-              onClose={handleResearchMenuClose}
+              anchorEl={menu3Anchor}
+              open={Boolean(menu3Anchor)}
+              onClose={handleMenu3Close}
               anchorOrigin={{
                 vertical: "bottom",
                 horizontal: "left",
@@ -59,50 +90,130 @@ function Header() {
               <MenuItem
                 component={Link}
                 to="/research-topics"
-                onClick={handleResearchMenuClose}
+                onClick={handleMenu3Close}
+              >
+                Hướng dẫn sử dụng
+              </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/researchs"
+                onClick={handleMenu3Close}
+              >
+                Quy định
+              </MenuItem>
+            </Menu>
+
+            {/* Đề tài nghiên cứu */}
+            <Button
+              color="inherit"
+              className="header-button"
+              onClick={handleMenu1Open}
+            >
+              Đề tài nghiên cứu
+            </Button>
+            <Menu
+              anchorEl={menu1Anchor}
+              open={Boolean(menu1Anchor)}
+              onClose={handleMenu1Close}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+            >
+              <MenuItem
+                component={Link}
+                to="/research-topics"
+                onClick={handleMenu1Close}
               >
                 Đăng ký đề tài
               </MenuItem>
               <MenuItem
                 component={Link}
                 to="/researchs"
-                onClick={handleResearchMenuClose}
+                onClick={handleMenu1Close}
               >
-                Công trình công bố
+                Đề xuất đề tài
               </MenuItem>
-              {/* <MenuItem
-              component={Link}
-              to="/articles"
-              onClick={handleResearchMenuClose}
-            >
-              Bài viết
-            </MenuItem>
-            <MenuItem
-              component={Link}
-              to="/authors"
-              onClick={handleResearchMenuClose}
-            >
-              Tác giả
-            </MenuItem> */}
               <MenuItem
                 component={Link}
-                to="/references"
-                onClick={handleResearchMenuClose}
+                to="/researchs"
+                onClick={handleMenu1Close}
               >
-                Tài liệu tham khảo
+                Công trình công bố
               </MenuItem>
               <MenuItem
                 component={Link}
                 to="/ai-tool"
-                onClick={handleResearchMenuClose}
+                onClick={handleMenu1Close}
               >
                 Công cụ hỗ trợ
               </MenuItem>
             </Menu>
 
-            {/* Account */}
-            <Account />
+            {/* Hoạt động khoa học */}
+            <Button
+              color="inherit"
+              className="header-button"
+              onClick={handleMenu2Open}
+            >
+              Hoạt động khoa học
+            </Button>
+            <Menu
+              anchorEl={menu2Anchor}
+              open={Boolean(menu2Anchor)}
+              onClose={handleMenu2Close}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+            >
+              <MenuItem
+                component={Link}
+                to="/research-topics"
+                onClick={handleMenu2Close}
+              >
+                Kê khai hoạt động
+              </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/researchs"
+                onClick={handleMenu2Close}
+              >
+                Bài báo khoa học
+              </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/researchs"
+                onClick={handleMenu2Close}
+              >
+                Chuyển giao công nghệ
+              </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/researchs"
+                onClick={handleMenu2Close}
+              >
+                Sách do NXB phát hành
+              </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/researchs"
+                onClick={handleMenu2Close}
+              >
+                Giải thưởng NCKH
+              </MenuItem>
+            </Menu>
           </div>
+          <div style={{ flex: 1 }}></div>
+          <Account isAuthor={true} />
         </Toolbar>
       </AppBar>
     </div>

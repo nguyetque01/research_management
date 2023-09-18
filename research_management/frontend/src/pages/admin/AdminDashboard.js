@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Typography, Grid, Paper } from "@mui/material";
+import { Container, Typography, Grid } from "@mui/material";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import AdminHeader from "../../components/admin/AdminHeader";
 

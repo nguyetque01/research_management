@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Container, Grid } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Container, Grid, Typography } from "@mui/material";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import Categories from "../components/Categories";
-import ResearchTopics from "../components/ResearchTopics";
-import Articles from "../components/Articles";
-import Authors from "../components/Authors";
+// import Categories from "../components/Categories";
+// import ResearchTopics from "../components/ResearchTopics";
+// import Articles from "../components/Articles";
+// import Authors from "../components/Authors";
 
 function Dashboard() {
-  // const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  const navigate = useNavigate();
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   // const userData = useSelector((state) => state.user.userData);
 
   // const categories = [
@@ -61,6 +63,15 @@ function Dashboard() {
   //   { id: 3, name: "Author 3" },
   // ];
 
+  useEffect(() => {
+    // Kiểm tra xem người dùng đã đăng nhập hay chưa
+    if (!isLoggedIn) {
+      // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+      navigate("/login");
+      console.log(isLoggedIn);
+    }
+  }, []);
+
   return (
     <div>
       <Header />
@@ -79,6 +90,23 @@ function Dashboard() {
             <Articles articles={articles} />{" "}
           </Grid>
         </Grid> */}
+        <Grid
+          container
+          spacing={20}
+          sx={{
+            minHeight: "100vh",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {/* Content */}
+          <Grid item xs={12}>
+            <Container>
+              <Typography variant="h4"> Dashboard</Typography>
+            </Container>
+          </Grid>
+        </Grid>
       </Container>
       <Footer />
     </div>
