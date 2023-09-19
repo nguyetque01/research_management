@@ -73,22 +73,26 @@ const menuData = [
     children: [],
   },
   {
-    text: "Đề tài các cấp",
+    text: "Quản lý đề tài",
     icon: <AssignmentIcon />,
     link: "/admin/researchs",
     children: [
       {
-        text: "Quản lý đề tài",
+        text: "Danh sách đề tài",
         link: "/admin/researchs",
       },
       {
-        text: "Quản lý đăng ký",
+        text: "Danh sách đăng ký",
+        link: "/admin/researchs/registration",
+      },
+      {
+        text: "Danh sách đề xuất",
         link: "/admin/researchs/registration",
       },
     ],
   },
   {
-    text: "Hoạt động khoa học khác",
+    text: "Quản lý hoạt động khoa học",
     icon: <LocalActivityIcon />,
     link: "/admin/activities",
     children: [
@@ -135,11 +139,11 @@ const menuData = [
     link: "/admin/reports",
     children: [
       {
-        text: "Số giờ nghiên cứu cá nhân",
+        text: "HĐKH cá nhân",
         link: "/admin/reports/personal",
       },
       {
-        text: "Số giờ nghiên cứu đơn vị",
+        text: "HĐKH đơn vị",
         link: "/admin/reports/department",
       },
       {

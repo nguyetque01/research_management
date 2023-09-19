@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { AppBar, Toolbar, Button, Menu, MenuItem } from "@mui/material";
 import "../assets/css/Header.css";
@@ -6,33 +7,62 @@ import Account from "../components/Account";
 import Banner from "./Banner";
 
 function Header() {
-  const [menu1Anchor, setMenu1Anchor] = useState(null);
-  const [menu2Anchor, setMenu2Anchor] = useState(null);
-  const [menu3Anchor, setMenu3Anchor] = useState(null);
+  const userData = useSelector((state) => state.user.userData);
+  const [menuAnchors, setMenuAnchors] = useState({
+    menu1Anchor: null,
+    menu2Anchor: null,
+    menu3Anchor: null,
+    menu4Anchor: null, // Added menu4
+  });
 
-  const handleMenu1Open = (event) => {
-    setMenu1Anchor(event.currentTarget);
+  const handleMenuOpen = (menu) => (event) => {
+    setMenuAnchors({ ...menuAnchors, [menu]: event.currentTarget });
   };
 
-  const handleMenu1Close = () => {
-    setMenu1Anchor(null);
+  const handleMenuClose = (menu) => () => {
+    setMenuAnchors({ ...menuAnchors, [menu]: null });
   };
 
-  const handleMenu2Open = (event) => {
-    setMenu2Anchor(event.currentTarget);
+  const renderMenuItems = (items) => {
+    return items.map((item) => (
+      <MenuItem
+        key={item.to}
+        component={Link}
+        to={item.to}
+        onClick={handleMenuClose(item.menu)}
+      >
+        {item.label}
+      </MenuItem>
+    ));
   };
 
-  const handleMenu2Close = () => {
-    setMenu2Anchor(null);
-  };
+  const menu1Items = [
+    { to: "/researchs/registration", label: "Đăng ký đề tài" },
+    { to: "/researchs/propose", label: "Đề xuất đề tài" },
+    { to: "/researchs", label: "Công trình công bố" },
+    { to: "/ai-tool", label: "Công cụ hỗ trợ" },
+  ];
 
-  const handleMenu3Open = (event) => {
-    setMenu3Anchor(event.currentTarget);
-  };
+  const menu2Items = [
+    { to: "/activities/declare", label: "Kê khai hoạt động" },
+    { to: "/articles", label: "Bài báo khoa học" },
+    { to: "/transfers", label: "Chuyển giao công nghệ" },
+    { to: "/books", label: "Sách do NXB phát hành" },
+    { to: "/awards", label: "Giải thưởng NCKH" },
+  ];
 
-  const handleMenu3Close = () => {
-    setMenu3Anchor(null);
-  };
+  const menu3Items = [
+    { to: "/manual", label: "Hướng dẫn sử dụng" },
+    { to: "/regulations", label: "Quy định" },
+  ];
+
+  const menu4Items = [
+    { to: "/activities/declare", label: "Quản lý đề tài" },
+    { to: "/articles", label: "Phê duyệt đề xuất" },
+    { to: "/transfers", label: "Phê duyệt đăng ký" },
+    { to: "/books", label: "Phê duyệt hoạt động" },
+    { to: "/awards", label: "Báo cáo tổng hợp" },
+  ];
 
   return (
     <div>
@@ -70,14 +100,14 @@ function Header() {
             <Button
               color="inherit"
               className="header-button"
-              onClick={handleMenu3Open}
+              onClick={handleMenuOpen("menu3Anchor")}
             >
               Hướng dẫn
             </Button>
             <Menu
-              anchorEl={menu3Anchor}
-              open={Boolean(menu3Anchor)}
-              onClose={handleMenu3Close}
+              anchorEl={menuAnchors.menu3Anchor}
+              open={Boolean(menuAnchors.menu3Anchor)}
+              onClose={handleMenuClose("menu3Anchor")}
               anchorOrigin={{
                 vertical: "bottom",
                 horizontal: "left",
@@ -87,34 +117,21 @@ function Header() {
                 horizontal: "left",
               }}
             >
-              <MenuItem
-                component={Link}
-                to="/manual"
-                onClick={handleMenu3Close}
-              >
-                Hướng dẫn sử dụng
-              </MenuItem>
-              <MenuItem
-                component={Link}
-                to="/regulations"
-                onClick={handleMenu3Close}
-              >
-                Quy định
-              </MenuItem>
+              {renderMenuItems(menu3Items)}
             </Menu>
 
             {/* Đề tài nghiên cứu */}
             <Button
               color="inherit"
               className="header-button"
-              onClick={handleMenu1Open}
+              onClick={handleMenuOpen("menu1Anchor")}
             >
               Đề tài nghiên cứu
             </Button>
             <Menu
-              anchorEl={menu1Anchor}
-              open={Boolean(menu1Anchor)}
-              onClose={handleMenu1Close}
+              anchorEl={menuAnchors.menu1Anchor}
+              open={Boolean(menuAnchors.menu1Anchor)}
+              onClose={handleMenuClose("menu1Anchor")}
               anchorOrigin={{
                 vertical: "bottom",
                 horizontal: "left",
@@ -124,48 +141,21 @@ function Header() {
                 horizontal: "left",
               }}
             >
-              <MenuItem
-                component={Link}
-                to="/researchs/registration"
-                onClick={handleMenu1Close}
-              >
-                Đăng ký đề tài
-              </MenuItem>
-              <MenuItem
-                component={Link}
-                to="/researchs/propose"
-                onClick={handleMenu1Close}
-              >
-                Đề xuất đề tài
-              </MenuItem>
-              <MenuItem
-                component={Link}
-                to="/researchs"
-                onClick={handleMenu1Close}
-              >
-                Công trình công bố
-              </MenuItem>
-              <MenuItem
-                component={Link}
-                to="/ai-tool"
-                onClick={handleMenu1Close}
-              >
-                Công cụ hỗ trợ
-              </MenuItem>
+              {renderMenuItems(menu1Items)}
             </Menu>
 
             {/* Hoạt động khoa học */}
             <Button
               color="inherit"
               className="header-button"
-              onClick={handleMenu2Open}
+              onClick={handleMenuOpen("menu2Anchor")}
             >
               Hoạt động khoa học
             </Button>
             <Menu
-              anchorEl={menu2Anchor}
-              open={Boolean(menu2Anchor)}
-              onClose={handleMenu2Close}
+              anchorEl={menuAnchors.menu2Anchor}
+              open={Boolean(menuAnchors.menu2Anchor)}
+              onClose={handleMenuClose("menu2Anchor")}
               anchorOrigin={{
                 vertical: "bottom",
                 horizontal: "left",
@@ -175,38 +165,38 @@ function Header() {
                 horizontal: "left",
               }}
             >
-              <MenuItem
-                component={Link}
-                to="/activities/declare"
-                onClick={handleMenu2Close}
-              >
-                Kê khai hoạt động
-              </MenuItem>
-              <MenuItem
-                component={Link}
-                to="/articles"
-                onClick={handleMenu2Close}
-              >
-                Bài báo khoa học
-              </MenuItem>
-              <MenuItem
-                component={Link}
-                to="/transfers"
-                onClick={handleMenu2Close}
-              >
-                Chuyển giao công nghệ
-              </MenuItem>
-              <MenuItem component={Link} to="/books" onClick={handleMenu2Close}>
-                Sách do NXB phát hành
-              </MenuItem>
-              <MenuItem
-                component={Link}
-                to="/awards"
-                onClick={handleMenu2Close}
-              >
-                Giải thưởng NCKH
-              </MenuItem>
+              {renderMenuItems(menu2Items)}
             </Menu>
+
+            {/* Phần dành cho người kiểm duyệt */}
+            {userData?.role === "reviewer" || userData?.role === "admin" ? (
+              <>
+                <Button
+                  color="inherit"
+                  className="header-button"
+                  onClick={handleMenuOpen("menu4Anchor")}
+                >
+                  Người kiểm duyệt
+                </Button>
+                <Menu
+                  anchorEl={menuAnchors.menu4Anchor}
+                  open={Boolean(menuAnchors.menu4Anchor)}
+                  onClose={handleMenuClose("menu4Anchor")}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                >
+                  {renderMenuItems(menu4Items)}
+                </Menu>
+              </>
+            ) : (
+              <></>
+            )}
           </div>
           <div style={{ flex: 1 }}></div>
           <Account isAuthor={true} />
