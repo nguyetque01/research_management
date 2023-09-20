@@ -22,87 +22,126 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(username, password, **extra_fields)
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):
-    USER = "user"
-    ADMIN = "admin"
-    REVIEWER = "reviewer"
-    ROLE_CHOICES = [
-        (USER, "User"),
-        (ADMIN, "Admin"),
-        (REVIEWER, "Reviewer"),
-    ]
 
-    username = models.CharField(max_length=30, unique=True)
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(unique=True, max_length=30)
     password = models.CharField(max_length=128)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    birth_date = models.DateField(null=True, blank=True)
-    gender = models.CharField(max_length=1, choices=[('M', 'Nam'), ('F', 'Nữ')], null=True, blank=True)
-    degree = models.CharField(max_length=100, null=True, blank=True)
+    full_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=20, null=True, blank=True)
-    address = models.TextField(null=True, blank=True)
-    avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
-    total_study_hours = models.PositiveIntegerField(default=0)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default=USER)
+    date_of_birth = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=10, choices=[("male", "Nam"), ("female", "Nữ")])
+    phone_number = models.CharField(max_length=15)
+    address = models.TextField(null=True)
+    profile_picture = models.ImageField(upload_to="profile_pictures/", null=True, blank=True)
+    role = models.CharField(max_length=20, choices=[("member", "Thành viên"), ("admin", "Quản trị viên"), ("approver", "Người kiểm duyệt")])
     is_active = models.BooleanField(default=True)
 
     objects = CustomUserManager()
 
-    USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ["first_name", "last_name", "email"]
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
 
     def __str__(self):
         return self.username
-
-    def has_perm(self, perm, obj=None):
-        return self.is_superuser
-
-    def has_module_perms(self, app_label):
-        return self.is_superuser
     
-# Research Topic (Đề tài nghiên cứu)
+# Lớp Lý lịch khoa học (AcademicProfile)
+class AcademicProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    academic_degree = models.CharField(max_length=100)
+    position = models.CharField(max_length=100)
+    education_history = models.TextField()
+    work_history = models.TextField()
+    research_activities = models.TextField()
+
+# Lớp Đề tài nghiên cứu (ResearchTopic)
 class ResearchTopic(models.Model):
-    name = models.CharField(max_length=255)
-    category = models.ForeignKey("Category", on_delete=models.CASCADE)
-    description = models.TextField(null=True, blank=True)
-    study_hours = models.PositiveIntegerField()
-    approval_status = models.CharField(max_length=20, choices=[("Pending", "Chưa kiểm phê duyệt"), ("Approved", "Đã kiểm phê duyệt")], default="Pending")
-    study_status = models.CharField(max_length=20, choices=[("InProgress", "Đang tiến hành"), ("Completed", "Đã hoàn thành")], default="InProgress")
-    # ...
+    topic_name = models.CharField(max_length=200)
+    funding_level = models.CharField(max_length=50)
+    research_type = models.CharField(max_length=100)
+    lead_unit = models.CharField(max_length=100, null=True)
+    description = models.TextField(null=True)
+    team_members = models.TextField(null=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    approval_date = models.DateField(null=True, blank=True)
+    approved_budget = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    status = models.CharField(max_length=20, choices=[("completed", "Đã hoàn thành"), ("in_progress", "Đang thực hiện"), ("not_started", "Chưa thực hiện")])
+    attachments = models.FileField(upload_to="research_topic_attachments/", null=True, blank=True)
+    academic_year = models.CharField(max_length=10, null=True)
+    research_hours = models.PositiveIntegerField(null=True)
 
-# Research (Bài nghiên cứu)
-class Research(models.Model):
-    topic = models.ForeignKey(ResearchTopic, on_delete=models.CASCADE)
-    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="authored_research")
-    reviewer = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name="reviewed_research")
-    release_date = models.DateField(null=True, blank=True)
-    abstract = models.TextField(null=True, blank=True)
-    keywords = models.CharField(max_length=255, null=True, blank=True)
-    pdf_file = models.FileField(upload_to="research_pdfs/", null=True, blank=True)
-    # ...
+# Lớp Phiếu đề xuất đề tài nghiên cứu (ResearchProposalForm)
+class ResearchProposalForm(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    research_topic_id = models.PositiveIntegerField()
+    submission_date = models.DateField()
+    status = models.CharField(max_length=20, choices=[("pending", "Chờ duyệt"), ("approved", "Đã duyệt"), ("rejected", "Từ chối"), ("in_progress", "Đang thực hiện"), ("completed", "Hoàn thành")])
+    approver_id = models.PositiveIntegerField()
+    approval_date = models.DateField(null=True, blank=True)
 
-# Category (Danh mục)
-class Category(models.Model):
-    name = models.CharField(max_length=100)
-    image = models.ImageField(upload_to="category_images/", null=True, blank=True)
-    # ...
+# Lớp Phiếu đăng ký đề tài nghiên cứu (ResearchTopicRegistrationForm)
+class ResearchTopicRegistrationForm(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    research_topic_id = models.PositiveIntegerField()
+    assigned_role = models.CharField(max_length=100)
+    registration_date = models.DateField()
+    status = models.CharField(max_length=20, choices=[("pending", "Chờ duyệt"), ("approved", "Đã duyệt"), ("rejected", "Từ chối"), ("in_progress", "Đang thực hiện"), ("completed", "Hoàn thành")])
+    approver_id = models.PositiveIntegerField()
+    approval_date = models.DateField(null=True, blank=True)
 
-# Article (Bài viết)
-class Article(models.Model):
-    title = models.CharField(max_length=255)
-    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+# Lớp Phiếu kê khai hoạt động nghiên cứu (ResearchActivityDeclarationForm)
+class ResearchActivityDeclarationForm(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    activity_id = models.PositiveIntegerField()
+    activity_type = models.CharField(max_length=100)
+    assigned_role = models.CharField(max_length=100)
+    academic_year = models.CharField(max_length=10)
+    declaration_date = models.DateField()
+    approval_date = models.DateField(null=True, blank=True)
+    approver_id = models.PositiveIntegerField()
+    research_hours = models.PositiveIntegerField()
+    submission_date = models.DateField()
+    status = models.CharField(max_length=20, choices=[("pending", "Chờ duyệt"), ("approved", "Đã duyệt"), ("rejected", "Từ chối"), ("in_progress", "Đang thực hiện"), ("completed", "Hoàn thành")])
+
+# Lớp Bài báo/báo cáo đăng trong tạp chí/kỷ yếu (JournalPublication)
+class JournalPublication(models.Model):
+    publication_title = models.CharField(max_length=200)
+    journal_name = models.CharField(max_length=200)
+    issn_isbn = models.CharField(max_length=20)
+    classification = models.CharField(max_length=100)
     publication_date = models.DateField()
-    image = models.ImageField(upload_to="article_images/", null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    keywords = models.CharField(max_length=255, null=True, blank=True)
-    content = models.TextField()
-    # ...
-
-# Reference (Tài liệu tham khảo)
-class Reference(models.Model):
-    title = models.CharField(max_length=255)
-    image = models.ImageField(upload_to="reference_images/", null=True, blank=True)
+    publication_type = models.CharField(max_length=100)
+    authors = models.TextField()
+    attachments = models.FileField(upload_to="journal_publication_attachments/")
     url = models.URLField()
-    # ...
+
+# Lớp Đề tài chuyển giao công nghệ (TechnologyTransferProject)
+class TechnologyTransferProject(models.Model):
+    project_title = models.CharField(max_length=200)
+    authors = models.TextField()
+    transfer_company = models.CharField(max_length=200)
+    transfer_contract_id = models.CharField(max_length=50)
+    signed_contract_id = models.CharField(max_length=50)
+    contract_value = models.DecimalField(max_digits=10, decimal_places=2)
+    contract_signing_date = models.DateField()
+    attachments = models.FileField(upload_to="technology_transfer_project_attachments/")
+
+# Lớp Sách do NXB phát hành (PublishedBook)
+class PublishedBook(models.Model):
+    book_title = models.CharField(max_length=200)
+    authors = models.TextField()
+    publisher = models.CharField(max_length=200)
+    publication_date = models.DateField()
+    isbn = models.CharField(max_length=20)
+    field_of_study = models.CharField(max_length=100)
+    attachments = models.FileField(upload_to="published_book_attachments/")
+
+# Lớp Giải thưởng NCKH (ResearchAward)
+class ResearchAward(models.Model):
+    award_title = models.CharField(max_length=200)
+    award_level = models.CharField(max_length=50)
+    award_category = models.CharField(max_length=100)
+    authors = models.TextField()
+    award_rank = models.CharField(max_length=20, choices=[("first", "Nhất"), ("second", "Nhì"), ("third", "Ba"), ("encouragement", "Khuyến khích")])
+    award_received_date = models.DateField()
+    attachments = models.FileField(upload_to="research_award_attachments/")

@@ -46,7 +46,7 @@ function Profile() {
   const [userData, setUserData] = useState({
     first_name: "",
     last_name: "",
-    birth_date: "",
+    date_of_birth: "",
     gender: "",
     degree: "",
     email: "",
@@ -130,7 +130,7 @@ function Profile() {
           >
             <Avatar
               alt={userData.username}
-              src={userData.avatar}
+              src={userData.profile_picture}
               sx={{
                 width: 80,
                 height: 80,
@@ -139,7 +139,7 @@ function Profile() {
             />
           </Box>
           <Typography variant="h5" mt={2} mb={2} align="center">
-            {userData.last_name} {userData.first_name}
+            {userData.full_name}
           </Typography>
           <Divider sx={{ marginBottom: "20px" }} />
           <Box
@@ -164,32 +164,18 @@ function Profile() {
             <Grid item xs={12} sm={6}>
               <Typography>
                 <strong>Ngày sinh:</strong>{" "}
-                {dayjs(userData.birth_date).format("DD/MM/YYYY")}
+                {dayjs(userData.date_of_birth).format("DD/MM/YYYY")}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography>
                 <strong>Giới tính:</strong>{" "}
-                {userData.gender === "M" ? "Nam" : "Nữ"}
+                {userData.gender === "male" ? "Nam" : "Nữ"}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography>
-                <strong>Học hàm/ Học vị: </strong>
-                {degrees.map((item) =>
-                  item.value === userData.degree ? item.label : ""
-                )}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography>
-                <strong>Tổng số giờ nghiên cứu:</strong>{" "}
-                {userData.total_study_hours}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography>
-                <strong>Số điện thoại:</strong> {userData.phone}
+                <strong>Số điện thoại:</strong> {userData.phone_number}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>

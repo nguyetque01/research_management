@@ -169,7 +169,7 @@ function Header() {
             </Menu>
 
             {/* Phần dành cho người kiểm duyệt */}
-            {userData?.role === "reviewer" || userData?.role === "admin" ? (
+            {userData?.role === "approver" || userData?.role === "admin" ? (
               <>
                 <Button
                   color="inherit"

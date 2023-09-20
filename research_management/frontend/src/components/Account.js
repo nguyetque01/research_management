@@ -52,12 +52,10 @@ const Account = () => {
           >
             <Avatar
               alt={userData.username}
-              src={userData.avatarUrl}
+              src={userData.profile_picture}
               sx={{ width: 36, height: 36, marginRight: "8px" }}
             />
-            <Typography fontSize={14}>
-              {`${userData.last_name} ${userData.first_name}`}
-            </Typography>
+            <Typography fontSize={14}>{`${userData.full_name}`}</Typography>
           </Button>
 
           <Menu

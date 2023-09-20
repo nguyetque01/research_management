@@ -44,9 +44,10 @@ function AITool() {
             "Content-Type": "application/x-www-form-urlencoded",
             "api-key": apiKey,
           },
-          body: `text=${encodeURIComponent(inputText)}`,
+          body: `text=${encodeURIComponent(inputText) + "bằng tiếng việt"}`,
         }
       );
+      console.log(response);
 
       if (response.ok) {
         const data = await response.json();
@@ -74,7 +75,7 @@ function AITool() {
   return (
     <div>
       <Header />
-      <Container maxWidth="lg" className="dashboard-container">
+      <Container maxWidth="100px" className="dashboard-container">
         <Grid
           container
           spacing={20}
@@ -131,6 +132,7 @@ function AITool() {
                   )}
                   <div
                     className={showResult ? "result-text show" : "result-text"}
+                    style={{ maxWidth: "500px" }}
                   >
                     {generatedText}
                   </div>

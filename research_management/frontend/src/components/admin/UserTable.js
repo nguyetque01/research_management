@@ -26,20 +26,17 @@ function UserTable({
         <TableHead>
           <TableRow>
             <TableCell style={{ minWidth: 10 }}>STT</TableCell>
-            <TableCell style={{ minWidth: 20 }}>Tên tài khoản</TableCell>
+            <TableCell style={{ minWidth: 20 }}>Tên đăng nhập</TableCell>
             <TableCell style={{ minWidth: 20 }}>Họ và tên</TableCell>
             <TableCell style={{ minWidth: 50 }}>Email</TableCell>
             <TableCell style={{ minWidth: 20 }}>Ngày sinh</TableCell>
             <TableCell style={{ minWidth: 20 }}>Giới tính</TableCell>
-            <TableCell style={{ minWidth: 50 }}>Học vị/ Học hàm</TableCell>
             <TableCell style={{ minWidth: 50 }}>Số điện thoại</TableCell>
             <TableCell style={{ minWidth: 50 }}>Địa chỉ</TableCell>
             <TableCell style={{ minWidth: 30 }}>Ảnh đại diện</TableCell>
-            <TableCell style={{ minWidth: 20 }}>
-              Tổng số giờ nghiên cứu
-            </TableCell>
             <TableCell style={{ minWidth: 20 }}>Vai trò</TableCell>
             <TableCell style={{ minWidth: 20 }}>Đang hoạt động</TableCell>
+            <TableCell style={{ minWidth: 50 }}>Lý lịch khoa học</TableCell>
             <TableCell style={{ minWidth: 50 }}>Thao tác</TableCell>
           </TableRow>
         </TableHead>
@@ -48,20 +45,22 @@ function UserTable({
             <TableRow key={user.id}>
               <TableCell>{index + 1}</TableCell>
               <TableCell>{user.username}</TableCell>
-              <TableCell>{user.last_name + " " + user.first_name}</TableCell>
+              <TableCell>{user.full_name}</TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell>
-                {dayjs(user.birth_date).format("DD/MM/YYYY")}
+                {dayjs(user.date_of_birth).format("DD/MM/YYYY")}
               </TableCell>
-              <TableCell>{user.gender === "M" ? "Nam" : "Nữ"}</TableCell>
-              <TableCell>
-                {degrees.find((degree) => degree.value === user.degree)?.label}
-              </TableCell>
-              <TableCell>{user.phone}</TableCell>
+              <TableCell>{user.gender === "male" ? "Nam" : "Nữ"}</TableCell>
+              <TableCell>{user.phone_number}</TableCell>
               <TableCell>{user.address}</TableCell>
               <TableCell>
                 {user.avatar ? (
-                  <img src={user.avatar} alt="Avatar" width="30" height="30" />
+                  <img
+                    src={user.profile_picture}
+                    alt="Avatar"
+                    width="30"
+                    height="30"
+                  />
                 ) : (
                   <img
                     src={require("../../assets/img/default-avatar.png")}
@@ -71,7 +70,6 @@ function UserTable({
                   />
                 )}
               </TableCell>
-              <TableCell>{user.total_study_hours}</TableCell>
               <TableCell>
                 {roles.find((role) => role.value === user.role)?.label}
               </TableCell>
@@ -80,6 +78,16 @@ function UserTable({
                   checked={user.is_active}
                   onChange={() => handleToggleActive(user)}
                 />
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  size="small"
+                  onClick={null}
+                >
+                  Xem
+                </Button>
               </TableCell>
               <TableCell>
                 <Button

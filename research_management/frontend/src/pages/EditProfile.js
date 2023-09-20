@@ -58,13 +58,13 @@ function EditProfile() {
   // State
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
-    first_name: "",
+    full_name: "",
     last_name: "",
-    birth_date: "",
+    date_of_birth: "",
     gender: "",
     degree: "",
     email: "",
-    phone: "",
+    phone_number: "",
     address: "",
     avatar: null,
   });
@@ -250,28 +250,20 @@ function EditProfile() {
             spacing={2}
             sx={{ marginTop: "20px", marginBottom: "20px" }}
           >
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Họ"
-                value={formData.last_name}
-                onChange={(e) => handleChange("last_name", e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Tên"
-                value={formData.first_name}
-                onChange={(e) => handleChange("first_name", e.target.value)}
+                label="Họ và tên"
+                value={formData.full_name}
+                onChange={(e) => handleChange("full_name", e.target.value)}
               />
             </Grid>
             <Grid item xs={6}>
               <DatePicker
                 label="Ngày sinh"
                 format="DD/MM/YYYY"
-                value={dayjs(formData.birth_date)}
-                onChange={(newValue) => handleChange("birth_date", newValue)}
+                value={dayjs(formData.date_of_birth)}
+                onChange={(newValue) => handleChange("date_of_birth", newValue)}
               />
             </Grid>
             <Grid item xs={6}>
@@ -282,14 +274,14 @@ function EditProfile() {
                 <div className="radio-buttons">
                   <label
                     className={`radio-label ${
-                      formData.gender === "M" ? "selected" : ""
+                      formData.gender === "male" ? "selected" : ""
                     }`}
                   >
                     <input
                       type="radio"
                       name="gender"
-                      value="M"
-                      checked={formData.gender === "M"}
+                      value="male"
+                      checked={formData.gender === "male"}
                       onChange={(e) =>
                         setFormData({ ...formData, gender: e.target.value })
                       }
@@ -298,15 +290,15 @@ function EditProfile() {
                   </label>
                   <label
                     className={`radio-label ${
-                      formData.gender === "F" ? "selected" : ""
+                      formData.gender === "female" ? "selected" : ""
                     }`}
                     style={{ marginLeft: "20px" }}
                   >
                     <input
                       type="radio"
                       name="gender"
-                      value="F"
-                      checked={formData.gender === "F"}
+                      value="female"
+                      checked={formData.gender === "female"}
                       onChange={(e) =>
                         setFormData({ ...formData, gender: e.target.value })
                       }
@@ -315,24 +307,6 @@ function EditProfile() {
                   </label>
                 </div>
               </div>
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id="degree-label">Học vị/ Học hàm</InputLabel>
-                <Select
-                  labelId="degree-label"
-                  id="degree"
-                  value={formData.degree}
-                  onChange={(e) => handleChange("degree", e.target.value)}
-                  label="Học vị/ Học hàm"
-                >
-                  {degrees.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -346,8 +320,8 @@ function EditProfile() {
               <TextField
                 fullWidth
                 label="Số điện thoại"
-                value={formData.phone}
-                onChange={(e) => handleChange("phone", e.target.value)}
+                value={formData.phone_number}
+                onChange={(e) => handleChange("phone_number", e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>

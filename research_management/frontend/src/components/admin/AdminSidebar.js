@@ -92,7 +92,7 @@ const menuData = [
     ],
   },
   {
-    text: "Quản lý hoạt động khoa học",
+    text: "Quản lý HĐKH",
     icon: <LocalActivityIcon />,
     link: "/admin/activities",
     children: [

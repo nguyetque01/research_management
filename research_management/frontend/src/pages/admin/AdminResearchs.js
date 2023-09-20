@@ -4,7 +4,7 @@ import axios from "axios";
 import DEFAULT_BACKEND_URL from "../../config";
 import AdminHeader from "../../components/admin/AdminHeader";
 import AdminSidebar from "../../components/admin/AdminSidebar";
-import TopicForm from "../../components/admin/ResearchTopicForm";
+import ResearchForm from "../../components/admin/ResearchForm";
 import {
   Button,
   Table,
@@ -25,21 +25,28 @@ import {
   DialogActions,
   Container,
 } from "@mui/material";
-import studyStatus from "../../data/studyStatus";
-import approvalStatus from "../../data/approvalStatus";
+import researchStatus from "../../data/researchStatus";
+import dayjs from "dayjs";
+import fundingLevels from "../../data/fundingLevels";
 
 function AdminResearchs() {
   const backendUrl = DEFAULT_BACKEND_URL;
   const defaultTopic = {
-    name: "",
-    category: "",
+    topic_name: "",
+    funding_level: "school",
+    research_type: "",
+    lead_unit: "",
     description: "",
-    study_hours: 0,
-    approval_status: "Pending",
-    study_status: "InProgress",
+    team_members: "",
+    start_date: dayjs().format("YYYY-MM-DD"),
+    end_date: dayjs().format("YYYY-MM-DD"),
+    approval_date: dayjs().format("YYYY-MM-DD"),
+    approved_budget: "",
+    status: "",
+    academic_year: "",
+    research_hours: 0,
   };
   const [topics, setTopics] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [newTopic, setNewTopic] = useState(defaultTopic);
   const [editingTopic, setEditingTopic] = useState(null);
   const [topicToDelete, setTopicToDelete] = useState(null);
@@ -90,19 +97,9 @@ function AdminResearchs() {
     }
   }
 
-  async function fetchCategories() {
-    try {
-      const response = await axios.get(`${backendUrl}/api/categories/`);
-      setCategories(response.data);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  }
-
   // Sử dụng useEffect để tự động gọi hàm fetchTopics khi component được tạo
   useEffect(() => {
     fetchTopics();
-    fetchCategories();
   }, []);
 
   // Mở modal hiển thị form thêm/sửa đề tài
@@ -224,6 +221,13 @@ function AdminResearchs() {
     }
   };
 
+  function calculateExecutionTime(startDate, endDate) {
+    const start = dayjs(startDate);
+    const end = dayjs(endDate);
+    const months = end.diff(start, "month");
+    return months;
+  }
+
   // Hiển thị giao diện
   return (
     <div>
@@ -249,7 +253,7 @@ function AdminResearchs() {
               aria-labelledby="add-topic-modal-title"
               aria-describedby="add-topic-modal-description"
             >
-              <TopicForm
+              <ResearchForm
                 newTopic={newTopic}
                 setNewTopic={setNewTopic}
                 editingTopic={editingTopic}
@@ -263,12 +267,18 @@ function AdminResearchs() {
                 <TableHead>
                   <TableRow>
                     <TableCell>STT</TableCell>
+                    <TableCell>Năm học</TableCell>
+                    <TableCell>Mã đề tài</TableCell>
                     <TableCell>Tên đề tài</TableCell>
-                    <TableCell>Danh mục</TableCell>
-                    <TableCell>Mô tả</TableCell>
-                    <TableCell>Số giờ nghiên cứu</TableCell>
-                    <TableCell>Trạng thái phê duyệt</TableCell>
-                    <TableCell>Trạng thái nghiên cứu</TableCell>
+                    <TableCell>Cấp đề tài</TableCell>
+                    <TableCell>Thời gian bắt đầu</TableCell>
+                    <TableCell>Thời gian kết thúc</TableCell>
+                    <TableCell>Thời gian thực hiện</TableCell>
+                    <TableCell>Kinh phí được phê duyệt</TableCell>
+                    <TableCell>Trạng thái </TableCell>
+                    <TableCell>Số giờ được tính</TableCell>
+                    <TableCell>Ngày kê khai</TableCell>
+                    <TableCell>Ngày phê duyệt</TableCell>
                     <TableCell>Thao tác</TableCell>
                   </TableRow>
                 </TableHead>
@@ -276,29 +286,44 @@ function AdminResearchs() {
                   {topics.map((topic, index) => (
                     <TableRow key={topic.id}>
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell>{topic.name}</TableCell>
+                      <TableCell>{topic.academic_year}</TableCell>
+                      <TableCell>{topic.id}</TableCell>
+                      <TableCell>{topic.topic_name}</TableCell>
                       <TableCell>
                         {
-                          categories.find(
-                            (category) => category.id === topic.category
-                          )?.name
-                        }
-                      </TableCell>
-                      <TableCell>{topic.description}</TableCell>
-                      <TableCell>{topic.study_hours}</TableCell>
-                      <TableCell>
-                        {
-                          approvalStatus.find(
-                            (status) => status.value === topic.approval_status
+                          fundingLevels.find(
+                            (status) => status.value === topic.funding_level
                           )?.label
                         }
                       </TableCell>
                       <TableCell>
+                        {dayjs(topic.start_date).format("DD/MM/YYYY")}
+                      </TableCell>
+                      <TableCell>
+                        {dayjs(topic.end_date).format("DD/MM/YYYY")}
+                      </TableCell>
+                      <TableCell>
+                        {calculateExecutionTime(
+                          topic.start_date,
+                          topic.end_date
+                        )}{" "}
+                        tháng
+                      </TableCell>
+
+                      <TableCell>{topic.approved_budget}</TableCell>
+                      <TableCell>
                         {
-                          studyStatus.find(
-                            (status) => status.value === topic.study_status
+                          researchStatus.find(
+                            (status) => status.value === topic.status
                           )?.label
                         }
+                      </TableCell>
+                      <TableCell>{topic.research_hours}</TableCell>
+                      <TableCell>
+                        {dayjs(topic.approval_date).format("DD/MM/YYYY")}
+                      </TableCell>
+                      <TableCell>
+                        {dayjs(topic.approval_date).format("DD/MM/YYYY")}
                       </TableCell>
                       <TableCell>
                         <div style={{ display: "flex", flexDirection: "row" }}>
@@ -306,7 +331,16 @@ function AdminResearchs() {
                             variant="outlined"
                             color="primary"
                             size="small"
+                            onClick={null}
+                          >
+                            Chi tiết
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            size="small"
                             onClick={() => handleEditTopic(topic.id)}
+                            sx={{ marginLeft: "8px" }}
                           >
                             Sửa
                           </Button>

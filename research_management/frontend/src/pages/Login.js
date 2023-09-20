@@ -59,6 +59,7 @@ function Login() {
   async function handleLoginResponse(response) {
     if (response.data && response.data.token) {
       localStorage.setItem("token", response.data.token);
+      console.log(response.data);
 
       try {
         const userProfileResponse = await axios.get(

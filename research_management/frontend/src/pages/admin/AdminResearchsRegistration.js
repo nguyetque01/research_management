@@ -4,7 +4,7 @@ import axios from "axios";
 import DEFAULT_BACKEND_URL from "../../config";
 import AdminHeader from "../../components/admin/AdminHeader";
 import AdminSidebar from "../../components/admin/AdminSidebar";
-import TopicForm from "../../components/admin/ResearchTopicForm";
+import ResearchRegistrationForm from "../../components/admin/ResearchRegistrationForm";
 import {
   Button,
   Table,
@@ -25,21 +25,23 @@ import {
   DialogActions,
   Container,
 } from "@mui/material";
-import studyStatus from "../../data/studyStatus";
-import approvalStatus from "../../data/approvalStatus";
+import researchStatus from "../../data/researchStatus";
+import dayjs from "dayjs";
 
 function AdminResearchsRegistration() {
   const backendUrl = DEFAULT_BACKEND_URL;
   const defaultTopic = {
-    name: "",
-    category: "",
-    description: "",
-    study_hours: 0,
-    approval_status: "Pending",
-    study_status: "InProgress",
+    user_id: 1,
+    research_topic_id: 5,
+    assigned_role: "researcher",
+    registration_date: "2023-09-21",
+    status: "pending",
+    approver_id: 4,
+    approval_date: "2023-09-22",
   };
   const [topics, setTopics] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [researchTopics, setResearchTopics] = useState([]);
+  const [users, setUsers] = useState([]);
   const [newTopic, setNewTopic] = useState(defaultTopic);
   const [editingTopic, setEditingTopic] = useState(null);
   const [topicToDelete, setTopicToDelete] = useState(null);
@@ -50,10 +52,12 @@ function AdminResearchsRegistration() {
     message: "",
   });
 
-  // Gửi HTTP request để lấy danh sách đề tài từ backend
+  // Gửi HTTP request để lấy danh sách người dùng từ backend
   async function fetchTopics() {
     try {
-      const response = await axios.get(`${backendUrl}/api/research-topics/`);
+      const response = await axios.get(
+        `${backendUrl}/api/research-topics/registration/`
+      );
       setTopics(response.data);
     } catch (error) {
       if (error.response) {
@@ -61,7 +65,7 @@ function AdminResearchsRegistration() {
         if (error.response.status === 404) {
           setNotification({
             type: "error",
-            message: "Không tìm thấy đề tài",
+            message: "Không tìm thấy đăng ký",
           });
         } else if (error.response.status === 401) {
           // Redirect đến trang đăng nhập
@@ -90,19 +94,29 @@ function AdminResearchsRegistration() {
     }
   }
 
-  async function fetchCategories() {
+  async function fetchUsers() {
     try {
-      const response = await axios.get(`${backendUrl}/api/categories/`);
-      setCategories(response.data);
+      const response = await axios.get(`${backendUrl}/api/users/`);
+      setUsers(response.data);
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      console.error("Error fetching users:", error);
+    }
+  }
+
+  async function fetchResearchTopics() {
+    try {
+      const response = await axios.get(`${backendUrl}/api/research-topics/`);
+      setResearchTopics(response.data);
+    } catch (error) {
+      console.error("Error fetching research-topics:", error);
     }
   }
 
   // Sử dụng useEffect để tự động gọi hàm fetchTopics khi component được tạo
   useEffect(() => {
     fetchTopics();
-    fetchCategories();
+    fetchResearchTopics();
+    fetchUsers();
   }, []);
 
   // Mở modal hiển thị form thêm/sửa đề tài
@@ -224,6 +238,13 @@ function AdminResearchsRegistration() {
     }
   };
 
+  function calculateExecutionTime(startDate, endDate) {
+    const start = dayjs(startDate);
+    const end = dayjs(endDate);
+    const months = end.diff(start, "month");
+    return months;
+  }
+
   // Hiển thị giao diện
   return (
     <div>
@@ -235,21 +256,21 @@ function AdminResearchsRegistration() {
           <AdminHeader />
           <Container>
             <h2>Quản lý đăng ký đề tài</h2>
-            {/* <Button
-            variant="contained"
-            color="primary"
-            // onClick={handleOpenModel}
-            sx={{ marginBottom: "24px" }}
-          >
-            Thêm đề tài nghiên cứu
-          </Button> */}
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleOpenModel}
+              sx={{ marginBottom: "24px" }}
+            >
+              Tạo đăng ký mới
+            </Button>
             <Modal
               open={isTopicModalOpen}
               onClose={handleCloseModal}
               aria-labelledby="add-topic-modal-title"
               aria-describedby="add-topic-modal-description"
             >
-              <TopicForm
+              <ResearchRegistrationForm
                 newTopic={newTopic}
                 setNewTopic={setNewTopic}
                 editingTopic={editingTopic}
@@ -263,50 +284,59 @@ function AdminResearchsRegistration() {
                 <TableHead>
                   <TableRow>
                     <TableCell>STT</TableCell>
-                    <TableCell>Tên đề tài</TableCell>
-                    <TableCell>Danh mục</TableCell>
-                    <TableCell>Mô tả</TableCell>
-                    <TableCell>Số giờ nghiên cứu</TableCell>
-                    <TableCell>Trạng thái phê duyệt</TableCell>
-                    <TableCell>Trạng thái nghiên cứu</TableCell>
-                    <TableCell>Thao tác</TableCell>
+                    <TableCell>Đề tài</TableCell>
+                    <TableCell>Người đăng ký</TableCell>
+                    <TableCell>Ngày đăng ký</TableCell>
+                    <TableCell>Vai trò</TableCell>
+                    <TableCell>Trạng thái</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {topics.map((topic, index) => (
                     <TableRow key={topic.id}>
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell>{topic.name}</TableCell>
                       <TableCell>
                         {
-                          categories.find(
-                            (category) => category.id === topic.category
-                          )?.name
+                          researchTopics.find(
+                            (research) =>
+                              research.id === topic.research_topic_id
+                          )?.topic_name
                         }
                       </TableCell>
-                      <TableCell>{topic.description}</TableCell>
-                      <TableCell>{topic.study_hours}</TableCell>
                       <TableCell>
                         {
-                          approvalStatus.find(
-                            (status) => status.value === topic.approval_status
+                          users.find((user) => user.id === topic.user_id)
+                            ?.full_name
+                        }
+                      </TableCell>
+                      <TableCell>{topic.assigned_role}</TableCell>
+                      <TableCell>
+                        {dayjs(topic.registration_date).format("DD/MM/YYYY")}
+                      </TableCell>
+                      <TableCell>
+                        {
+                          researchStatus.find(
+                            (status) => status.value === topic.status
                           )?.label
                         }
                       </TableCell>
-                      <TableCell>
-                        {
-                          studyStatus.find(
-                            (status) => status.value === topic.study_status
-                          )?.label
-                        }
-                      </TableCell>
+
                       <TableCell>
                         <div style={{ display: "flex", flexDirection: "row" }}>
                           <Button
                             variant="outlined"
                             color="primary"
                             size="small"
+                            onClick={null}
+                          >
+                            Chi tiết
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            size="small"
                             onClick={() => handleEditTopic(topic.id)}
+                            sx={{ marginLeft: "8px" }}
                           >
                             Sửa
                           </Button>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   TextField,
   Button,
@@ -16,7 +16,6 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CloseIcon from "@mui/icons-material/Close";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import degrees from "../../data/degrees";
 import roles from "../../data/roles";
 import {
   VisuallyHiddenInput,
@@ -65,10 +64,13 @@ function UserForm({
       ...formData,
       [name]: name === "image" ? files[0] : value,
     };
+
+    const isCheckbox = e.target.type === "checkbox";
+    const updatedIsChecked = isCheckbox ? e.target.checked : formData.is_active;
     const formattedData = {
       ...updatedData,
-      birth_date: dayjs(formData.birth_date).format("YYYY-MM-DD"),
-      is_active: formData.birth_date === "on" ? true : false,
+      date_of_birth: dayjs(formData.date_of_birth).format("YYYY-MM-DD"),
+      is_active: updatedIsChecked,
     };
     setFormData(formattedData);
     if (editingUser) {
@@ -113,38 +115,29 @@ function UserForm({
                   label="Mật khẩu"
                   value={formData.password || ""}
                   onChange={handleChange}
-                  required={!editingUser}
+                  required
                   style={formInputStyle}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={12}>
                 <TextField
                   fullWidth
-                  name="last_name"
-                  label="Họ"
-                  value={formData.last_name}
+                  name="full_name"
+                  label="Họ và tên"
+                  value={formData.full_name}
                   onChange={handleChange}
                   style={formInputStyle}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  name="first_name"
-                  label="Tên"
-                  value={formData.first_name}
-                  onChange={handleChange}
-                  style={formInputStyle}
+                  required
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <DatePicker
                   label="Ngày sinh"
                   format="DD/MM/YYYY"
-                  value={dayjs(formData.birth_date)}
+                  value={dayjs(formData.date_of_birth)}
                   onChange={(date) =>
                     handleChange({
-                      target: { name: "birth_date", value: date },
+                      target: { name: "date_of_birth", value: date },
                     })
                   }
                 />
@@ -160,29 +153,29 @@ function UserForm({
                   <div className="radio-buttons">
                     <label
                       className={`radio-label ${
-                        formData.gender === "M" ? "selected" : ""
+                        formData.gender === "male" ? "selected" : ""
                       }`}
                     >
                       <input
                         type="radio"
                         name="gender"
-                        value="M"
-                        checked={formData.gender === "M"}
+                        value="male"
+                        checked={formData.gender === "male"}
                         onChange={handleChange}
                       />
                       Nam
                     </label>
                     <label
                       className={`radio-label ${
-                        formData.gender === "F" ? "selected" : ""
+                        formData.gender === "female" ? "selected" : ""
                       }`}
                       style={{ marginLeft: "20px" }}
                     >
                       <input
                         type="radio"
                         name="gender"
-                        value="F"
-                        checked={formData.gender === "F"}
+                        value="female"
+                        checked={formData.gender === "female"}
                         onChange={handleChange}
                       />
                       Nữ
@@ -199,16 +192,18 @@ function UserForm({
                   value={formData.email}
                   onChange={handleChange}
                   style={formInputStyle}
+                  required
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  name="phone"
+                  name="phone_number"
                   label="Số điện thoại"
-                  value={formData.phone}
+                  value={formData.phone_number}
                   onChange={handleChange}
                   style={formInputStyle}
+                  required
                 />
               </Grid>
               <Grid item xs={12}>
@@ -225,35 +220,6 @@ function UserForm({
 
           <Grid item xs={12} sm={6}>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id="degree-label">Học vị/ Học hàm</InputLabel>
-                  <Select
-                    labelId="degree-label"
-                    id="degree"
-                    name="degree"
-                    value={formData.degree}
-                    onChange={handleChange}
-                    label="Học vị/ Học hàm"
-                  >
-                    {degrees.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  type="number"
-                  label="Tổng số giờ nghiên cứu"
-                  value={formData.total_study_hours}
-                  onChange={handleChange}
-                  name="total_study_hours"
-                />
-              </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth>
                   <InputLabel id="role-label">Vai trò</InputLabel>

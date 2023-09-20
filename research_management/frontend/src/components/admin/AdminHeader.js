@@ -13,9 +13,9 @@ const AdminHeader = () => {
   return (
     <AppBar position="static" sx={{ bgcolor: "#3f51b5" }}>
       <Toolbar>
-        <IconButton size="large" edge="start" color="inherit" aria-label="menu">
+        {/* <IconButton size="large" edge="start" color="inherit" aria-label="menu">
           <MenuIcon />
-        </IconButton>
+        </IconButton> */}
         {/* <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Dashboard
         </Typography> */}

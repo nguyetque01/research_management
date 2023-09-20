@@ -5,45 +5,43 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth import authenticate
-from .models import CustomUser, ResearchTopic, Category
-from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer, UserUpdateSerializer, ResearchTopicSerializer, CategorySerializer
+from .models import CustomUser, ResearchTopic, ResearchTopicRegistrationForm
+from .serializers import UserSerializer, UserUpdateSerializer, ResearchTopicSerializer, ResearchTopicRegistrationSerializer
 
-##### REGISTRATION, LOGIN #####
+##### LOGIN #####
 
-class RegistrationAPIView(APIView):
-    permission_classes = (AllowAny,)
-
-    def post(self, request):
-        serializer = RegistrationSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            if user:
-                token, created = Token.objects.get_or_create(user=user)
-                return Response({'token': token.key}, status=status.HTTP_201_CREATED)
-        
-        errors = serializer.errors
-        if "username" in errors and "custom user with this username already exists." in errors["username"]:
-            return Response({"error": "Tên đăng nhập đã tồn tại"}, status=status.HTTP_400_BAD_REQUEST)
-        if "email" in errors and "custom user with this email already exists." in errors["email"]:
-            return Response({"error": "Email đã tồn tại"}, status=status.HTTP_400_BAD_REQUEST)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+from django.contrib.auth import authenticate, login
 
 class LoginAPIView(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        serializer = LoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        username = request.data.get('username')
+        password = request.data.get('password')
 
-        user = authenticate(username=serializer.validated_data['username'],
-                            password=serializer.validated_data['password'])
+        # Kiểm tra tên đăng nhập và mật khẩu thủ công
+        try:
+            user = CustomUser.objects.get(username=username)
+            if user.password == password:
+                # Đăng nhập thành công
+                login(request, user)
+                token, created = Token.objects.get_or_create(user=user)  # Tạo hoặc lấy token
 
-        if user:
-            token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_200_OK)
-            
-        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response(
+                    {
+                        'message': 'Đăng nhập thành công',
+                        'token': token.key  # Trả về token cho client
+                    },
+                    status=status.HTTP_200_OK
+                )
+            else:
+                # Sai mật khẩu
+                return Response({'message': 'Sai mật khẩu'}, status=status.HTTP_401_UNAUTHORIZED)
+        except CustomUser.DoesNotExist:
+            # Tài khoản không tồn tại
+            return Response({'message': 'Tài khoản không tồn tại'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
     
 ##### USER PROFILE #####
 
@@ -159,69 +157,6 @@ class UserToggleActiveView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except CustomUser.DoesNotExist:
             return Response({"message": "Người dùng không tồn tại"}, status=status.HTTP_404_NOT_FOUND)
-
-########################################################################
-
-##### Category List #####
-class CategoryListAPIView(APIView):
-    permission_classes = (AllowAny,) 
-    def get(self, request):
-        research_topics = Category.objects.all()
-        serializer = CategorySerializer(research_topics, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)    
-
-##### Category #####
-class CategoryAPIView(APIView):
-    permission_classes = (AllowAny,)
-
-    def get_object(self, pk):
-        try:
-            return Category.objects.get(pk=pk)
-        except Category.DoesNotExist:
-            return None
-
-    def get(self, request, pk):
-        category = self.get_object(pk)
-        if not category:
-            return Response(
-                {"message": "Category not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        serializer = CategorySerializer(category)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    def post(self, request):
-        serializer = CategorySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request, pk):
-        category = self.get_object(pk)
-        if not category:
-            return Response(
-                {"message": "Category not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        serializer = CategorySerializer(category, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk):
-        category = self.get_object(pk)
-        if not category:
-            return Response(
-                {"message": "Category not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        category.delete()
-        return Response(
-            {"message": "Category deleted successfully"},
-            status=status.HTTP_204_NO_CONTENT,
-        )
     
 ########################################################################
 
@@ -283,5 +218,67 @@ class ResearchTopicAPIView(APIView):
         research_topic.delete()
         return Response(
             {"message": "ResearchTopic deleted successfully"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
+########################################################################
+
+class ResearchTopicRegistrationListAPIView(APIView):
+    permission_classes = (AllowAny,) 
+    def get(self, request):
+        research_topics = ResearchTopicRegistrationForm.objects.all()
+        serializer = ResearchTopicRegistrationSerializer(research_topics, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ResearchTopicRegistrationAPIView(APIView):
+    permission_classes = (AllowAny,)
+
+    def get_object(self, pk):
+        try:
+            return ResearchTopicRegistrationForm.objects.get(pk=pk)
+        except ResearchTopicRegistrationForm.DoesNotExist:
+            return None
+
+    # Thay đổi phần gọi phương thức get
+    def get(self, request, pk):
+        research_topic = self.get_object(pk)
+        if not research_topic:
+            return Response(
+                {"message": "Research Topic not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        serializer = ResearchTopicRegistrationSerializer(research_topic)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        serializer = ResearchTopicRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        research_topic = self.get_object(pk)
+        if not research_topic:
+            return Response(
+                {"message": "ResearchTopicRegistration not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        serializer = ResearchTopicRegistrationSerializer(research_topic, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        research_topic = self.get_object(pk)
+        if not research_topic:
+            return Response(
+                {"message": "ResearchTopicRegistration not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        research_topic.delete()
+        return Response(
+            {"message": "ResearchTopicRegistration deleted successfully"},
             status=status.HTTP_204_NO_CONTENT,
         )

@@ -1,39 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, ResearchTopic, Category
-
-##### REGISTRATION, LOGIN #####
-
-class RegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-    print(password)
-
-    class Meta:
-        model = CustomUser
-        fields = ['username', 'password', 
-                  'first_name', 'last_name', 
-                  'birth_date', 'gender', 
-                  'degree', 'phone', 
-                  'email', 'address'
-                ]
-
-    def validate(self, data):
-        # Kiểm tra xác thực cho từng trường dữ liệu
-        if len(data['password']) < 8:
-            raise serializers.ValidationError("Mật khẩu phải có ít nhất 8 ký tự.")
-        
-        return data
-
-    def create(self, validated_data):
-        password = validated_data.pop('password')
-        user = CustomUser(**validated_data)
-        user.set_password(password)
-        
-        user.save()
-        return user
-    
-class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField(write_only=True)
+from .models import CustomUser, ResearchTopic, ResearchTopicRegistrationForm
 
 ##### USERS #####
 
@@ -45,7 +11,8 @@ class UserSerializer(serializers.ModelSerializer):
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'birth_date', 'gender', 'degree', 'email', 'phone', 'address', 'avatar']
+        fields = '__all__'
+
 
 ################################################################################################
 
@@ -58,9 +25,11 @@ class ResearchTopicSerializer(serializers.ModelSerializer):
 
 ################################################################################################
 
-##### CATEGORIES #####
+##### RESEARCH TOPICS #####
 
-class CategorySerializer(serializers.ModelSerializer):
+class ResearchTopicRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Category
+        model = ResearchTopicRegistrationForm
         fields = '__all__'
+
+################################################################################################

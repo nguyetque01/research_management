@@ -1,7 +1,7 @@
 const roles = [
-  { label: "Thành viên", value: "user" },
+  { label: "Thành viên", value: "member" },
   { label: "Quản trị viên", value: "admin" },
-  { label: "Người phê duyệt", value: "reviewer" },
+  { label: "Người kiểm duyệt", value: "approver" },
 ];
 
 export default roles;
