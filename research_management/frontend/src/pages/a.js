@@ -17,12 +17,8 @@ import {
   Checkbox,
   TextField,
   Stack,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem, // Thêm Checkbox từ @mui/material
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import researchStatus from "../data/researchStatus";
@@ -40,7 +36,7 @@ function ResearchTopics() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [selectedItemCount, setSelectedItemCount] = useState(0); // Thêm state cho số lượng item đã chọn
   const [selectAll, setSelectAll] = useState(false);
-  const [totalResearchHours, setTotalStudyHours] = useState(0);
+  const [totalStudyHours, setTotalStudyHours] = useState(0);
   const [sortByColumn, setSortByColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
   const [notification, setNotification] = useState({
@@ -91,7 +87,6 @@ function ResearchTopics() {
   // Sử dụng useEffect để tự động gọi hàm fetchTopics khi component được tạo
   useEffect(() => {
     fetchTopics();
-    setSelectedHourRange("all");
   }, []);
 
   function calculateExecutionTime(startDate, endDate) {
@@ -125,44 +120,38 @@ function ResearchTopics() {
 
     // Tính tổng số giờ nghiên cứu
     const selectedCount = selectAllValue ? updatedTopics.length : 0;
-    const totalResearchHours = selectAllValue
+    const totalStudyHours = selectAllValue
       ? updatedTopics.reduce((total, topic) => total + topic.research_hours, 0)
       : 0;
 
     setSelectedItemCount(selectedCount);
-    setTotalStudyHours(totalResearchHours);
+    setTotalStudyHours(totalStudyHours);
   };
 
   // Xử lý khi checkbox thay đổi
   const handleCheckboxChange = (index) => {
-    const updatedItems = filteredTopics?.length
-      ? [...filteredTopics]
-      : [...researchTopics];
+    const updatedItems = [...currentItems];
+    const itemIndex = researchTopics.findIndex(
+      (topic) => topic.id === updatedItems[index].id
+    );
+    const topic = researchTopics[itemIndex];
+    topic.selected = !topic.selected;
+    setResearchTopics([...researchTopics]);
 
-    const topic = updatedItems[index];
+    // Tính tổng số giờ nghiên cứu
+    const selectedCount = researchTopics.filter(
+      (topic) => topic.selected
+    ).length;
+    const totalStudyHours = researchTopics
+      .filter((topic) => topic.selected)
+      .reduce((total, topic) => total + topic.research_hours, 0);
 
-    if (topic) {
-      // Kiểm tra xem topic tồn tại
-      topic.selected = !topic.selected;
+    setSelectedItemCount(selectedCount);
+    setTotalStudyHours(totalStudyHours);
 
-      // Cập nhật danh sách các chủ đề đã lọc
-      setFilteredTopics([...updatedItems]);
-
-      // Tính tổng số giờ nghiên cứu và kiểm tra tất cả checkbox đã được chọn
-      const selectedCount = updatedItems.filter(
-        (topic) => topic.selected
-      ).length;
-      const totalResearchHours = updatedItems
-        .filter((topic) => topic.selected)
-        .reduce((total, topic) => total + topic.research_hours, 0);
-
-      setSelectedItemCount(selectedCount);
-      setTotalStudyHours(totalResearchHours);
-
-      // Kiểm tra nếu tất cả các checkbox đã được chọn
-      const allSelected = updatedItems.every((topic) => topic.selected);
-      setSelectAll(allSelected);
-    }
+    // Kiểm tra nếu tất cả các checkbox đã được chọn
+    const allSelected = researchTopics.every((topic) => topic.selected);
+    setSelectAll(allSelected);
   };
 
   const handleSortByColumn = (column) => {
@@ -196,45 +185,11 @@ function ResearchTopics() {
 
   // Xử lý khi nút "Đăng ký" được nhấn
   const handleRegistration = () => {
-    const selectedTopics = researchTopics.filter((topic) => topic.selected);
-
-    // Kiểm tra xem có ít nhất một đề tài được chọn
-    if (selectedTopics.length === 0) {
-      alert("Vui lòng chọn ít nhất một đề tài để đăng ký.");
-      return;
-    }
-
-    // Gửi yêu cầu đăng ký lên API
-    const registrationData = {
-      selectedTopics: selectedTopics.map((topic) => topic.id),
-    };
-    fetch("http://localhost:8000/api/registration/", {
-      method: "POST",
-      body: JSON.stringify(registrationData),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.message === "Đăng ký thành công!") {
-          // Đăng ký thành công, thực hiện các hành động cần thiết
-          alert("Đăng ký đề tài thành công!");
-          // Cập nhật trạng thái đã chọn của các đề tài
-          const updatedTopics = researchTopics.map((topic) => ({
-            ...topic,
-            selected: false,
-          }));
-          setResearchTopics(updatedTopics);
-        } else {
-          // Đăng ký thất bại, xử lý lỗi
-          alert("Đăng ký đề tài thất bại. Vui lòng thử lại sau.");
-        }
-      })
-      .catch((error) => {
-        // Xử lý lỗi khi không thể kết nối tới API
-        alert("Có lỗi xảy ra khi kết nối đến máy chủ.");
-      });
+    const selected = researchTopics.filter((topic) => topic.selected);
+    // Thực hiện hành động đăng ký với các đề tài đã chọn (selected)
+    // Ví dụ: Gửi yêu cầu đăng ký lên API, hoặc thực hiện thao tác tương ứng
+    // Sau đó, cập nhật lại trạng thái của danh sách đề tài nếu cần
+    setSelectedTopics(selected);
   };
 
   const filteredItems = researchTopics.filter((topic) =>
@@ -287,91 +242,15 @@ function ResearchTopics() {
     }
   }
 
-  // Xử lý Lọc
-  const [filteredTopics, setFilteredTopics] = useState(researchTopics);
-  const [selectedHourRange, setSelectedHourRange] = useState("all");
-  const [isFiltering, setIsFiltering] = useState(false);
-
-  const handleHourRangeChange = (event) => {
-    setSelectedHourRange(event.target.value);
-  };
-
-  const handleFilterClick = () => {
-    setIsFiltering(true);
-    let filteredTopics = [];
-
-    if (selectedHourRange === "all") {
-      filteredTopics = researchTopics;
-    } else if (selectedHourRange === "lessThan100") {
-      filteredTopics = researchTopics.filter(
-        (topic) => topic.research_hours < 100
-      );
-    } else if (selectedHourRange === "100to500") {
-      filteredTopics = researchTopics.filter(
-        (topic) => topic.research_hours >= 100 && topic.research_hours <= 500
-      );
-    } else if (selectedHourRange === "moreThan500") {
-      filteredTopics = researchTopics.filter(
-        (topic) => topic.research_hours > 500
-      );
-    }
-
-    setFilteredTopics(filteredTopics);
-  };
-
   return (
     <div>
       <Header />
       <Container>
-        <Grid container alignItems="center">
-          <Grid item xs={6}>
-            <Typography variant="h4" style={{ margin: "20px 0" }}>
-              Đăng ký đề tài nghiên cứu
-            </Typography>
-          </Grid>
-        </Grid>
-        <div>
-          {/* Chọn khoảng số giờ nghiên cứu */}
-          <FormControl
-            variant="outlined"
-            style={{ margin: "10px 0", width: "300px" }}
-          >
-            <InputLabel>Chọn khoảng số giờ nghiên cứu</InputLabel>
-            <Select
-              label="Chọn khoảng số giờ nghiên cứu"
-              value={selectedHourRange}
-              onChange={handleHourRangeChange}
-            >
-              <MenuItem value="all">Tất cả</MenuItem>
-              <MenuItem value="lessThan100">Dưới 100 giờ</MenuItem>
-              <MenuItem value="100to500">100 - 500 giờ</MenuItem>
-              <MenuItem value="moreThan500">Trên 500 giờ</MenuItem>
-            </Select>
-          </FormControl>
-
-          {/* Lọc đề tài */}
-          <Button
-            style={{ margin: "15px 10px", width: "150px" }}
-            variant="contained"
-            color="primary"
-            onClick={handleFilterClick}
-          >
-            Lọc Đề Tài
-          </Button>
-
-          {/* Hiển thị kết quả lọc nếu isFiltering là true */}
-          {isFiltering && (
-            <div className="filtered-results">
-              {/* Hiển thị kết quả lọc ở đây */}
-            </div>
-          )}
-        </div>
-
         <div className="research-topics-list-container">
           <Grid container alignItems="center">
             <Grid item xs={6}>
-              <Typography variant="h6" style={{ margin: "20px 0" }}>
-                Danh sách đề tài
+              <Typography variant="h4" style={{ margin: "20px 0" }}>
+                Đăng ký đề tài nghiên cứu
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -390,7 +269,7 @@ function ResearchTopics() {
             style={{ float: "right", marginRight: "10px" }}
           >
             Số đề tài đã chọn: {selectedItemCount} - Tổng số giờ nghiên cứu:{" "}
-            {totalResearchHours}
+            {totalStudyHours}
           </Typography>
           <div className="pagination">
             <Stack direction="row" spacing={1}>
@@ -446,8 +325,8 @@ function ResearchTopics() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredTopics.length > 0 ? (
-                    filteredTopics.map((topic, index) => (
+                  {currentItems.length > 0 ? (
+                    currentItems.map((topic, index) => (
                       <TableRow key={topic.id}>
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{topic.academic_year}</TableCell>

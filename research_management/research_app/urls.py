@@ -18,4 +18,7 @@ urlpatterns = [
     path('research-topics/registration/', views.ResearchTopicRegistrationListAPIView.as_view(), name='research-topics-registration'),
     path("research-topic/registration/<int:pk>/", views.ResearchTopicRegistrationAPIView.as_view(), name="research-topic-registration-id"),
     path("research-topic/registration/", views.ResearchTopicRegistrationAPIView.as_view(), name="research-topic-registration"),
+    
+    path('registration/', views.RegistrationTopicAPIView.as_view(), name='registration'),
+
 ]

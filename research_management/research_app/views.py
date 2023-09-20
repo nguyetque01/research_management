@@ -282,3 +282,26 @@ class ResearchTopicRegistrationAPIView(APIView):
             {"message": "ResearchTopicRegistration deleted successfully"},
             status=status.HTTP_204_NO_CONTENT,
         )
+    
+
+
+
+class RegistrationTopicAPIView(APIView):
+    permission_classes = (AllowAny,)
+
+
+    def post(self, request):
+        selected_topics = request.data.get('selected_topics', [])
+        try:
+            # Thực hiện hành động đăng ký với các đề tài đã chọn (selected_topics)
+            for topic_id in selected_topics:
+                try:
+                    topic = ResearchTopic.objects.get(id=topic_id)
+                    topic.selected = True
+                    topic.save()
+                except ResearchTopic.DoesNotExist:
+                    pass
+
+            return Response({"message": "Đăng ký thành công!"})
+        except Exception as e:
+            return Response({"message": "Đăng ký thất bại!", "error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

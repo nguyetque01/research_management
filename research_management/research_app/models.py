@@ -69,6 +69,7 @@ class ResearchTopic(models.Model):
     attachments = models.FileField(upload_to="research_topic_attachments/", null=True, blank=True)
     academic_year = models.CharField(max_length=10, null=True)
     research_hours = models.PositiveIntegerField(null=True)
+    selected = models.BooleanField(default=False)
 
 # Lớp Phiếu đề xuất đề tài nghiên cứu (ResearchProposalForm)
 class ResearchProposalForm(models.Model):
