@@ -44,3 +44,4 @@ class ResearchTopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResearchTopic
         fields = '__all__'
+        

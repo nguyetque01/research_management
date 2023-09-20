@@ -128,7 +128,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Thêm các domain cần cho phép tại đây
+    "http://localhost:3000", # Thêm các domain cần cho phép tại đây
 ]
 
 AUTH_USER_MODEL = 'research_app.CustomUser'

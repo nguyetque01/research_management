@@ -56,7 +56,8 @@ class ResearchTopic(models.Model):
     study_hours = models.PositiveIntegerField()
     approval_status = models.CharField(max_length=20, choices=[("Pending", "Chưa kiểm phê duyệt"), ("Approved", "Đã kiểm phê duyệt")], default="Pending")
     study_status = models.CharField(max_length=20, choices=[("InProgress", "Đang tiến hành"), ("Completed", "Đã hoàn thành")], default="InProgress")
-    ...
+    selected = models.BooleanField(default=False)
+    
     
     # name = models.CharField(max_length=255)
     # start_date = models.DateField()

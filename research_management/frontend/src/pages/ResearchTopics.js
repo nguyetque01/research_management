@@ -13,14 +13,18 @@ import {
   Container,
   Checkbox,
   TextField, 
-  Box,
-  Stack,// Thêm Checkbox từ @mui/material
+  Stack,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,// Thêm Checkbox từ @mui/material
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import DEFAULT_BACKEND_URL from "../config.js";
+import axios from "axios"; 
 
 const NO_RESEARCH_IMAGE = require("../assets/img/research.webp");
 
@@ -32,7 +36,7 @@ function ResearchTopics() {
       name: "Sample Research 1",
       category: "Sample Category 1",
       description: "This is a sample research description.",
-      study_hours: 10,
+      study_hours: 100,
       approval_status: "Pending",
       study_status: "InProgress",
       selected: false,
@@ -42,7 +46,7 @@ function ResearchTopics() {
       name: "Sample Research 2",
       category: "Sample Category 2",
       description: "Another sample research description.",
-      study_hours: 15,
+      study_hours: 150,
       approval_status: "Approved",
       study_status: "Completed",
       selected: false,
@@ -52,7 +56,7 @@ function ResearchTopics() {
       name: "Rename",
       category: "Sample Category 2",
       description: "Another sample research description.",
-      study_hours: 15,
+      study_hours: 80,
       approval_status: "Approved",
       study_status: "Completed",
       selected: false,
@@ -62,7 +66,7 @@ function ResearchTopics() {
       name: "innuyasa",
       category: "Sample Category 2",
       description: "Another sample research description.",
-      study_hours: 15,
+      study_hours: 200,
       approval_status: "Approved",
       study_status: "Completed",
       selected: false,
@@ -72,7 +76,7 @@ function ResearchTopics() {
       name: "gulinazha",
       category: "Sample Category 2",
       description: "Another sample research description.",
-      study_hours: 15,
+      study_hours: 700,
       approval_status: "Approved",
       study_status: "Completed",
       selected: false,
@@ -82,7 +86,7 @@ function ResearchTopics() {
       name: "Yoona",
       category: "Sample Category 2",
       description: "Another sample research description.",
-      study_hours: 15,
+      study_hours: 50,
       approval_status: "Approved",
       study_status: "Completed",
       selected: false,
@@ -92,7 +96,7 @@ function ResearchTopics() {
       name: "Renamekarina",
       category: "Sample Category 2",
       description: "Another sample research description.",
-      study_hours: 15,
+      study_hours: 300,
       approval_status: "Approved",
       study_status: "Completed",
       selected: false,
@@ -102,7 +106,7 @@ function ResearchTopics() {
       name: "VNG",
       category: "Sample Category 2",
       description: "Another sample research description.",
-      study_hours: 15,
+      study_hours: 150,
       approval_status: "Approved",
       study_status: "Completed",
       selected: false,
@@ -112,7 +116,7 @@ function ResearchTopics() {
       name: "analyst",
       category: "Sample Category 2",
       description: "Another sample research description.",
-      study_hours: 15,
+      study_hours: 100,
       approval_status: "Approved",
       study_status: "Completed",
       selected: false,
@@ -122,7 +126,7 @@ function ResearchTopics() {
       name: "10hsang",
       category: "Sample Category 2",
       description: "Another sample research description.",
-      study_hours: 15,
+      study_hours: 20,
       approval_status: "Approved",
       study_status: "Completed",
       selected: false,
@@ -132,7 +136,7 @@ function ResearchTopics() {
       name: "Khoime",
       category: "Sample Category 2",
       description: "Another sample research description.",
-      study_hours: 15,
+      study_hours: 75,
       approval_status: "Approved",
       study_status: "Completed",
       selected: false,
@@ -142,7 +146,7 @@ function ResearchTopics() {
       name: "wish",
       category: "Sample Category 2",
       description: "Another sample research description.",
-      study_hours: 15,
+      study_hours: 600,
       approval_status: "Approved",
       study_status: "Completed",
       selected: false,
@@ -160,6 +164,7 @@ function ResearchTopics() {
   const [totalStudyHours, setTotalStudyHours] = useState(0);
   const [sortByColumn, setSortByColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
+  
 
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
@@ -196,15 +201,16 @@ function ResearchTopics() {
 
   // Xử lý khi checkbox thay đổi
   const handleCheckboxChange = (index) => {
-    const updatedItems = [...currentItems];
-    const itemIndex = researchTopics.findIndex((topic) => topic.id === updatedItems[index].id);
-    const topic = researchTopics[itemIndex];
+    const updatedItems = [...filteredTopics];
+    const topic = updatedItems[index];
     topic.selected = !topic.selected;
-    setResearchTopics([...researchTopics]);
 
-    // Tính tổng số giờ nghiên cứu
-    const selectedCount = researchTopics.filter((topic) => topic.selected).length;
-    const totalStudyHours = researchTopics
+    // Cập nhật danh sách các chủ đề đã lọc
+    setFilteredTopics([...updatedItems]);
+
+    // Tính tổng số giờ nghiên cứu và kiểm tra tất cả checkbox đã được chọn
+    const selectedCount = updatedItems.filter((topic) => topic.selected).length;
+    const totalStudyHours = updatedItems
       .filter((topic) => topic.selected)
       .reduce((total, topic) => total + topic.study_hours, 0);
 
@@ -212,7 +218,7 @@ function ResearchTopics() {
     setTotalStudyHours(totalStudyHours);
 
     // Kiểm tra nếu tất cả các checkbox đã được chọn
-    const allSelected = researchTopics.every((topic) => topic.selected);
+    const allSelected = updatedItems.every((topic) => topic.selected);
     setSelectAll(allSelected);
   };
   
@@ -246,13 +252,45 @@ function ResearchTopics() {
     }
   };
   
-  // Xử lý khi nút "Đăng ký" được nhấn
+ // Xử lý khi nút "Đăng ký" được nhấn
   const handleRegistration = () => {
-    const selected = researchTopics.filter((topic) => topic.selected);
-    // Thực hiện hành động đăng ký với các đề tài đã chọn (selected)
-    // Ví dụ: Gửi yêu cầu đăng ký lên API, hoặc thực hiện thao tác tương ứng
-    // Sau đó, cập nhật lại trạng thái của danh sách đề tài nếu cần
-    setSelectedTopics(selected);
+    const selectedTopics = researchTopics.filter(topic => topic.selected);
+
+    // Kiểm tra xem có ít nhất một đề tài được chọn
+    if (selectedTopics.length === 0) {
+      alert('Vui lòng chọn ít nhất một đề tài để đăng ký.');
+      return;
+    }
+
+    // Gửi yêu cầu đăng ký lên API
+    const registrationData = { selectedTopics: selectedTopics.map(topic => topic.id) };
+    fetch('http://localhost:8000/api/registration/', {
+      method: 'POST',
+      body: JSON.stringify(registrationData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message === 'Đăng ký thành công!') {
+          // Đăng ký thành công, thực hiện các hành động cần thiết
+          alert('Đăng ký đề tài thành công!');
+          // Cập nhật trạng thái đã chọn của các đề tài
+          const updatedTopics = researchTopics.map(topic => ({
+            ...topic,
+            selected: false
+          }));
+          setResearchTopics(updatedTopics);
+        } else {
+          // Đăng ký thất bại, xử lý lỗi
+          alert('Đăng ký đề tài thất bại. Vui lòng thử lại sau.');
+        }
+      })
+      .catch(error => {
+        // Xử lý lỗi khi không thể kết nối tới API
+        alert('Có lỗi xảy ra khi kết nối đến máy chủ.');
+      });
   };
 
   const filteredItems = researchTopics.filter((topic) =>
@@ -304,16 +342,86 @@ function ResearchTopics() {
       pageNumbers.push('...');
     }
   }
+  
+  // Xử lý Lọc
+  const [filteredTopics, setFilteredTopics] = useState(researchTopics);
+  const [selectedHourRange, setSelectedHourRange] = useState('');
+  const [isFiltering, setIsFiltering] = useState(false);
+
+  const handleHourRangeChange = (event) => {
+    setSelectedHourRange(event.target.value);
+  };
+
+
+
+  const handleFilterClick = () => {
+    setIsFiltering(true);
+    let filteredTopics = [];
+
+    if (selectedHourRange === 'all') {
+      filteredTopics = researchTopics;
+    } else if (selectedHourRange === 'lessThan100') {
+      filteredTopics = researchTopics.filter((topic) => topic.study_hours < 100);
+    } else if (selectedHourRange === '100to500') {
+      filteredTopics = researchTopics.filter((topic) => topic.study_hours >= 100 && topic.study_hours <= 500);
+    } else if (selectedHourRange === 'moreThan500') {
+      filteredTopics = researchTopics.filter((topic) => topic.study_hours > 500);
+    }
+
+    setFilteredTopics(filteredTopics);
+  };
+  
 
   return (
     <div>
       <Header />
       <Container>
-        <div className="research-topics-list-container">
-          <Grid container alignItems="center">
+        <Grid container alignItems="center">
             <Grid item xs={6}>
               <Typography variant="h4" style={{ margin: "20px 0" }}>
                 Đăng ký đề tài nghiên cứu
+              </Typography>
+            </Grid> 
+        </Grid>
+        <div>
+          {/* Chọn khoảng số giờ nghiên cứu */}
+          <FormControl variant="outlined" style={{ margin: "10px 0", width: "300px" }}>
+          <InputLabel>Chọn khoảng số giờ nghiên cứu</InputLabel>
+          <Select
+            label="Chọn khoảng số giờ nghiên cứu"
+            value={selectedHourRange}
+            onChange={handleHourRangeChange}
+          >
+            <MenuItem value="all">Tất cả</MenuItem>
+            <MenuItem value="lessThan100">Dưới 100 giờ</MenuItem>
+            <MenuItem value="100to500">100 - 500 giờ</MenuItem>
+            <MenuItem value="moreThan500">Trên 500 giờ</MenuItem>
+          </Select>
+          </FormControl>
+
+          {/* Lọc đề tài */}
+          <Button
+            style={{ margin: "15px 10px", width: "150px" }}
+            variant="contained"
+            color="primary"
+            onClick={handleFilterClick}
+          >
+            Lọc Đề Tài
+          </Button>
+
+          {/* Hiển thị kết quả lọc nếu isFiltering là true */}
+          {isFiltering && (
+            <div className="filtered-results">
+              {/* Hiển thị kết quả lọc ở đây */}
+            </div>
+          )}
+        </div>
+        
+        <div className="research-topics-list-container">
+          <Grid container alignItems="center">
+            <Grid item xs={6}>
+              <Typography variant="h6" style={{ margin: "20px 0" }}>
+                Danh sách đề tài 
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -348,34 +456,60 @@ function ResearchTopics() {
             
             <TableContainer component={Paper}>
               <Table style={{ cursor: 'pointer' }}>
-                <TableHead>
+              <TableHead>
+                <TableRow style={{ backgroundColor: "LightSkyBlue" }}>
+                  <TableCell onClick={() => handleSortByColumn('name')}>
+                    Tên Đề Tài
+                    {sortByColumn === 'name' && (
+                      <span>{sortOrder === 'asc' ? '▲' : '▼'}</span>
+                    )}
+                  </TableCell>
+                  <TableCell>Danh Mục</TableCell>
+                  <TableCell>Mô Tả</TableCell>
+                  <TableCell onClick={() => handleSortByColumn('study_hours')}>
+                    Số Giờ Nghiên Cứu
+                    {sortByColumn === 'study_hours' && (
+                      <span>{sortOrder === 'asc' ? '▲' : '▼'}</span>
+                    )}
+                  </TableCell>
+                  <TableCell>Trạng Thái Phê Duyệt</TableCell>
+                  <TableCell>Trạng Thái Nghiên Cứu</TableCell>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectAll}
+                      onChange={handleSelectAllChange}
+                    />
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+              {isFiltering ? (
+                filteredTopics.length > 0 ? (
+                  filteredTopics.map((topic, index) => (
+                    <TableRow key={topic.id}>
+                      <TableCell>{topic.name}</TableCell>
+                      <TableCell>{topic.category}</TableCell>
+                      <TableCell>{topic.description}</TableCell>
+                      <TableCell>{topic.study_hours}</TableCell>
+                      <TableCell>{topic.approval_status}</TableCell>
+                      <TableCell>{topic.study_status}</TableCell>
+                      <TableCell>
+                        <Checkbox
+                          checked={topic.selected}
+                          onChange={() => handleCheckboxChange(index)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
                   <TableRow>
-                    <TableCell onClick={() => handleSortByColumn('name')}>
-                      Tên Đề Tài
-                      {sortByColumn === 'name' && (
-                        <span>{sortOrder === 'asc' ? '▲' : '▼'}</span>
-                      )}
-                    </TableCell>
-                    <TableCell>Danh Mục</TableCell>
-                    <TableCell>Mô Tả</TableCell>
-                    <TableCell onClick={() => handleSortByColumn('study_hours')}>
-                      Số Giờ Nghiên Cứu
-                      {sortByColumn === 'study_hours' && (
-                        <span>{sortOrder === 'asc' ? '▲' : '▼'}</span>
-                      )}
-                    </TableCell>
-                    <TableCell>Trạng Thái Phê Duyệt</TableCell>
-                    <TableCell>Trạng Thái Nghiên Cứu</TableCell>
-                    <TableCell>
-                      <Checkbox
-                        checked={selectAll}
-                        onChange={handleSelectAllChange}
-                      />
+                    <TableCell colSpan={7} align="center">
+                      Không tìm thấy đề tài nào.
                     </TableCell>
                   </TableRow>
-                </TableHead>
-                <TableBody>
-                {currentItems.length > 0 ? (
+                )
+              ) : (
+                currentItems.length > 0 ? (
                   currentItems.map((topic, index) => (
                     <TableRow key={topic.id}>
                       <TableCell>{topic.name}</TableCell>
@@ -390,17 +524,17 @@ function ResearchTopics() {
                           onChange={() => handleCheckboxChange(index)}
                         />
                       </TableCell>
-                   </TableRow>
-                  ))
-                  ): (
-                    <TableRow>
-                      <TableCell colSpan={7} align="center">
-                        Không tìm thấy đề tài nào.
-                      </TableCell>
                     </TableRow>
-                  )}
-                </TableBody>
-                
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={7} align="center">
+                      Không tìm thấy đề tài nào.
+                    </TableCell>
+                  </TableRow>
+                )
+              )}
+            </TableBody>
               </Table>
             </TableContainer>
             
