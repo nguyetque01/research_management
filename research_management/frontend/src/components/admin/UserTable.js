@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import roles from "../../data/roles";
-import degrees from "../../data/degrees";
 
 function UserTable({
   users,
@@ -35,6 +34,7 @@ function UserTable({
             <TableCell style={{ minWidth: 50 }}>Địa chỉ</TableCell>
             <TableCell style={{ minWidth: 30 }}>Ảnh đại diện</TableCell>
             <TableCell style={{ minWidth: 20 }}>Vai trò</TableCell>
+            <TableCell style={{ minWidth: 30 }}>Ngày tham gia</TableCell>
             <TableCell style={{ minWidth: 20 }}>Đang hoạt động</TableCell>
             <TableCell style={{ minWidth: 50 }}>Lý lịch khoa học</TableCell>
             <TableCell style={{ minWidth: 50 }}>Thao tác</TableCell>
@@ -47,11 +47,9 @@ function UserTable({
               <TableCell>{user.username}</TableCell>
               <TableCell>{user.full_name}</TableCell>
               <TableCell>{user.email}</TableCell>
-              <TableCell>
-                {dayjs(user.date_of_birth).format("DD/MM/YYYY")}
-              </TableCell>
+              <TableCell>{dayjs(user.birthday).format("DD/MM/YYYY")}</TableCell>
               <TableCell>{user.gender === "male" ? "Nam" : "Nữ"}</TableCell>
-              <TableCell>{user.phone_number}</TableCell>
+              <TableCell>{user.phone}</TableCell>
               <TableCell>{user.address}</TableCell>
               <TableCell>
                 {user.avatar ? (
@@ -72,6 +70,9 @@ function UserTable({
               </TableCell>
               <TableCell>
                 {roles.find((role) => role.value === user.role)?.label}
+              </TableCell>
+              <TableCell>
+                {dayjs(user.date_joined).format("DD/MM/YYYY")}
               </TableCell>
               <TableCell>
                 <Switch

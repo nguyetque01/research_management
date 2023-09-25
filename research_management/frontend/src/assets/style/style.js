@@ -18,6 +18,7 @@ const formContainerStyle = {
   boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
   maxWidth: "500px",
   margin: "auto",
+  marginTop: "40px",
 };
 
 const headerStyle = {

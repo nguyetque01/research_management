@@ -46,7 +46,7 @@ function Profile() {
   const [userData, setUserData] = useState({
     first_name: "",
     last_name: "",
-    date_of_birth: "",
+    birthday: "",
     gender: "",
     degree: "",
     email: "",
@@ -164,7 +164,7 @@ function Profile() {
             <Grid item xs={12} sm={6}>
               <Typography>
                 <strong>Ngày sinh:</strong>{" "}
-                {dayjs(userData.date_of_birth).format("DD/MM/YYYY")}
+                {dayjs(userData.birthday).format("DD/MM/YYYY")}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -175,7 +175,7 @@ function Profile() {
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography>
-                <strong>Số điện thoại:</strong> {userData.phone_number}
+                <strong>Số điện thoại:</strong> {userData.phone}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>

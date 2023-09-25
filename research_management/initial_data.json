@@ -1,0 +1,255 @@
+[
+  {
+    "model": "research_app.academicyear",
+    "pk": 1,
+    "fields": {
+      "name": "2020 - 2021"
+    }
+  },
+  {
+    "model": "research_app.academicyear",
+    "pk": 2,
+    "fields": {
+      "name": "2021 - 2022"
+    }
+  },
+  {
+    "model": "research_app.academicyear",
+    "pk": 3,
+    "fields": {
+      "name": "202 - 2023"
+    }
+  },
+  {
+    "model": "research_app.academicyear",
+    "pk": 4,
+    "fields": {
+      "name": "2023 - 2024"
+    }
+  },
+  {
+    "model": "research_app.leadunit",
+    "pk": 1,
+    "fields": {
+      "name": "Sở Khoa học Công nghệ"
+    }
+  },
+  {
+    "model": "research_app.leadunit",
+    "pk": 2,
+    "fields": {
+      "name": "Trường Đại học Công nghệ Đồng Nai"
+    }
+  },
+  {
+    "model": "research_app.leadunit",
+    "pk": 3,
+    "fields": {
+      "name": "Đơn vị khác"
+    }
+  },
+  {
+    "model": "research_app.level",
+    "pk": 1,
+    "fields": {
+      "name": "Trường"
+    }
+  },
+  {
+    "model": "research_app.level",
+    "pk": 2,
+    "fields": {
+      "name": "Tỉnh"
+    }
+  },
+  {
+    "model": "research_app.level",
+    "pk": 3,
+    "fields": {
+      "name": "Bộ"
+    }
+  },
+  {
+    "model": "research_app.level",
+    "pk": 4,
+    "fields": {
+      "name": "Nhà nước"
+    }
+  },
+  {
+    "model": "research_app.level",
+    "pk": 5,
+    "fields": {
+      "name": "Quốc tế"
+    }
+  },
+  {
+    "model": "research_app.researchtype",
+    "pk": 1,
+    "fields": {
+      "name": "Đề tài, dự án nghiên cứu khoa học các cấp"
+    }
+  },
+  {
+    "model": "research_app.researchtype",
+    "pk": 2,
+    "fields": {
+      "name": "Bài báo, báo cáo khoa học đã xuất bản"
+    }
+  },
+  {
+    "model": "research_app.researchtype",
+    "pk": 3,
+    "fields": {
+      "name": "Sách và giáo trình học tập được Nhà xuất bản phát hành"
+    }
+  },
+  {
+    "model": "research_app.researchtype",
+    "pk": 4,
+    "fields": {
+      "name": "Tham gia các cuộc thi khoa học"
+    }
+  },
+  {
+    "model": "research_app.researchtype",
+    "pk": 5,
+    "fields": {
+      "name": "Bằng sáng chế"
+    }
+  },
+  {
+    "model": "research_app.researchtype",
+    "pk": 6,
+    "fields": {
+      "name": "Chuyển giao công nghệ, tư vấn kỹ thuật có doanh thu"
+    }
+  },
+  {
+    "model": "research_app.researchtype",
+    "pk": 7,
+    "fields": {
+      "name": "Các hoạt động khác"
+    }
+  },
+  {
+    "model": "research_app.unit",
+    "pk": 1,
+    "fields": {
+      "name": "đề tài"
+    }
+  },
+  {
+    "model": "research_app.unit",
+    "pk": 2,
+    "fields": {
+      "name": "bài"
+    }
+  },
+  {
+    "model": "research_app.unit",
+    "pk": 3,
+    "fields": {
+      "name": "bằng"
+    }
+  },
+  {
+    "model": "research_app.unit",
+    "pk": 4,
+    "fields": {
+      "name": "tín chỉ"
+    }
+  },
+  {
+    "model": "research_app.unit",
+    "pk": 5,
+    "fields": {
+      "name": "người"
+    }
+  },
+  {
+    "model": "research_app.unit",
+    "pk": 6,
+    "fields": {
+      "name": "đội"
+    }
+  },
+  {
+    "model": "research_app.unit",
+    "pk": 7,
+    "fields": {
+      "name": "năm thứ nhất"
+    }
+  },
+  {
+    "model": "research_app.unit",
+    "pk": 8,
+    "fields": {
+      "name": "triệu đồng"
+    }
+  },
+  {
+    "model": "research_app.unit",
+    "pk": 9,
+    "fields": {
+      "name": "đề tài/năm thứ nhất"
+    }
+  },
+  {
+    "model": "research_app.unit",
+    "pk": 10,
+    "fields": {
+      "name": "người/năm thứ nhất"
+    }
+  },
+  {
+    "model": "research_app.user",
+    "pk": 1,
+    "fields": {
+      "username": "quentn",
+      "email": "quentn0620@gmail.com",
+      "password": "123123123",
+      "role": "admin",
+      "full_name": "Nguyễn Thị Nguyệt Quế",
+      "birthday": "2001-06-20",
+      "gender": "female",
+      "phone": "0939469412",
+      "address": "Biên Hòa, Đồng Nai",
+      "profile_image": "",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2023-09-24T10:00:00Z"
+    }
+  },
+  {
+    "model": "research_app.user",
+    "pk": 2,
+    "fields": {
+      "username": "nguyen_van_a",
+      "email": "nguyenvana@example.com",
+      "password": "123456789",
+      "role": "user",
+      "full_name": "Nguyễn Văn A",
+      "birthday": "1990-01-01",
+      "gender": "male",
+      "phone": "1234567890",
+      "address": "123 Đường ABC, Quận XYZ",
+      "profile_image": "",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2023-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "research_app.academicprofile",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "academic_degree": "Tiến sĩ Khoa học Máy tính",
+      "position": "Giảng viên",
+      "education_history": "Tiến sĩ Khoa học Máy tính, Đại học XYZ, 2015\nThạc sĩ Khoa học Máy tính, Đại học ABC, 2010",
+      "work_history": "Kỹ sư phần mềm chính, Công ty A, 2015-nay\nKỹ sư phần mềm, Công ty B, 2010-2015",
+      "research_activities": "Đã công bố 10 bài báo nghiên cứu tại các hội thảo và tạp chí hàng đầu"
+    }
+  }
+]

@@ -4,13 +4,69 @@ from rest_framework import status, generics
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-from django.contrib.auth import authenticate
-from .models import CustomUser, ResearchTopic, ResearchTopicRegistrationForm
-from .serializers import UserSerializer, UserUpdateSerializer, ResearchTopicSerializer, ResearchTopicRegistrationSerializer
+from django.contrib.auth import authenticate, login
+from .models import User, AcademicProfile, AcademicYear, Unit, LeadUnit, Level, ResearchType, ResearchActivity, ResearchActivityCategory, ResearchTopic
+from .serializers import UserSerializer, AcademicProfileSerializer, AcademicYearSerializer, UnitSerializer, LeadUnitSerializer, LevelSerializer, ResearchTypeSerializer, ResearchActivitySerializer,ResearchActivityCategorySerializer, ResearchTopicSerializer
+
+# COMMON API VIEW
+class CommonAPIView(APIView):
+    permission_classes = (AllowAny,)
+
+    def get_object(self, model, pk):
+        try:
+            return model.objects.get(pk=pk)
+        except model.DoesNotExist:
+            return None
+
+    def get(self, request, model, serializer_class, pk=None):
+        if pk:
+            instance = self.get_object(model, pk)
+            if not instance:
+                return Response(
+                    {"message": f"{model.__name__} not found"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            serializer = serializer_class(instance)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            queryset = model.objects.all()
+            serializer = serializer_class(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, model, serializer_class):
+        serializer = serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, model, serializer_class, pk):
+        instance = self.get_object(model, pk)
+        if not instance:
+            return Response(
+                {"message": f"{model.__name__} not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        serializer = serializer_class(instance, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, model, pk):
+        instance = self.get_object(model, pk)
+        if not instance:
+            return Response(
+                {"message": f"{model.__name__} not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        instance.delete()
+        return Response(
+            {"message": f"{model.__name__} deleted successfully"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 ##### LOGIN #####
-
-from django.contrib.auth import authenticate, login
 
 class LoginAPIView(APIView):
     permission_classes = (AllowAny,)
@@ -21,7 +77,7 @@ class LoginAPIView(APIView):
 
         # Kiểm tra tên đăng nhập và mật khẩu thủ công
         try:
-            user = CustomUser.objects.get(username=username)
+            user = User.objects.get(username=username)
             if user.password == password:
                 # Đăng nhập thành công
                 login(request, user)
@@ -37,11 +93,9 @@ class LoginAPIView(APIView):
             else:
                 # Sai mật khẩu
                 return Response({'message': 'Sai mật khẩu'}, status=status.HTTP_401_UNAUTHORIZED)
-        except CustomUser.DoesNotExist:
+        except User.DoesNotExist:
             # Tài khoản không tồn tại
             return Response({'message': 'Tài khoản không tồn tại'}, status=status.HTTP_401_UNAUTHORIZED)
-
-
     
 ##### USER PROFILE #####
 
@@ -55,7 +109,7 @@ class UserProfileView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class UserProfileUpdateView(generics.RetrieveUpdateAPIView):
-    serializer_class = UserUpdateSerializer
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
@@ -83,212 +137,48 @@ class UserProfileUpdateView(generics.RetrieveUpdateAPIView):
 
 ##### USERS #####
     
-class UserListAPIView(APIView):
-    permission_classes = (AllowAny,) 
-    def get(self, request):
-        research_topics = CustomUser.objects.all()
-        serializer = UserSerializer(research_topics, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-class UserAPIView(APIView):
-    permission_classes = (AllowAny,)
+class UserListAPIView(CommonAPIView):
+    model = User
+    serializer_class = UserSerializer
 
-    def get_object(self, pk):
-        try:
-            return CustomUser.objects.get(pk=pk)
-        except CustomUser.DoesNotExist:
-            return None
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class UserAPIView(CommonAPIView):
+    model = User
+    serializer_class = UserSerializer
 
     def get(self, request, pk):
-        user = self.get_object(pk)
-        if not user:
-            return Response(
-                {"message": "User not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return super().get(request, self.model, self.serializer_class, pk)
 
     def put(self, request, pk):
-        try:
-            user = CustomUser.objects.get(pk=pk)
-        except CustomUser.DoesNotExist:
-            return Response({"message": "Người dùng không tồn tại"}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = UserSerializer(user, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return super().put(request, self.model, self.serializer_class, pk)
 
     def delete(self, request, pk):
-        try:
-            user = CustomUser.objects.get(pk=pk)
-            user.delete()
-            return Response({"message": "Xóa người dùng thành công"}, status=status.HTTP_204_NO_CONTENT)
-        except CustomUser.DoesNotExist:
-            return Response({"message": "Người dùng không tồn tại"}, status=status.HTTP_404_NOT_FOUND)
+        return super().delete(request, self.model, pk)
 
-    def patch(self, request, pk):
-        try:
-            user = CustomUser.objects.get(pk=pk)
-            user.is_active = not user.is_active  # Đảo ngược trạng thái
-            user.save()
-            serializer = UserSerializer(user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except CustomUser.DoesNotExist:
-            return Response({"message": "Người dùng không tồn tại"}, status=status.HTTP_404_NOT_FOUND)
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+    
 
 class UserToggleActiveView(APIView):
     permission_classes = (AllowAny,) 
+    
     def patch(self, request, pk):
         try:
-            user = CustomUser.objects.get(pk=pk)
+            user = User.objects.get(pk=pk)
             user.is_active = not user.is_active  # Đảo ngược trạng thái
             user.save()
             serializer = UserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except CustomUser.DoesNotExist:
+        except User.DoesNotExist:
             return Response({"message": "Người dùng không tồn tại"}, status=status.HTTP_404_NOT_FOUND)
-    
-########################################################################
-
-##### Research Topic List #####
-class ResearchTopicListAPIView(APIView):
-    permission_classes = (AllowAny,) 
-    def get(self, request):
-        research_topics = ResearchTopic.objects.all()
-        serializer = ResearchTopicSerializer(research_topics, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-##### Research Topic #####
-class ResearchTopicAPIView(APIView):
-    permission_classes = (AllowAny,)
-
-    def get_object(self, pk):
-        try:
-            return ResearchTopic.objects.get(pk=pk)
-        except ResearchTopic.DoesNotExist:
-            return None
-
-    def get(self, request, pk):
-        research_topic = self.get_object(pk)
-        if not research_topic:
-            return Response(
-                {"message": "Research Topic not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        serializer = ResearchTopicSerializer(research_topic)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    def post(self, request):
-        serializer = ResearchTopicSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request, pk):
-        research_topic = self.get_object(pk)
-        if not research_topic:
-            return Response(
-                {"message": "ResearchTopic not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        serializer = ResearchTopicSerializer(research_topic, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk):
-        research_topic = self.get_object(pk)
-        if not research_topic:
-            return Response(
-                {"message": "ResearchTopic not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        research_topic.delete()
-        return Response(
-            {"message": "ResearchTopic deleted successfully"},
-            status=status.HTTP_204_NO_CONTENT,
-        )
-
-########################################################################
-
-class ResearchTopicRegistrationListAPIView(APIView):
-    permission_classes = (AllowAny,) 
-    def get(self, request):
-        research_topics = ResearchTopicRegistrationForm.objects.all()
-        serializer = ResearchTopicRegistrationSerializer(research_topics, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-class ResearchTopicRegistrationAPIView(APIView):
-    permission_classes = (AllowAny,)
-
-    def get_object(self, pk):
-        try:
-            return ResearchTopicRegistrationForm.objects.get(pk=pk)
-        except ResearchTopicRegistrationForm.DoesNotExist:
-            return None
-
-    # Thay đổi phần gọi phương thức get
-    def get(self, request, pk):
-        research_topic = self.get_object(pk)
-        if not research_topic:
-            return Response(
-                {"message": "Research Topic not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        serializer = ResearchTopicRegistrationSerializer(research_topic)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    def post(self, request):
-        serializer = ResearchTopicRegistrationSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request, pk):
-        research_topic = self.get_object(pk)
-        if not research_topic:
-            return Response(
-                {"message": "ResearchTopicRegistration not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        serializer = ResearchTopicRegistrationSerializer(research_topic, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk):
-        research_topic = self.get_object(pk)
-        if not research_topic:
-            return Response(
-                {"message": "ResearchTopicRegistration not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        research_topic.delete()
-        return Response(
-            {"message": "ResearchTopicRegistration deleted successfully"},
-            status=status.HTTP_204_NO_CONTENT,
-        )
-    
 
 
+ ########################################################################
 
 class RegistrationTopicAPIView(APIView):
     permission_classes = (AllowAny,)
-
 
     def post(self, request):
         selected_topics = request.data.get('selected_topics', [])
@@ -304,4 +194,269 @@ class RegistrationTopicAPIView(APIView):
 
             return Response({"message": "Đăng ký thành công!"})
         except Exception as e:
-            return Response({"message": "Đăng ký thất bại!", "error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Đăng ký thất bại!", "error": str(e)}, status=status.HTTP_400_BAD_REQUEST)          
+
+########################################################################
+
+##### Academic Profile #####
+
+class AcademicProfileListAPIView(CommonAPIView):
+    model = AcademicProfile
+    serializer_class = AcademicProfileSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class AcademicProfileAPIView(CommonAPIView):
+    model = AcademicProfile
+    serializer_class = AcademicProfileSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+    
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+
+
+########################################################################
+
+##### Academic Year #####
+
+class AcademicYearListAPIView(CommonAPIView):
+    model = AcademicYear
+    serializer_class = AcademicYearSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class AcademicYearAPIView(CommonAPIView):
+    model = AcademicYear
+    serializer_class = AcademicYearSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+    
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+
+########################################################################
+
+##### Unit #####
+
+class UnitListAPIView(CommonAPIView):
+    model = Unit
+    serializer_class = UnitSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class UnitAPIView(CommonAPIView):
+    model = Unit
+    serializer_class = UnitSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+    
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+
+########################################################################
+
+##### Level #####
+
+class LevelListAPIView(CommonAPIView):
+    model = Level
+    serializer_class = LevelSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class LevelAPIView(CommonAPIView):
+    model = Level
+    serializer_class = LevelSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+    
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+
+########################################################################
+##### ResearchType #####
+
+class ResearchTypeListAPIView(CommonAPIView):
+    model = ResearchType
+    serializer_class = ResearchTypeSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class ResearchTypeAPIView(CommonAPIView):
+    model = ResearchType
+    serializer_class = ResearchTypeSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+    
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+
+########################################################################
+
+##### LeadUnit #####
+
+class LeadUnitListAPIView(CommonAPIView):
+    model = LeadUnit
+    serializer_class = LeadUnitSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class LeadUnitAPIView(CommonAPIView):
+    model = LeadUnit
+    serializer_class = LeadUnitSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+    
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+
+########################################################################
+
+##### Research Activity #####
+
+class ResearchActivityListAPIView(CommonAPIView):
+    model = ResearchActivity
+    serializer_class = ResearchActivitySerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class ResearchActivityAPIView(CommonAPIView):
+    model = ResearchActivity
+    serializer_class = ResearchActivitySerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+    
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+
+
+########################################################################
+
+##### Research ActivityCategory #####
+
+class ResearchActivityCategoryListAPIView(CommonAPIView):
+    model = ResearchActivityCategory
+    serializer_class = ResearchActivityCategorySerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class ResearchActivityCategoryAPIView(CommonAPIView):
+    model = ResearchActivityCategory
+    serializer_class = ResearchActivityCategorySerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+    
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+    
+
+########################################################################
+
+##### Research Activity Category By Research Activity #####
+
+class ResearchActivityCategoryByResearchActivityAPIView(APIView):
+    """
+    API view to retrieve ResearchActivityCategories by ResearchActivity.
+    """
+
+    def get(self, request, research_activity_id):
+        try:
+            # Lấy ra các ResearchActivityCategory dựa trên research_activity_id
+            categories = ResearchActivityCategory.objects.filter(research_activity__id=research_activity_id)
+            
+            # Serialize dữ liệu
+            serializer = ResearchActivityCategorySerializer(categories, many=True)
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except ResearchActivityCategory.DoesNotExist:
+            return Response({"detail": "ResearchActivityCategory not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+########################################################################
+
+##### Research Topic #####
+class ResearchTopicListAPIView(CommonAPIView):
+    model = ResearchTopic
+    serializer_class = ResearchTopicSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class ResearchTopicAPIView(CommonAPIView):
+    model = ResearchTopic
+    serializer_class = ResearchTopicSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)

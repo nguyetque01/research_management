@@ -1,148 +1,273 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.utils import timezone
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, username, password=None, **extra_fields):
-        if not username:
-            raise ValueError("The Username field must be set")
-        username = self.normalize_username(username)
-        user = self.model(username=username, **extra_fields)
+    def create_user(self, username, email, password=None, role="User", **extra_fields):
+        if not email:
+            raise ValueError('Email address is required')
+        email = self.normalize_email(email)
+        user = self.model(username=username, email=email, role=role, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, password=None, **extra_fields):
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
+    def create_superuser(self, username, email, password=None, role="Admin", **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
 
-        if extra_fields.get("is_staff") is not True:
-            raise ValueError("Superuser must have is_staff=True.")
-        if extra_fields.get("is_superuser") is not True:
-            raise ValueError("Superuser must have is_superuser=True.")
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
 
-        return self.create_user(username, password, **extra_fields)
+        return self.create_user(username, email, password, role, **extra_fields)
 
+# Người dùng (User)
+class User(AbstractBaseUser, PermissionsMixin):
+    ROLE_CHOICES = (
+        ('user', 'Người dùng'),
+        ('manager', 'Người quản lý khoa học'),
+        ('admin', 'Quản trị viên'),
+    )
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(unique=True, max_length=30)
-    password = models.CharField(max_length=128)
-    full_name = models.CharField(max_length=100)
+    GENDER_CHOICES = (
+        ('male', 'Nam'),
+        ('female', 'Nữ'),
+    )
+
+    username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
-    date_of_birth = models.DateField(null=True, blank=True)
-    gender = models.CharField(max_length=10, choices=[("male", "Nam"), ("female", "Nữ")])
-    phone_number = models.CharField(max_length=15)
-    address = models.TextField(null=True)
-    profile_picture = models.ImageField(upload_to="profile_pictures/", null=True, blank=True)
-    role = models.CharField(max_length=20, choices=[("member", "Thành viên"), ("admin", "Quản trị viên"), ("approver", "Người kiểm duyệt")])
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    full_name = models.CharField(max_length=255)
+    birthday = models.DateField()
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
+    phone = models.CharField(max_length=15, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(default=timezone.now)
 
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'username'
+    EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = ['email']
 
     def __str__(self):
         return self.username
-    
-# Lớp Lý lịch khoa học (AcademicProfile)
+
+# Lý lịch khoa học (AcademicProfile)
 class AcademicProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     academic_degree = models.CharField(max_length=100)
     position = models.CharField(max_length=100)
     education_history = models.TextField()
     work_history = models.TextField()
     research_activities = models.TextField()
 
-# Lớp Đề tài nghiên cứu (ResearchTopic)
+    def __str__(self):
+        return self.user.username
+
+# Năm học (AcademicYear)
+class AcademicYear(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+    
+# Đơn vị tính (Unit)
+class Unit(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+    
+# Đơn vị chủ trì tính (LeadUnit)
+class LeadUnit(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+    
+# Cấp đề tài (Level)
+class Level(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+    
+# Loại hình nghiên cứu (ResearchType)
+class ResearchType(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+# Hoạt động nghiên cứu khoa học (ResearchActivity)
+class ResearchActivity(models.Model):
+
+    name = models.CharField(max_length=255)
+    academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
+    level = models.ForeignKey(Level, on_delete=models.CASCADE)
+    lead_unit = models.ForeignKey(LeadUnit, on_delete=models.CASCADE)
+    research_type = models.ForeignKey(ResearchType, on_delete=models.CASCADE) 
+    total_hours = models.IntegerField(null=True)
+    unit = models.ForeignKey(Unit, on_delete=models.CASCADE, null=True)
+    
+    def __str__(self):
+        return self.name
+
+# Phân loại hoạt động nghiên cứu khoa học (ResearchActivityCategory)
+class ResearchActivityCategory(models.Model):
+    
+    research_activity = models.ForeignKey(ResearchActivity, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    total_hours = models.IntegerField()
+    unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.research_activity.name} - {self.category_name}"
+
+
+# Đề tài nghiên cứu (ResearchTopic):
 class ResearchTopic(models.Model):
-    topic_name = models.CharField(max_length=200)
-    funding_level = models.CharField(max_length=50)
-    research_type = models.CharField(max_length=100)
-    lead_unit = models.CharField(max_length=100, null=True)
-    description = models.TextField(null=True)
-    team_members = models.TextField(null=True)
-    start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True)
-    approval_date = models.DateField(null=True, blank=True)
-    approved_budget = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    status = models.CharField(max_length=20, choices=[("completed", "Đã hoàn thành"), ("in_progress", "Đang thực hiện"), ("not_started", "Chưa thực hiện")])
-    attachments = models.FileField(upload_to="research_topic_attachments/", null=True, blank=True)
-    academic_year = models.CharField(max_length=10, null=True)
-    research_hours = models.PositiveIntegerField(null=True)
-    selected = models.BooleanField(default=False)
+    COMPLETION_STATUS_CHOICES = (
+        ('in_progress', 'Đang thực hiện'),
+        ('completed', 'Đã hoàn thành'),
+    )
 
-# Lớp Phiếu đề xuất đề tài nghiên cứu (ResearchProposalForm)
-class ResearchProposalForm(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    research_topic_id = models.PositiveIntegerField()
+    name = models.CharField(max_length=255)
+    research_activity = models.ForeignKey('ResearchActivity', on_delete=models.CASCADE)
+    authors = models.ManyToManyField(User, related_name='research_topics')
+    approved_budget = models.IntegerField()
+    approved_hours = models.IntegerField()
+    completion_status = models.CharField(max_length=20, choices=COMPLETION_STATUS_CHOICES)
+    research_resources = models.ManyToManyField('ResearchResource')
+
+    def __str__(self):
+        return self.name
+    
+# Phiếu đăng ký đề tài nghiên cứu (ResearchTopicRegistration)
+class ResearchTopicRegistration(models.Model):
+    APPROVAL_STATUS_CHOICES = (
+        ('pending', 'Chờ duyệt'),
+        ('approved', 'Đã duyệt'),
+        ('rejected', 'Từ chối'),
+    )
+
+    assigned_role = models.CharField(max_length=255)
+    expected_budget = models.IntegerField()
+    expected_hours = models.IntegerField()
+    registrant = models.ForeignKey(User, on_delete=models.CASCADE)
+    registration_approver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='approved_registrations')
+    registered_date = models.DateField()
+    registration_approved_date = models.DateField(null=True, blank=True)
+    approval_status = models.CharField(max_length=20, choices=APPROVAL_STATUS_CHOICES, default='pending')
+
+    def __str__(self):
+        return f"Registration #{self.pk}"
+
+# Phiếu nộp đề tài nghiên cứu (ResearchTopicSubmission):
+class ResearchTopicSubmission(models.Model):
+    APPROVAL_STATUS_CHOICES = (
+        ('pending', 'Chờ duyệt'),
+        ('approved', 'Đã duyệt'),
+        ('rejected', 'Từ chối'),
+    )
+
     submission_date = models.DateField()
-    status = models.CharField(max_length=20, choices=[("pending", "Chờ duyệt"), ("approved", "Đã duyệt"), ("rejected", "Từ chối"), ("in_progress", "Đang thực hiện"), ("completed", "Hoàn thành")])
-    approver_id = models.PositiveIntegerField()
-    approval_date = models.DateField(null=True, blank=True)
+    submission_approver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='approved_submissions')
+    submission_approved_date = models.DateField(null=True, blank=True)
+    approval_status = models.CharField(max_length=20, choices=APPROVAL_STATUS_CHOICES, default='pending')
 
-# Lớp Phiếu đăng ký đề tài nghiên cứu (ResearchTopicRegistrationForm)
-class ResearchTopicRegistrationForm(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    research_topic_id = models.PositiveIntegerField()
-    assigned_role = models.CharField(max_length=100)
-    registration_date = models.DateField()
-    status = models.CharField(max_length=20, choices=[("pending", "Chờ duyệt"), ("approved", "Đã duyệt"), ("rejected", "Từ chối"), ("in_progress", "Đang thực hiện"), ("completed", "Hoàn thành")])
-    approver_id = models.PositiveIntegerField()
-    approval_date = models.DateField(null=True, blank=True)
+    def __str__(self):
+        return f"Submission #{self.pk}"
 
-# Lớp Phiếu kê khai hoạt động nghiên cứu (ResearchActivityDeclarationForm)
-class ResearchActivityDeclarationForm(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    activity_id = models.PositiveIntegerField()
-    activity_type = models.CharField(max_length=100)
-    assigned_role = models.CharField(max_length=100)
-    academic_year = models.CharField(max_length=10)
-    declaration_date = models.DateField()
-    approval_date = models.DateField(null=True, blank=True)
-    approver_id = models.PositiveIntegerField()
-    research_hours = models.PositiveIntegerField()
-    submission_date = models.DateField()
-    status = models.CharField(max_length=20, choices=[("pending", "Chờ duyệt"), ("approved", "Đã duyệt"), ("rejected", "Từ chối"), ("in_progress", "Đang thực hiện"), ("completed", "Hoàn thành")])
 
-# Lớp Bài báo/báo cáo đăng trong tạp chí/kỷ yếu (JournalPublication)
-class JournalPublication(models.Model):
-    publication_title = models.CharField(max_length=200)
-    journal_name = models.CharField(max_length=200)
+# Tài nguyên nghiên cứu (ResearchResource)
+class ResearchResource(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    authors = models.CharField(max_length=255)
+    created_date = models.DateField(auto_now_add=True)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.CharField(max_length=100)
+    attachments = models.ManyToManyField('File', blank=True)
+    url = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.title
+
+# Tập tin (File)
+class File(models.Model):
+    name = models.CharField(max_length=255)
+    file = models.FileField(upload_to='files/')
+    type = models.CharField(max_length=100)
+    size = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name
+
+# Lớp Bài báo/báo cáo đăng trong tạp chí/kỷ yếu (Article)
+class Article(ResearchResource):
+    journal_name = models.CharField(max_length=255)
     issn_isbn = models.CharField(max_length=20)
     classification = models.CharField(max_length=100)
-    publication_date = models.DateField()
-    publication_type = models.CharField(max_length=100)
-    authors = models.TextField()
-    attachments = models.FileField(upload_to="journal_publication_attachments/")
-    url = models.URLField()
+    published_date = models.DateField()
+    published_type = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.journal_name
 
 # Lớp Đề tài chuyển giao công nghệ (TechnologyTransferProject)
-class TechnologyTransferProject(models.Model):
-    project_title = models.CharField(max_length=200)
-    authors = models.TextField()
-    transfer_company = models.CharField(max_length=200)
-    transfer_contract_id = models.CharField(max_length=50)
-    signed_contract_id = models.CharField(max_length=50)
-    contract_value = models.DecimalField(max_digits=10, decimal_places=2)
-    contract_signing_date = models.DateField()
-    attachments = models.FileField(upload_to="technology_transfer_project_attachments/")
+class TechnologyTransferProject(ResearchResource):
+    transfer_company = models.CharField(max_length=255)
+    transfer_contract_id = models.CharField(max_length=100, unique=True)
+    signed_contract_id = models.CharField(max_length=100, unique=True)
+    signed_contract_date = models.DateField()
+    contract_value = models.IntegerField()
 
-# Lớp Sách do NXB phát hành (PublishedBook)
-class PublishedBook(models.Model):
-    book_title = models.CharField(max_length=200)
-    authors = models.TextField()
-    publisher = models.CharField(max_length=200)
-    publication_date = models.DateField()
-    isbn = models.CharField(max_length=20)
+    def __str__(self):
+        return self.transfer_contract_id
+
+# Sách do NXB phát hành (PublishedBook)
+class PublishedBook(ResearchResource):
+    publisher = models.CharField(max_length=255)
+    published_date = models.DateField()
+    isbn = models.CharField(max_length=20, unique=True)
     field_of_study = models.CharField(max_length=100)
-    attachments = models.FileField(upload_to="published_book_attachments/")
 
-# Lớp Giải thưởng NCKH (ResearchAward)
-class ResearchAward(models.Model):
-    award_title = models.CharField(max_length=200)
-    award_level = models.CharField(max_length=50)
-    award_category = models.CharField(max_length=100)
-    authors = models.TextField()
-    award_rank = models.CharField(max_length=20, choices=[("first", "Nhất"), ("second", "Nhì"), ("third", "Ba"), ("encouragement", "Khuyến khích")])
+    def __str__(self):
+        return self.isbn
+
+# Giải thưởng NCKH (ResearchAward)
+class ResearchAward(ResearchResource):
+    AWARD_LEVEL_CHOICES = (
+        ('school', 'Trường'),
+        ('province', 'Tỉnh'),
+        ('ministry', 'Bộ'),
+        ('government', 'Nhà nước'),
+        ('international', 'Quốc tế'),
+    )
+
+    AWARD_CATEGORY_CHOICES = (
+        ('participation', 'Tham gia'),
+        ('mentorship', 'Hướng dẫn'),
+    )
+
+    AWARD_RANK_CHOICES = (
+        ('first', 'Nhất'),
+        ('second', 'Nhì'),
+        ('third', 'Ba'),
+        ('encouragement', 'Khuyến khích'),
+    )
+
+    award_level = models.CharField(max_length=20, choices=AWARD_LEVEL_CHOICES)
+    award_category = models.CharField(max_length=20, choices=AWARD_CATEGORY_CHOICES)
+    award_rank = models.CharField(max_length=20, choices=AWARD_RANK_CHOICES)
     award_received_date = models.DateField()
-    attachments = models.FileField(upload_to="research_award_attachments/")
+
+    def __str__(self):
+        return f"{self.award_level} - {self.award_category}"

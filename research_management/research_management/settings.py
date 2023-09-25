@@ -131,7 +131,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Thêm các domain cần cho phép tại đây
 ]
 
-AUTH_USER_MODEL = 'research_app.CustomUser'
+AUTH_USER_MODEL = 'research_app.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

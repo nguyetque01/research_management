@@ -1,0 +1,60 @@
+import React from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+} from "@mui/material";
+
+function UnitsTable({ data, handleEditItem, openDeleteDialog }) {
+  return (
+    <TableContainer component={Paper} sx={{ marginBottom: "40px" }}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell style={{ minWidth: 50 }}>STT</TableCell>
+            <TableCell style={{ minWidth: 50 }}>Mã đơn vị chủ trì</TableCell>
+            <TableCell style={{ minWidth: 100 }}>Đơn vị chủ trì</TableCell>
+            <TableCell style={{ minWidth: 100 }}>Thao tác</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {data.map((unit, index) => (
+            <TableRow key={unit.id}>
+              <TableCell>{index + 1}</TableCell>
+              <TableCell>{unit.id}</TableCell>
+              <TableCell>{unit.name}</TableCell>
+              <TableCell>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    size="small"
+                    onClick={() => handleEditItem(unit.id)}
+                  >
+                    Sửa
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    size="small"
+                    onClick={() => openDeleteDialog(unit)}
+                    sx={{ marginLeft: "8px" }}
+                  >
+                    Xóa
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+}
+
+export default UnitsTable;

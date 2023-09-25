@@ -69,7 +69,7 @@ function UserForm({
     const updatedIsChecked = isCheckbox ? e.target.checked : formData.is_active;
     const formattedData = {
       ...updatedData,
-      date_of_birth: dayjs(formData.date_of_birth).format("YYYY-MM-DD"),
+      birthday: dayjs(formData.birthday).format("YYYY-MM-DD"),
       is_active: updatedIsChecked,
     };
     setFormData(formattedData);
@@ -134,10 +134,10 @@ function UserForm({
                 <DatePicker
                   label="Ngày sinh"
                   format="DD/MM/YYYY"
-                  value={dayjs(formData.date_of_birth)}
+                  value={dayjs(formData.birthday)}
                   onChange={(date) =>
                     handleChange({
-                      target: { name: "date_of_birth", value: date },
+                      target: { name: "birthday", value: date },
                     })
                   }
                 />
@@ -198,12 +198,11 @@ function UserForm({
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  name="phone_number"
+                  name="phone"
                   label="Số điện thoại"
-                  value={formData.phone_number}
+                  value={formData.phone}
                   onChange={handleChange}
                   style={formInputStyle}
-                  required
                 />
               </Grid>
               <Grid item xs={12}>

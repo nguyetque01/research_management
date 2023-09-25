@@ -1,4 +1,4 @@
-const fundingLevels = [
+const levels = [
   { label: "Trường", value: "school" },
   { label: "Tỉnh", value: "province" },
   { label: "Bộ", value: "ministry" },
@@ -6,4 +6,4 @@ const fundingLevels = [
   { label: "Quốc tế", value: "international" },
 ];
 
-export default fundingLevels;
+export default levels;

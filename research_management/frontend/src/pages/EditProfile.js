@@ -59,12 +59,11 @@ function EditProfile() {
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     full_name: "",
-    last_name: "",
-    date_of_birth: "",
+    birthday: "",
     gender: "",
     degree: "",
     email: "",
-    phone_number: "",
+    phone: "",
     address: "",
     avatar: null,
   });
@@ -262,8 +261,8 @@ function EditProfile() {
               <DatePicker
                 label="Ngày sinh"
                 format="DD/MM/YYYY"
-                value={dayjs(formData.date_of_birth)}
-                onChange={(newValue) => handleChange("date_of_birth", newValue)}
+                value={dayjs(formData.birthday)}
+                onChange={(newValue) => handleChange("birthday", newValue)}
               />
             </Grid>
             <Grid item xs={6}>
@@ -320,8 +319,8 @@ function EditProfile() {
               <TextField
                 fullWidth
                 label="Số điện thoại"
-                value={formData.phone_number}
-                onChange={(e) => handleChange("phone_number", e.target.value)}
+                value={formData.phone}
+                onChange={(e) => handleChange("phone", e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>

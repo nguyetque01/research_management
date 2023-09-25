@@ -67,47 +67,72 @@ const menuData = [
     children: [],
   },
   {
-    text: "Quản lý tài khoản",
+    text: "Người dùng",
     icon: <AccountIcon />,
-    link: "/admin/accounts",
-    children: [],
-  },
-  {
-    text: "Quản lý đề tài",
-    icon: <AssignmentIcon />,
-    link: "/admin/researchs",
+    link: "/admin/users",
     children: [
       {
-        text: "Danh sách đề tài",
-        link: "/admin/researchs",
+        text: "Danh sách tài khoản",
+        link: "/admin/users",
+      },
+      {
+        text: "Lý lịch khoa học",
+        link: "/admin/academic-profiles",
+      },
+    ],
+  },
+  {
+    text: "Thông tin chung",
+    icon: <CategoryIcon />,
+    link: "/admin",
+    children: [
+      {
+        text: "Năm học",
+        link: "/admin/academic-years",
+      },
+      {
+        text: "Cấp đề tài",
+        link: "/admin/levels",
+      },
+      {
+        text: "Loại nghiên cứu",
+        link: "/admin/research-types",
+      },
+      {
+        text: "Đơn vị tính",
+        link: "/admin/units",
+      },
+      {
+        text: "Đơn vị chủ trì",
+        link: "/admin/lead-units",
+      },
+    ],
+  },
+  {
+    text: "Hoạt động NCKH",
+    icon: <LocalActivityIcon />,
+    link: "/admin/research-activities",
+    children: [
+      {
+        text: "Hoạt động",
+        link: "/admin/research-activities",
+      },
+      {
+        text: "Đề tài",
+        link: "/admin/research-topics",
       },
       {
         text: "Danh sách đăng ký",
-        link: "/admin/researchs/registration",
+        link: "/admin/research-activities/registration",
       },
       {
-        text: "Danh sách đề xuất",
-        link: "/admin/researchs/registration",
+        text: "Danh sách nộp",
+        link: "/admin/research-activities/submition",
       },
     ],
   },
   {
-    text: "Quản lý HĐKH",
-    icon: <LocalActivityIcon />,
-    link: "/admin/activities",
-    children: [
-      {
-        text: "Quản lý hoạt động",
-        link: "/admin/activities",
-      },
-      {
-        text: "Danh sách kê khai",
-        link: "/admin/activities/declare",
-      },
-    ],
-  },
-  {
-    text: "Tài nguyên KH",
+    text: "Tài nguyên",
     icon: <CategoryIcon />,
     link: "/admin/resourses",
     children: [

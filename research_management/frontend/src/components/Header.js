@@ -37,14 +37,13 @@ function Header() {
   };
 
   const menu1Items = [
-    { to: "/researchs/registration", label: "Đăng ký đề tài" },
-    { to: "/researchs/propose", label: "Đề xuất đề tài" },
-    { to: "/researchs", label: "Công trình công bố" },
+    { to: "/research-activities/registration", label: "Đăng ký đề tài" },
+    { to: "/research-activities/declare", label: "Nộp minh chứng" },
     { to: "/ai-tool", label: "Công cụ hỗ trợ" },
   ];
 
   const menu2Items = [
-    { to: "/activities/declare", label: "Kê khai hoạt động" },
+    { to: "/researchs", label: "Công trình công bố" },
     { to: "/articles", label: "Bài báo khoa học" },
     { to: "/transfers", label: "Chuyển giao công nghệ" },
     { to: "/books", label: "Sách do NXB phát hành" },
@@ -57,11 +56,16 @@ function Header() {
   ];
 
   const menu4Items = [
-    { to: "/activities/declare", label: "Quản lý đề tài" },
-    { to: "/articles", label: "Phê duyệt đề xuất" },
-    { to: "/transfers", label: "Phê duyệt đăng ký" },
-    { to: "/books", label: "Phê duyệt hoạt động" },
-    { to: "/awards", label: "Báo cáo tổng hợp" },
+    { to: "/research-activities", label: "Quản lý hoạt động NCKH" },
+    {
+      to: "/research-activities/registration/approve",
+      label: "Phê duyệt đăng ký",
+    },
+    {
+      to: "/research-activities/declare/approve",
+      label: "Phê duyệt minh chứng",
+    },
+    { to: "/reports", label: "Báo cáo tổng hợp" },
   ];
 
   return (
@@ -126,7 +130,7 @@ function Header() {
               className="header-button"
               onClick={handleMenuOpen("menu1Anchor")}
             >
-              Đề tài nghiên cứu
+              Hoạt động NCKH
             </Button>
             <Menu
               anchorEl={menuAnchors.menu1Anchor}
@@ -150,7 +154,7 @@ function Header() {
               className="header-button"
               onClick={handleMenuOpen("menu2Anchor")}
             >
-              Hoạt động khoa học
+              Tài nguyên NCKH
             </Button>
             <Menu
               anchorEl={menuAnchors.menu2Anchor}
@@ -168,15 +172,15 @@ function Header() {
               {renderMenuItems(menu2Items)}
             </Menu>
 
-            {/* Phần dành cho người kiểm duyệt */}
-            {userData?.role === "approver" || userData?.role === "admin" ? (
+            {/* Phần dành cho người quản lý khoa học*/}
+            {userData?.role === "manager" || userData?.role === "admin" ? (
               <>
                 <Button
                   color="inherit"
                   className="header-button"
                   onClick={handleMenuOpen("menu4Anchor")}
                 >
-                  Người kiểm duyệt
+                  Quản lý hoạt động NCKH
                 </Button>
                 <Menu
                   anchorEl={menuAnchors.menu4Anchor}

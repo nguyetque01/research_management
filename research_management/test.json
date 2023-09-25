@@ -1,0 +1,13 @@
+[
+  {
+    "model": "research_app.researchactivity",
+    "pk": 2,
+    "fields": {
+      "name": "Bài báo khoa học đăng trong tạp chí thuộc danh mục ISI",
+      "academic_year": 1,
+      "level": 1,
+      "lead_unit": 1,
+      "research_type": 1
+    }
+  }
+]
