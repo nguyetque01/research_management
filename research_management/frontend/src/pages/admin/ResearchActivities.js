@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import { Button, Grid, Modal, Snackbar, Alert, Container } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import AdminHeader from "../../components/admin/AdminHeader";
@@ -14,6 +14,7 @@ import fetchData, {
 } from "../../utils/apiUtils";
 
 function ResearchActivities() {
+  // Khai báo các biến state
   const backendUrl = DEFAULT_BACKEND_URL;
   const pageTitle = "Quản lý hoạt động nghiên cứu khoa học";
   const dataLabel = "hoạt động";
@@ -43,8 +44,8 @@ function ResearchActivities() {
   const [leadUnits, setLeadUnits] = useState([]);
   const [levels, setLevels] = useState([]);
   const [researchTypes, setResearchTypes] = useState([]);
-  const [categories, setClassifications] = useState([]);
-  const [categoriesToUpdate, setClassificationsToUpdate] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [researchActivityDetails, setResearchActivityDetails] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Gửi HTTP request để lấy danh sách data từ backend
@@ -60,7 +61,9 @@ function ResearchActivities() {
     }
   }
 
+  // Khi component được tạo hoặc cập nhật
   useEffect(() => {
+    // Hàm fetch tất cả dữ liệu từ API
     const fetchAllData = async () => {
       setIsLoading(true);
       try {
@@ -75,7 +78,11 @@ function ResearchActivities() {
           fetchData(`${backendUrl}/api/users/`, setUsers),
           fetchData(
             `${backendUrl}/api/research-activity-categories/`,
-            setClassifications
+            setCategories
+          ),
+          fetchData(
+            `${backendUrl}/api/research-activity-details/`,
+            setResearchActivityDetails
           ),
         ]);
       } catch (error) {
@@ -132,6 +139,7 @@ function ResearchActivities() {
     setIsDataModalOpen(true);
   };
 
+  // Xử lý khi người dùng gửi form
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = `${backendUrl}/api/research-activity`;
@@ -147,12 +155,12 @@ function ResearchActivities() {
       setNotification
     );
 
-    if (categoriesToUpdate.length !== 0)
-      updateClassification(categoriesToUpdate);
     setIsDataModalOpen(false);
   };
 
-  const updateClassification = () => {};
+  const ForwardedResearchActivityForm = forwardRef((props, ref) => (
+    <ResearchActivityForm {...props} ref={ref} />
+  ));
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -195,7 +203,7 @@ function ResearchActivities() {
               aria-labelledby="add-data-modal-title"
               aria-describedby="add-data-modal-description"
             >
-              <ResearchActivityForm
+              <ForwardedResearchActivityForm
                 newData={newData}
                 setNewData={setNewData}
                 editingData={editingData}
@@ -209,7 +217,7 @@ function ResearchActivities() {
                 levels={levels}
                 researchTypes={researchTypes}
                 categories={categories}
-                setClassificationsToUpdate={setClassificationsToUpdate}
+                researchActivityDetails={researchActivityDetails}
               />
             </Modal>
             <ResearchActivitiesTable
@@ -223,7 +231,8 @@ function ResearchActivities() {
               levels={levels}
               researchTypes={researchTypes}
               categories={categories}
-              setClassifications={setClassifications}
+              researchActivityDetails={researchActivityDetails}
+              setCategories={setCategories}
             />
           </Container>
         </Grid>

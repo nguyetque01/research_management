@@ -10,7 +10,7 @@ import {
   Button,
 } from "@mui/material";
 
-function UnitsTable({ data, handleEditItem, openDeleteDialog }) {
+function ResearchTypesTable({ data, handleEditItem, openDeleteDialog }) {
   return (
     <TableContainer component={Paper} sx={{ marginBottom: "40px" }}>
       <Table>
@@ -61,4 +61,4 @@ function UnitsTable({ data, handleEditItem, openDeleteDialog }) {
   );
 }
 
-export default UnitsTable;
+export default ResearchTypesTable;

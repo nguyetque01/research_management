@@ -104,11 +104,19 @@ class ResearchType(models.Model):
 
     def __str__(self):
         return self.name
+    
+# Phân loại hoạt động nghiên cứu khoa học (ResearchActivityCategory)
+class ResearchActivityCategory(models.Model):
+    research_type = models.ForeignKey(ResearchType, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.research_type.name} - {self.name}"
 
 # Hoạt động nghiên cứu khoa học (ResearchActivity)
 class ResearchActivity(models.Model):
 
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
     level = models.ForeignKey(Level, on_delete=models.CASCADE)
     lead_unit = models.ForeignKey(LeadUnit, on_delete=models.CASCADE)
@@ -119,18 +127,20 @@ class ResearchActivity(models.Model):
     def __str__(self):
         return self.name
 
-# Phân loại hoạt động nghiên cứu khoa học (ResearchActivityCategory)
-class ResearchActivityCategory(models.Model):
+# Chi tiết hoạt động nghiên cứu khoa học (ResearchActivityDetail)
+class ResearchActivityDetail(models.Model):
     
-    research_activity = models.ForeignKey(ResearchActivity, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
+    activity = models.ForeignKey(ResearchActivity, on_delete=models.CASCADE)
+    category = models.ForeignKey(ResearchActivityCategory, on_delete=models.CASCADE)
     total_hours = models.IntegerField()
     unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.research_activity.name} - {self.category_name}"
-
-
+        return f"{self.activity.name} - {self.category.name}"
+    
+    class Meta:
+        unique_together = ['activity', 'category']
+    
 # Đề tài nghiên cứu (ResearchTopic):
 class ResearchTopic(models.Model):
     COMPLETION_STATUS_CHOICES = (
@@ -138,13 +148,14 @@ class ResearchTopic(models.Model):
         ('completed', 'Đã hoàn thành'),
     )
 
-    name = models.CharField(max_length=255)
-    research_activity = models.ForeignKey('ResearchActivity', on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, null=True)
+    activity = models.ForeignKey('ResearchActivity', on_delete=models.CASCADE)
+    category = models.ForeignKey('ResearchActivityCategory', on_delete=models.CASCADE, null=True)
     authors = models.ManyToManyField(User, related_name='research_topics')
     approved_budget = models.IntegerField()
     approved_hours = models.IntegerField()
     completion_status = models.CharField(max_length=20, choices=COMPLETION_STATUS_CHOICES)
-    research_resources = models.ManyToManyField('ResearchResource')
+    research_resources = models.ManyToManyField('ResearchResource', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -157,12 +168,13 @@ class ResearchTopicRegistration(models.Model):
         ('rejected', 'Từ chối'),
     )
 
-    assigned_role = models.CharField(max_length=255)
+    topic = models.ForeignKey(ResearchTopic, on_delete=models.CASCADE)
+    registrant = models.ForeignKey(User, on_delete=models.CASCADE)
+    registered_date = models.DateField(null=True, blank=True)
+    assigned_role = models.CharField(max_length=255, null=True)
     expected_budget = models.IntegerField()
     expected_hours = models.IntegerField()
-    registrant = models.ForeignKey(User, on_delete=models.CASCADE)
-    registration_approver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='approved_registrations')
-    registered_date = models.DateField()
+    registration_approver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='approved_registrations',null=True)
     registration_approved_date = models.DateField(null=True, blank=True)
     approval_status = models.CharField(max_length=20, choices=APPROVAL_STATUS_CHOICES, default='pending')
 
@@ -177,6 +189,7 @@ class ResearchTopicSubmission(models.Model):
         ('rejected', 'Từ chối'),
     )
 
+    topic = models.ForeignKey(ResearchTopic, on_delete=models.CASCADE)
     submission_date = models.DateField()
     submission_approver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='approved_submissions')
     submission_approved_date = models.DateField(null=True, blank=True)

@@ -251,5 +251,45 @@
       "work_history": "Kỹ sư phần mềm chính, Công ty A, 2015-nay\nKỹ sư phần mềm, Công ty B, 2010-2015",
       "research_activities": "Đã công bố 10 bài báo nghiên cứu tại các hội thảo và tạp chí hàng đầu"
     }
+  },
+  {
+    "model": "research_app.researchactivitycategory",
+    "pk": 1,
+    "fields": {
+      "research_type": 1,
+      "name": "Giá trị HD ≤ 1 tỷ đồng"
+    }
+  },
+  {
+    "model": "research_app.researchactivitycategory",
+    "pk": 2,
+    "fields": {
+      "research_type": 1,
+      "name": "1 tỷ đồng < Giá trị HĐ ≤ 2 tỷ đồng"
+    }
+  },
+  {
+    "model": "research_app.researchactivitycategory",
+    "pk": 3,
+    "fields": {
+      "research_type": 1,
+      "name": "2 tỷ đồng < Giá trị HĐ"
+    }
+  },
+  {
+    "model": "research_app.researchactivitycategory",
+    "pk": 4,
+    "fields": {
+      "research_type": 4,
+      "name": "Tham gia"
+    }
+  },
+  {
+    "model": "research_app.researchactivitycategory",
+    "pk": 5,
+    "fields": {
+      "research_type": 4,
+      "name": "Đạt giải"
+    }
   }
 ]

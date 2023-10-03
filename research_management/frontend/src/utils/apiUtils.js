@@ -143,6 +143,94 @@ export const addUpdateData = async (
   }
 };
 
+export const addData = async (
+  url,
+  data,
+  successMessage,
+  fetchDataFunction,
+  setNotification,
+  setResponse
+) => {
+  try {
+    if (data.id) {
+      setNotification({
+        type: "error",
+        message: "Dữ liệu đã tồn tại",
+      });
+    } else {
+      // Nếu đang thêm dữ liệu mới
+      const response = await axios.post(`${url}/`, data);
+
+      if (response.status === 201) {
+        // Kiểm tra nếu yêu cầu thành công (status code 201 Created)
+        const responseData = response.data; // Lấy dữ liệu từ response
+        setNotification({
+          type: "success",
+          message: successMessage,
+        });
+
+        // Gọi hàm để tải lại dữ liệu (nếu cần)
+        if (fetchDataFunction) {
+          fetchDataFunction();
+        }
+
+        // Gán response data (nếu cần)
+        if (setResponse) {
+          setResponse(responseData);
+        }
+
+        return responseData; // Trả về response data
+      } else {
+        // Xử lý lỗi HTTP khác (nếu cần)
+        setNotification({
+          type: "error",
+          message: "Lỗi không xác định",
+        });
+        console.error(
+          "Error submitting data: Unexpected HTTP status code",
+          response.status
+        );
+        return null;
+      }
+    }
+  } catch (error) {
+    // Xử lý lỗi trong quá trình gửi yêu cầu
+    if (error.response) {
+      if (error.response.status === 400) {
+        // Lỗi dữ liệu không hợp lệ
+        setNotification({
+          type: "error",
+          message: "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.",
+        });
+      } else if (error.response.status === 401) {
+        // Lỗi xác thực
+        setNotification({
+          type: "error",
+          message: "Bạn cần đăng nhập để thực hiện thao tác này.",
+        });
+      } else {
+        // Xử lý lỗi HTTP khác (nếu cần)
+        setNotification({
+          type: "error",
+          message: "Lỗi không xác định",
+        });
+        console.error(
+          "Error submitting data: Unexpected HTTP status code",
+          error.response.status
+        );
+      }
+    } else {
+      // Lỗi không kết nối đến máy chủ hoặc mạng
+      setNotification({
+        type: "error",
+        message: "Không thể kết nối đến máy chủ.",
+      });
+      console.error("Error submitting data:", error.message);
+    }
+    return null;
+  }
+};
+
 /////////////////////////////////////////////////////////////////
 // Xóa một đối tượng dựa trên ID
 export const deleteDataById = async (

@@ -26,6 +26,7 @@ import Units from "./pages/admin/general/Units";
 import LeadUnits from "./pages/admin/general/LeadUnits";
 import Levels from "./pages/admin/general/Levels";
 import ResearchTypes from "./pages/admin/general/ResearchTypes";
+import ResearchActivityCategories from "./pages/admin/general/ResearchActivityCategories";
 
 function App() {
   const dispatch = useDispatch();
@@ -49,6 +50,7 @@ function App() {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Router>
         <Routes>
+          <Route path="/registration" Component={Registration} />
           <Route path="/" Component={Dashboard} />
           <Route path="/dashboard" Component={Dashboard} />
           <Route path="/about" Component={About} />
@@ -80,6 +82,10 @@ function App() {
           <Route path="/admin/lead-units" Component={LeadUnits} />
           <Route path="/admin/levels" Component={Levels} />
           <Route path="/admin/research-types" Component={ResearchTypes} />
+          <Route
+            path="/admin/research-activity-categories"
+            Component={ResearchActivityCategories}
+          />
         </Routes>
       </Router>
     </LocalizationProvider>

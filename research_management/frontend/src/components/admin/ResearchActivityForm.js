@@ -10,7 +10,6 @@ import {
   MenuItem,
 } from "@mui/material";
 import { formContainerStyle, headerStyle } from "../../assets/style/style";
-import getCategoriesByActivityId from "../../utils/commonUtils";
 import ResearchActivityCategoryForm from "../../components/admin/ResearchActivityCategoryForm";
 
 function ResearchActivityForm({
@@ -25,79 +24,77 @@ function ResearchActivityForm({
   leadUnits,
   levels,
   researchTypes,
-  classifications,
-  setCategoriesToUpdate,
+  categories,
+  researchActivityDetails,
 }) {
-  const [formData, setFormData] = useState(
-    editingData ? { ...editingData } : { ...newData }
-  );
+  const [formData, setFormData] = useState(editingData || newData);
   const [currentCategories, setCurrentCategories] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    // setCategoriesToUpdate([]);
+  const [currentDetails, setCurrentDetails] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
+  const getCategoriesByResearchTypeId = (researchTypeId) => {
+    const researchType = researchTypes.find(
+      (type) => type.id === researchTypeId
+    );
+    if (researchType) {
+      const categoriesByType = categories.filter(
+        (category) => category?.research_type === researchType?.id
+      );
+      return categoriesByType;
+    }
+    return [];
+  };
+
+  const getDetailsByActivity = (activity) => {
+    const activityDetail = researchActivityDetails?.filter(
+      (detail) => detail?.activity === activity?.id
+    );
+    return activityDetail || [];
+  };
+
+  useEffect(() => {
     const fetchDataAndSetFormData = async () => {
       setIsLoading(true);
       if (editingData) {
-        await setFormData({ ...editingData });
+        setFormData({ ...editingData });
       }
+
+      const currentCategoriesList = getCategoriesByResearchTypeId(
+        editingData?.research_type
+      );
+      setCurrentCategories(currentCategoriesList);
+
+      const details = getDetailsByActivity(editingData);
+      setCurrentDetails(details);
+
       setIsLoading(false);
     };
 
     fetchDataAndSetFormData();
-
-    const fetchActivityCategories = async () => {
-      try {
-        const currentCategoriesList = await getCategoriesByActivityId(
-          classifications,
-          editingData.id
-        );
-        setCurrentCategories(currentCategoriesList);
-      } catch (error) {
-        console.error("Lỗi khi tải danh sách phân loại hoạt động:", error);
-      }
-    };
-
-    fetchActivityCategories();
-  }, [editingData, classifications]);
-
-  // Xử lý khi người dùng bấm vào nút thêm phân loại mới
-  const handleAddCategory = () => {
-    // // Tạo một phân loại mới và thêm vào danh sách phân loại mới
-    const newCategory = {
-      research_activity: editingData.id,
-      name: "",
-      total_hours: "",
-      unit: "",
-    };
-
-    setCurrentCategories((prevCurrentCategories) => [
-      ...prevCurrentCategories,
-      newCategory,
-    ]);
-  };
+  }, [editingData, categories, researchActivityDetails]);
 
   // Xử lý khi người dùng thay đổi giá trị trường nhập liệu
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Sử dụng prevState để cập nhật state mà không bị mất dữ liệu
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    const updatedData = { ...formData, [name]: value };
+
+    setFormData(updatedData);
+
     if (editingData) {
       // Nếu đang chỉnh sửa hoạt động
-      setEditingData((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
+      setEditingData(updatedData);
     } else {
       // Nếu đang thêm hoạt động mới
-      setNewData((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
+      setNewData(updatedData);
     }
+
+    if (name === "research_type") {
+      const categories = getCategoriesByResearchTypeId(value);
+      setCurrentCategories(categories);
+    }
+
+    const details = getDetailsByActivity(editingData);
+    setCurrentDetails(details);
   };
 
   if (isLoading) {
@@ -126,7 +123,7 @@ function ResearchActivityForm({
                 label="Tên hoạt động"
                 value={formData.name}
                 onChange={handleChange}
-                requi
+                required
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -140,7 +137,7 @@ function ResearchActivityForm({
                   onChange={handleChange}
                   label="Năm học"
                 >
-                  {academicYears.map((option) => (
+                  {academicYears?.map((option) => (
                     <MenuItem key={option.id} value={option.id}>
                       {option.name}
                     </MenuItem>
@@ -159,7 +156,7 @@ function ResearchActivityForm({
                   onChange={handleChange}
                   label="Cấp đề tài"
                 >
-                  {levels.map((option) => (
+                  {levels?.map((option) => (
                     <MenuItem key={option.id} value={option.id}>
                       {option.name}
                     </MenuItem>
@@ -169,16 +166,16 @@ function ResearchActivityForm({
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel id="level_unit-label">Đơn vị chủ trì</InputLabel>
+                <InputLabel id="lead-unit-label">Đơn vị chủ trì</InputLabel>
                 <Select
-                  labelId="lead_unit-label"
-                  id="lead_unit"
+                  labelId="lead-unit-label"
+                  id="lead-unit"
                   name="lead_unit"
                   value={formData.lead_unit}
                   onChange={handleChange}
-                  label="Cấp đề tài"
+                  label="Đơn vị chủ trì"
                 >
-                  {leadUnits.map((option) => (
+                  {leadUnits?.map((option) => (
                     <MenuItem key={option.id} value={option.id}>
                       {option.name}
                     </MenuItem>
@@ -199,7 +196,7 @@ function ResearchActivityForm({
                   onChange={handleChange}
                   label="Loại hình nghiên cứu"
                 >
-                  {researchTypes.map((option) => (
+                  {researchTypes?.map((option) => (
                     <MenuItem key={option.id} value={option.id}>
                       {option.name}
                     </MenuItem>
@@ -244,7 +241,7 @@ function ResearchActivityForm({
                       onChange={handleChange}
                       label="Đơn vị tính"
                     >
-                      {units.map((option) => (
+                      {units?.map((option) => (
                         <MenuItem key={option.id} value={option.id}>
                           {option.name}
                         </MenuItem>
@@ -255,64 +252,42 @@ function ResearchActivityForm({
               </>
             ) : (
               <Grid item xs={12}>
-                {currentCategories.map((classification, index) => (
+                {currentCategories?.map((category, index) => (
                   <ResearchActivityCategoryForm
+                    key={category.id}
                     index={index}
-                    classification={classification}
-                    currentCategories={currentCategories}
-                    setCurrentCategories={setCurrentCategories}
+                    category={category}
                     units={units}
+                    editingData={editingData}
+                    researchActivityDetails={researchActivityDetails}
+                    handleChange={handleChange}
                   />
                 ))}
               </Grid>
             )}
           </Grid>
 
+          {/* Nút lưu và nút hủy */}
           <div
             style={{
               marginTop: "20px",
               marginBottom: "10px",
               display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-end",
+              justifyContent: "flex-end",
+              alignItems: "center",
             }}
           >
-            <div>
-              <div>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={handleAddCategory}
-                >
-                  Thêm phân loại mới
-                </Button>
-              </div>
-              <div>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  sx={{ marginTop: "10px" }}
-                  onClick={null}
-                >
-                  Xóa tất cả phân loại
-                </Button>
-              </div>
-            </div>
-
-            {/* Nút lưu và nút hủy */}
-            <div>
-              <Button type="submit" variant="contained" color="primary">
-                Lưu
-              </Button>
-              <Button
-                onClick={onClose}
-                variant="contained"
-                color="secondary"
-                sx={{ marginLeft: "10px" }}
-              >
-                Hủy
-              </Button>
-            </div>
+            <Button type="submit" variant="contained" color="primary">
+              Lưu
+            </Button>
+            <Button
+              onClick={onClose}
+              variant="contained"
+              color="secondary"
+              sx={{ marginLeft: "10px" }}
+            >
+              Hủy
+            </Button>
           </div>
         </form>
       </div>

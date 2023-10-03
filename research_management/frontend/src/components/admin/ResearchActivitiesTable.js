@@ -9,7 +9,6 @@ import {
   Paper,
   Button,
 } from "@mui/material";
-import getCategoriesByActivityId from "../../utils/commonUtils";
 
 function TableHeader() {
   return (
@@ -42,67 +41,78 @@ const TableRowComponent = ({
   handleEditItem,
   openDeleteDialog,
   categories,
+  researchActivityDetails,
   units,
 }) => {
-  const [researchActivityCategories, setActivityCategories] = useState([]);
-  const [rows, setRows] = useState(1);
-  const [researchActivityCategoriesLength, setActivityCategoriesLength] =
+  const [categoriesByResearchType, setCategoriesByResearchType] = useState([]);
+  const [categoriesByResearchTypeLength, setCategoriesByResearchTypeLength] =
     useState(1);
 
   useEffect(() => {
-    async function fetchActivityCategories() {
+    async function fetchCategoriesByResearchType() {
       try {
-        const researchActivityCategoriesList = await getCategoriesByActivityId(
-          categories,
-          activity.id
+        const categoriesByResearchTypeList = categories.filter(
+          (category) => category.research_type === researchType.id
         );
-        console.log(researchActivityCategoriesList);
-        setActivityCategories(researchActivityCategoriesList);
-        setActivityCategoriesLength(researchActivityCategoriesList.length);
+        setCategoriesByResearchType(categoriesByResearchTypeList);
+        setCategoriesByResearchTypeLength(categoriesByResearchTypeList.length);
       } catch (error) {
         console.error("Lỗi khi tải danh sách phân loại hoạt động:", error);
       }
     }
-    fetchActivityCategories();
-  }, []);
-
-  // Cập nhật rows khi researchActivityCategoriesLength thay đổi
-  useEffect(() => {
-    setRows(researchActivityCategoriesLength);
-  }, [researchActivityCategoriesLength]);
+    fetchCategoriesByResearchType();
+  }, [categories, researchType.id]);
 
   return (
     <>
-      {researchActivityCategories?.length !== 0 ? (
-        researchActivityCategories.map((category, categoryIndex) => (
-          <TableRow key={activity.id}>
-            {categoryIndex === 0 && (
-              <>
-                <TableCell rowSpan={rows}>{index + 1}</TableCell>
-                <TableCell rowSpan={rows}>{activity.id}</TableCell>
-                <TableCell rowSpan={rows}>{activity.name}</TableCell>
-                <TableCell rowSpan={rows}>{academicYear?.name}</TableCell>
-                <TableCell rowSpan={rows}>{level?.name}</TableCell>
-                <TableCell rowSpan={rows}>{leadUnit?.name}</TableCell>
-                <TableCell rowSpan={rows}>{researchType?.name}</TableCell>
-              </>
-            )}
-            <TableCell rowSpan={1}>{category.name}</TableCell>
-            <TableCell rowSpan={1}>{category.total_hours}</TableCell>
-            <TableCell rowSpan={1}>
-              {units.find((unit) => unit.id === category.unit)?.name}
-            </TableCell>
-            {categoryIndex === 0 && (
-              <TableCell rowSpan={rows}>
-                <ActionButton
-                  handleEditItem={handleEditItem}
-                  openDeleteDialog={openDeleteDialog}
-                  activity={activity}
-                />
-              </TableCell>
-            )}
-          </TableRow>
-        ))
+      {categoriesByResearchType?.length !== 0 ? (
+        categoriesByResearchType.map((category, categoryIndex) => {
+          return (
+            <TableRow key={`${activity.id}_${category.id}`}>
+              {categoryIndex === 0 && (
+                <>
+                  <TableCell rowSpan={categoriesByResearchTypeLength}>
+                    {index + 1}
+                  </TableCell>
+                  <TableCell rowSpan={categoriesByResearchTypeLength}>
+                    {activity.id}
+                  </TableCell>
+                  <TableCell rowSpan={categoriesByResearchTypeLength}>
+                    {activity.name}
+                  </TableCell>
+                  <TableCell rowSpan={categoriesByResearchTypeLength}>
+                    {academicYear?.name}
+                  </TableCell>
+                  <TableCell rowSpan={categoriesByResearchTypeLength}>
+                    {level?.name}
+                  </TableCell>
+                  <TableCell rowSpan={categoriesByResearchTypeLength}>
+                    {leadUnit?.name}
+                  </TableCell>
+                  <TableCell rowSpan={categoriesByResearchTypeLength}>
+                    {researchType?.name}
+                  </TableCell>
+                </>
+              )}
+              <CategoryRows
+                key={`${activity.id}_${category.id}`}
+                category={category}
+                activity={activity}
+                researchActivityDetails={researchActivityDetails}
+                units={units}
+              />
+              {categoryIndex === 0 && (
+                <TableCell rowSpan={categoriesByResearchTypeLength}>
+                  <ActionButton
+                    handleEditItem={handleEditItem}
+                    openDeleteDialog={openDeleteDialog}
+                    activity={activity}
+                  />
+                </TableCell>
+              )}
+            </TableRow>
+          );
+        })
       ) : (
         <TableRow key={activity.id}>
           <TableCell>{index + 1}</TableCell>
@@ -124,6 +134,33 @@ const TableRowComponent = ({
           </TableCell>
         </TableRow>
       )}
+    </>
+  );
+};
+
+const CategoryRows = ({
+  category,
+  activity,
+  researchActivityDetails,
+  units,
+}) => {
+  const [detail, setDetail] = useState(null);
+
+  useEffect(() => {
+    const activityDetail = researchActivityDetails.find(
+      (detail) =>
+        detail.category === category.id && detail.activity === activity.id
+    );
+    setDetail(activityDetail);
+  }, [category.id, activity.id, researchActivityDetails]);
+
+  return (
+    <>
+      <TableCell>{category.name}</TableCell>
+      <TableCell>{detail?.total_hours}</TableCell>
+      <TableCell>
+        {units.find((unit) => unit.id === detail?.unit)?.name}
+      </TableCell>
     </>
   );
 };
@@ -154,14 +191,13 @@ function ActionButton({ handleEditItem, openDeleteDialog, activity }) {
 
 function ResearchActivitiesTable({
   data,
-  handleEditItem,
-  openDeleteDialog,
   academicYears,
   units,
   leadUnits,
   levels,
   researchTypes,
   categories,
+  researchActivityDetails,
 }) {
   return (
     <TableContainer component={Paper}>
@@ -185,9 +221,8 @@ function ResearchActivitiesTable({
                 researchType={researchTypes.find(
                   (research_type) => research_type.id === activity.research_type
                 )}
-                handleEditItem={handleEditItem}
-                openDeleteDialog={openDeleteDialog}
                 categories={categories}
+                researchActivityDetails={researchActivityDetails}
                 units={units}
               />
             </>

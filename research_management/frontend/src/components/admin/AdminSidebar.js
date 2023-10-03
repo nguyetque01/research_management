@@ -99,6 +99,10 @@ const menuData = [
         link: "/admin/research-types",
       },
       {
+        text: "Phân loại hoạt động",
+        link: "/admin/research-activity-categories",
+      },
+      {
         text: "Đơn vị tính",
         link: "/admin/units",
       },
@@ -236,7 +240,6 @@ const AdminSidebar = () => {
                 {menuItem.children.length > 0 ? (
                   <>
                     <ButtonBase
-                      button
                       onClick={() => handleSubmenuClick(index)}
                       sx={linkStyle}
                     >

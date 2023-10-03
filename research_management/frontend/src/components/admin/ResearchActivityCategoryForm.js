@@ -12,102 +12,77 @@ import {
 
 export default function ResearchActivityCategoryForm({
   category,
-  currentCategories,
-  setCurrentCategories,
-  setCategoriesToUpdate,
   index,
   units,
+  editingData,
+  researchActivityDetails,
+  handleChange,
 }) {
-  const [isVisible, setIsVisible] = useState(true);
+  const [detail, setDetail] = useState(null);
 
-  // Khi người dùng thay đổi form
-  const handleChange = () => {};
-
-  // Khi người dùng xóa phân loại
-  const handleDelete = () => {
-    setCurrentCategories((prevCurrentCategories) =>
-      prevCurrentCategories.filter((item) => item !== category)
+  const getDetailByActivityCategory = (activity, category) => {
+    const activityDetail = researchActivityDetails.find(
+      (detail) =>
+        detail?.activity === activity?.id && detail?.category === category?.id
     );
-    setIsVisible(false);
+    return activityDetail;
   };
+
+  useEffect(() => {
+    const activityDetail = getDetailByActivityCategory(editingData, category);
+    setDetail(activityDetail);
+  }, [editingData, category, researchActivityDetails]);
+
   return (
-    <>
-      {isVisible && (
-        <div>
-          <Typography sx={{ fontSize: 16, color: "#333" }}>
-            Phân loại {index + 1}
-          </Typography>
-          <Grid container spacing={2} sx={{ marginTop: "0px" }}>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                fullWidth
-                name="name"
-                label="Phân loại"
-                value={category?.name}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={5}>
-              <TextField
-                fullWidth
-                name="total_hours"
-                label="Tổng số giờ"
-                value={category?.total_hours}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={2}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+    <div>
+      <Typography sx={{ fontSize: 16, color: "#333", marginTop: 2 }}>
+        Phân loại {index + 1}: {category?.name}
+      </Typography>
+      <Grid container spacing={2} sx={{ marginTop: 0 }}>
+        <Grid item xs={12} sm={5}>
+          <TextField
+            fullWidth
+            name="total_hours"
+            label="Tổng số giờ"
+            value={detail?.total_hours || ""}
+            onChange={(e) => handleChange(e, category.id)}
+          />
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          sm={2}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <p>
+            giờ <span style={{ fontSize: 20 }}>/</span>
+          </p>
+        </Grid>
+        <Grid item xs={12} sm={5}>
+          <FormControl fullWidth>
+            <InputLabel id="unit-label">Đơn vị tính</InputLabel>
+            <Select
+              labelId="unit-label"
+              id="unit"
+              name="unit"
+              value={detail?.unit || ""}
+              onChange={(e) => handleChange(e, category.id)}
+              label="Đơn vị tính"
             >
-              <p>
-                giờ <span style={{ fontSize: 20 }}>/</span>
-              </p>
-            </Grid>
-            <Grid item xs={12} sm={5}>
-              <FormControl fullWidth>
-                <InputLabel id="unit-label">Đơn vị tính</InputLabel>
-                <Select
-                  labelId="unit-label"
-                  id="unit"
-                  name="unit"
-                  value={category?.unit}
-                  onChange={handleChange}
-                  label="Đơn vị tính"
-                >
-                  {units?.map((option) => (
-                    <MenuItem key={option.id} value={option.id}>
-                      {option.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-          <div
-            style={{
-              marginTop: 16,
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Button
-              variant="outlined"
-              color="error"
-              size="small"
-              onClick={handleDelete}
-            >
-              Xóa phân loại
-            </Button>
-          </div>
-        </div>
-      )}
-    </>
+              {units &&
+                units.map((unit) => (
+                  <MenuItem key={unit.id} value={unit.id}>
+                    {unit.name}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
+    </div>
   );
 }

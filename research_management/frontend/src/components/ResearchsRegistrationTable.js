@@ -7,9 +7,8 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
+  Checkbox,
 } from "@mui/material";
-import getCategoriesByActivityId from "../utils/commonUtils";
 
 function TableHeader() {
   return (
@@ -24,7 +23,7 @@ function TableHeader() {
         <TableCell style={{ minWidth: 50 }}>Phân loại</TableCell>
         <TableCell style={{ minWidth: 50 }}>Tổng số giờ</TableCell>
         <TableCell style={{ minWidth: 50 }}>Đơn vị tính</TableCell>
-        <TableCell style={{ minWidth: 50 }}>Đăng ký</TableCell>
+        <TableCell style={{ minWidth: 50 }}>Chọn</TableCell>
       </TableRow>
     </TableHead>
   );
@@ -39,60 +38,93 @@ const TableRowComponent = ({
   unit,
   researchType,
   categories,
+  researchActivityDetails,
   units,
+  handleCheckboxChange,
+  registeredListByUser,
 }) => {
-  const [activityCategories, setActivityCategories] = useState([]);
-  const [rows, setRows] = useState(1);
-  const [activityCategoriesLength, setActivityCategoriesLength] = useState(1);
+  const [categoriesByResearchType, setCategoriesByResearchType] = useState([]);
+  const [categoriesByResearchTypeLength, setCategoriesByResearchTypeLength] =
+    useState(1);
 
   useEffect(() => {
-    async function fetchActivityCategories() {
+    async function fetchCategoriesByResearchType() {
       try {
-        const activityCategoriesList = await getCategoriesByActivityId(
-          categories,
-          activity.id
+        const categoriesByResearchTypeList = categories.filter(
+          (category) => category.research_type === researchType?.id
         );
-        console.log(activityCategoriesList);
-        setActivityCategories(activityCategoriesList);
-        setActivityCategoriesLength(activityCategoriesList.length);
+        setCategoriesByResearchType(categoriesByResearchTypeList);
+        setCategoriesByResearchTypeLength(categoriesByResearchTypeList.length);
       } catch (error) {
         console.error("Lỗi khi tải danh sách phân loại hoạt động:", error);
       }
     }
-    fetchActivityCategories();
-  }, []);
+    fetchCategoriesByResearchType();
+  }, [categories, researchType?.id]);
 
-  useEffect(() => {
-    setRows(activityCategoriesLength);
-  }, [activityCategoriesLength]);
-
+  // Hàm kiểm tra xem cặp activity và category có trong danh sách đã đăng ký của người dùng hay không
+  const isPairRegistered = (activityId, categoryId) => {
+    return registeredListByUser.some((item) => {
+      return item.activity === activityId && item.category === categoryId;
+    });
+  };
+  const isDisabled = isPairRegistered(activity?.id, null);
+  console.log(isDisabled);
   return (
     <>
-      {activityCategories?.length !== 0 ? (
-        activityCategories.map((category, categoryIndex) => (
-          <TableRow key={activity.id}>
-            {categoryIndex === 0 && (
-              <>
-                <TableCell rowSpan={rows}>{index + 1}</TableCell>
-                <TableCell rowSpan={rows}>{activity.name}</TableCell>
-                <TableCell rowSpan={rows}>{academicYear?.name}</TableCell>
-                <TableCell rowSpan={rows}>{level?.name}</TableCell>
-                <TableCell rowSpan={rows}>{leadUnit?.name}</TableCell>
-                <TableCell rowSpan={rows}>{researchType?.name}</TableCell>
-              </>
-            )}
-            <TableCell rowSpan={1}>{category.name}</TableCell>
-            <TableCell rowSpan={1}>{category.total_hours}</TableCell>
-            <TableCell rowSpan={1}>
-              {units.find((unit) => unit.id === category.unit)?.name}
-            </TableCell>
-            <TableCell rowSpan={1}>
-              <ActionButton />
-            </TableCell>
-          </TableRow>
-        ))
+      {categoriesByResearchType?.length !== 0 ? (
+        categoriesByResearchType.map((category, categoryIndex) => {
+          const isDisabledWithCategory = isPairRegistered(
+            activity?.id,
+            category?.id
+          );
+
+          return (
+            <TableRow key={`${activity?.id}_${category?.id}`}>
+              {categoryIndex === 0 && (
+                <>
+                  <TableCell rowSpan={categoriesByResearchTypeLength}>
+                    {index + 1}
+                  </TableCell>
+                  <TableCell rowSpan={categoriesByResearchTypeLength}>
+                    {activity.name}
+                  </TableCell>
+                  <TableCell rowSpan={categoriesByResearchTypeLength}>
+                    {academicYear?.name}
+                  </TableCell>
+                  <TableCell rowSpan={categoriesByResearchTypeLength}>
+                    {level?.name}
+                  </TableCell>
+                  <TableCell rowSpan={categoriesByResearchTypeLength}>
+                    {leadUnit?.name}
+                  </TableCell>
+                  <TableCell rowSpan={categoriesByResearchTypeLength}>
+                    {researchType?.name}
+                  </TableCell>
+                </>
+              )}
+              <CategoryRows
+                key={`${activity?.id}_${category?.id}`}
+                category={category}
+                activity={activity}
+                researchActivityDetails={researchActivityDetails}
+                units={units}
+              />
+
+              <TableCell rowSpan={1}>
+                <Checkbox
+                  disabled={isDisabledWithCategory} // Tắt checkbox nếu cặp đã đăng ký
+                  defaultChecked={isDisabledWithCategory}
+                  onChange={() =>
+                    handleCheckboxChange(activity?.id, category?.id)
+                  }
+                />
+              </TableCell>
+            </TableRow>
+          );
+        })
       ) : (
-        <TableRow key={activity.id}>
+        <TableRow key={activity?.id}>
           <TableCell>{index + 1}</TableCell>
           <TableCell>{activity.name}</TableCell>
           <TableCell>{academicYear?.name}</TableCell>
@@ -103,7 +135,11 @@ const TableRowComponent = ({
           <TableCell>{activity.total_hours}</TableCell>
           <TableCell>{unit?.name}</TableCell>
           <TableCell>
-            <ActionButton />
+            <Checkbox
+              defaultChecked={isDisabled}
+              disabled={isDisabled}
+              onChange={() => handleCheckboxChange(activity?.id)}
+            />
           </TableCell>
         </TableRow>
       )}
@@ -111,20 +147,32 @@ const TableRowComponent = ({
   );
 };
 
-function ActionButton({}) {
+const CategoryRows = ({
+  category,
+  activity,
+  researchActivityDetails,
+  units,
+}) => {
+  const [detail, setDetail] = useState(null);
+
+  useEffect(() => {
+    const activityDetail = researchActivityDetails.find(
+      (detail) =>
+        detail.category === category?.id && detail.activity === activity?.id
+    );
+    setDetail(activityDetail);
+  }, [category?.id, activity?.id, researchActivityDetails]);
+
   return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
-      <Button
-        variant="outlined"
-        color="primary"
-        size="small"
-        onClick={() => null}
-      >
-        Đăng ký
-      </Button>
-    </div>
+    <>
+      <TableCell>{category.name}</TableCell>
+      <TableCell>{detail?.total_hours}</TableCell>
+      <TableCell>
+        {units.find((unit) => unit?.id === detail?.unit)?.name}
+      </TableCell>
+    </>
   );
-}
+};
 
 function ResearchRegistrationTable({
   data,
@@ -134,6 +182,9 @@ function ResearchRegistrationTable({
   levels,
   researchTypes,
   categories,
+  researchActivityDetails,
+  handleCheckboxChange,
+  registeredListByUser,
 }) {
   return (
     <TableContainer component={Paper}>
@@ -143,22 +194,27 @@ function ResearchRegistrationTable({
           {data.map((activity, index) => (
             <>
               <TableRowComponent
-                key={activity.id}
+                key={activity?.id}
                 index={index}
                 activity={activity}
                 academicYear={academicYears.find(
-                  (academic_year) => academic_year.id === activity.academic_year
+                  (academic_year) =>
+                    academic_year?.id === activity.academic_year
                 )}
-                level={levels.find((level) => level.id === activity.level)}
+                level={levels.find((level) => level?.id === activity.level)}
                 leadUnit={leadUnits.find(
-                  (lead_unit) => lead_unit.id === activity.lead_unit
+                  (lead_unit) => lead_unit?.id === activity.lead_unit
                 )}
-                unit={units.find((unit) => unit.id === activity.unit)}
+                unit={units.find((unit) => unit?.id === activity.unit)}
                 researchType={researchTypes.find(
-                  (research_type) => research_type.id === activity.research_type
+                  (research_type) =>
+                    research_type?.id === activity.research_type
                 )}
                 categories={categories}
+                researchActivityDetails={researchActivityDetails}
                 units={units}
+                handleCheckboxChange={handleCheckboxChange}
+                registeredListByUser={registeredListByUser}
               />
             </>
           ))}

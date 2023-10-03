@@ -9,6 +9,7 @@ __pycache__/
 venv/
 db.sqlite3
 media/
+migrations/
 
 # Node.js/npm related
 node_modules/

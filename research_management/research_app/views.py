@@ -5,8 +5,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth import authenticate, login
-from .models import User, AcademicProfile, AcademicYear, Unit, LeadUnit, Level, ResearchType, ResearchActivity, ResearchActivityCategory, ResearchTopic
-from .serializers import UserSerializer, AcademicProfileSerializer, AcademicYearSerializer, UnitSerializer, LeadUnitSerializer, LevelSerializer, ResearchTypeSerializer, ResearchActivitySerializer,ResearchActivityCategorySerializer, ResearchTopicSerializer
+from .models import User, AcademicProfile, AcademicYear, Unit, LeadUnit, Level, ResearchType, ResearchActivity, ResearchActivityCategory, ResearchActivityDetail, ResearchTopic, ResearchTopicRegistration, ResearchTopicSubmission, ResearchResource, File, Article, TechnologyTransferProject, PublishedBook, ResearchAward
+from .serializers import UserSerializer, AcademicProfileSerializer, AcademicYearSerializer, UnitSerializer, LeadUnitSerializer, LevelSerializer, ResearchTypeSerializer, ResearchActivitySerializer, ResearchActivityCategorySerializer, ResearchActivityDetailSerializer, ResearchTopicSerializer, ResearchTopicRegistrationSerializer, ResearchTopicSubmissionSerializer, ResearchResourceSerializer, FileSerializer, ArticleSerializer, TechnologyTransferProjectSerializer, PublishedBookSerializer, ResearchAwardSerializer
 
 # COMMON API VIEW
 class CommonAPIView(APIView):
@@ -174,27 +174,6 @@ class UserToggleActiveView(APIView):
         except User.DoesNotExist:
             return Response({"message": "Người dùng không tồn tại"}, status=status.HTTP_404_NOT_FOUND)
 
-
- ########################################################################
-
-class RegistrationTopicAPIView(APIView):
-    permission_classes = (AllowAny,)
-
-    def post(self, request):
-        selected_topics = request.data.get('selected_topics', [])
-        try:
-            # Thực hiện hành động đăng ký với các đề tài đã chọn (selected_topics)
-            for topic_id in selected_topics:
-                try:
-                    topic = ResearchTopic.objects.get(id=topic_id)
-                    topic.selected = True
-                    topic.save()
-                except ResearchTopic.DoesNotExist:
-                    pass
-
-            return Response({"message": "Đăng ký thành công!"})
-        except Exception as e:
-            return Response({"message": "Đăng ký thất bại!", "error": str(e)}, status=status.HTTP_400_BAD_REQUEST)          
 
 ########################################################################
 
@@ -388,7 +367,7 @@ class ResearchActivityAPIView(CommonAPIView):
 
 ########################################################################
 
-##### Research ActivityCategory #####
+##### Research Activity Category #####
 
 class ResearchActivityCategoryListAPIView(CommonAPIView):
     model = ResearchActivityCategory
@@ -416,24 +395,30 @@ class ResearchActivityCategoryAPIView(CommonAPIView):
 
 ########################################################################
 
-##### Research Activity Category By Research Activity #####
+##### Research Activity Detail #####
 
-class ResearchActivityCategoryByResearchActivityAPIView(APIView):
-    """
-    API view to retrieve ResearchActivityCategories by ResearchActivity.
-    """
+class ResearchActivityDetailListAPIView(CommonAPIView):
+    model = ResearchActivityDetail
+    serializer_class = ResearchActivityDetailSerializer
 
-    def get(self, request, research_activity_id):
-        try:
-            # Lấy ra các ResearchActivityCategory dựa trên research_activity_id
-            categories = ResearchActivityCategory.objects.filter(research_activity__id=research_activity_id)
-            
-            # Serialize dữ liệu
-            serializer = ResearchActivityCategorySerializer(categories, many=True)
-            
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except ResearchActivityCategory.DoesNotExist:
-            return Response({"detail": "ResearchActivityCategory not found"}, status=status.HTTP_404_NOT_FOUND)
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class ResearchActivityDetailAPIView(CommonAPIView):
+    model = ResearchActivityDetail
+    serializer_class = ResearchActivityDetailSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+    
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
     
 ########################################################################
 
@@ -448,6 +433,214 @@ class ResearchTopicListAPIView(CommonAPIView):
 class ResearchTopicAPIView(CommonAPIView):
     model = ResearchTopic
     serializer_class = ResearchTopicSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+    
+########################################################################
+
+##### Research Topic Registration #####
+class ResearchTopicRegistrationListAPIView(CommonAPIView):
+    model = ResearchTopicRegistration
+    serializer_class = ResearchTopicRegistrationSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class ResearchTopicRegistrationAPIView(CommonAPIView):
+    model = ResearchTopicRegistration
+    serializer_class = ResearchTopicRegistrationSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+    
+########################################################################
+
+##### Research Topic Submission #####
+class ResearchTopicSubmissionListAPIView(CommonAPIView):
+    model = ResearchTopicSubmission
+    serializer_class = ResearchTopicSubmissionSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class ResearchTopicSubmissionAPIView(CommonAPIView):
+    model = ResearchTopicSubmission
+    serializer_class = ResearchTopicSubmissionSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+    
+########################################################################
+
+##### Research Resource #####
+class ResearchResourceListAPIView(CommonAPIView):
+    model = ResearchResource
+    serializer_class = ResearchResourceSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class ResearchResourceAPIView(CommonAPIView):
+    model = ResearchResource
+    serializer_class = ResearchResourceSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+    
+########################################################################
+
+##### File #####
+class FileListAPIView(CommonAPIView):
+    model = File
+    serializer_class = FileSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class FileAPIView(CommonAPIView):
+    model = File
+    serializer_class = FileSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+    
+########################################################################
+
+##### Article #####
+class ArticleListAPIView(CommonAPIView):
+    model = Article
+    serializer_class = ArticleSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class ArticleAPIView(CommonAPIView):
+    model = Article
+    serializer_class = ArticleSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+
+########################################################################
+
+##### Technology Transfer Project #####
+class TechnologyTransferProjectListAPIView(CommonAPIView):
+    model = TechnologyTransferProject
+    serializer_class = TechnologyTransferProjectSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class TechnologyTransferProjectAPIView(CommonAPIView):
+    model = TechnologyTransferProject
+    serializer_class = TechnologyTransferProjectSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+    
+########################################################################
+
+##### Published Book #####
+class PublishedBookListAPIView(CommonAPIView):
+    model = PublishedBook
+    serializer_class = PublishedBookSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class PublishedBookAPIView(CommonAPIView):
+    model = PublishedBook
+    serializer_class = PublishedBookSerializer
+
+    def get(self, request, pk):
+        return super().get(request, self.model, self.serializer_class, pk)
+
+    def put(self, request, pk):
+        return super().put(request, self.model, self.serializer_class, pk)
+
+    def delete(self, request, pk):
+        return super().delete(request, self.model, pk)
+
+    def post(self, request):
+        return super().post(request, self.model, self.serializer_class)
+    
+########################################################################
+
+##### Research Award #####
+class ResearchAwardListAPIView(CommonAPIView):
+    model = ResearchAward
+    serializer_class = ResearchAwardSerializer
+
+    def get(self, request):
+        return super().get(request, self.model, self.serializer_class)
+
+class ResearchAwardAPIView(CommonAPIView):
+    model = ResearchAward
+    serializer_class = ResearchAwardSerializer
 
     def get(self, request, pk):
         return super().get(request, self.model, self.serializer_class, pk)

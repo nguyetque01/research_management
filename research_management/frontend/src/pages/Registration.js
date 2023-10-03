@@ -31,10 +31,10 @@ import dayjs from "dayjs";
 
 const NO_RESEARCH_IMAGE = require("../assets/img/research.webp");
 
-function ResearchTopics() {
+function Registration() {
   const backendUrl = DEFAULT_BACKEND_URL;
-  const [researchTopics, setResearchTopics] = useState([]);
-  const [selectedTopics, setSelectedTopics] = useState([]);
+  const [researchActivities, setResearchActivities] = useState([]);
+  const [selectedActivities, setSelectedActivities] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -48,18 +48,20 @@ function ResearchTopics() {
     message: "",
   });
 
-  // Gửi HTTP request để lấy danh sách đề tài từ backend
-  async function fetchTopics() {
+  // Gửi HTTP request để lấy danh sách hoạt động từ backend
+  async function fetchActivities() {
     try {
-      const response = await axios.get(`${backendUrl}/api/research-topics/`);
-      setResearchTopics(response.data);
+      const response = await axios.get(
+        `${backendUrl}/api/research-activities/`
+      );
+      setResearchActivities(response.data);
     } catch (error) {
       if (error.response) {
         // Nếu có phản hồi từ máy chủ, xử lý lỗi dựa trên mã trạng thái HTTP
         if (error.response.status === 404) {
           setNotification({
             type: "error",
-            message: "Không tìm thấy đề tài",
+            message: "Không tìm thấy hoạt động",
           });
         } else if (error.response.status === 401) {
           // Redirect đến trang đăng nhập
@@ -84,13 +86,13 @@ function ResearchTopics() {
           message: "Lỗi không xác định",
         });
       }
-      console.error("Error fetching research topics:", error);
+      console.error("Error fetching research activities:", error);
     }
   }
 
-  // Sử dụng useEffect để tự động gọi hàm fetchTopics khi component được tạo
+  // Sử dụng useEffect để tự động gọi hàm fetchActivities khi component được tạo
   useEffect(() => {
-    fetchTopics();
+    fetchActivities();
     setSelectedHourRange("all");
   }, []);
 
@@ -113,20 +115,23 @@ function ResearchTopics() {
   };
 
   const handleSelectAllChange = () => {
-    const updatedTopics = [...researchTopics];
+    const updatedActivities = [...researchActivities];
     const selectAllValue = !selectAll;
 
-    updatedTopics.forEach((topic) => {
-      topic.selected = selectAllValue;
+    updatedActivities.forEach((activity) => {
+      activity.selected = selectAllValue;
     });
 
-    setResearchTopics(updatedTopics);
+    setResearchActivities(updatedActivities);
     setSelectAll(selectAllValue);
 
     // Tính tổng số giờ nghiên cứu
-    const selectedCount = selectAllValue ? updatedTopics.length : 0;
+    const selectedCount = selectAllValue ? updatedActivities.length : 0;
     const totalResearchHours = selectAllValue
-      ? updatedTopics.reduce((total, topic) => total + topic.research_hours, 0)
+      ? updatedActivities.reduce(
+          (total, activity) => total + activity.research_hours,
+          0
+        )
       : 0;
 
     setSelectedItemCount(selectedCount);
@@ -135,32 +140,32 @@ function ResearchTopics() {
 
   // Xử lý khi checkbox thay đổi
   const handleCheckboxChange = (index) => {
-    const updatedItems = filteredTopics?.length
-      ? [...filteredTopics]
-      : [...researchTopics];
+    const updatedItems = filteredActivities?.length
+      ? [...filteredActivities]
+      : [...researchActivities];
 
-    const topic = updatedItems[index];
+    const activity = updatedItems[index];
 
-    if (topic) {
-      // Kiểm tra xem topic tồn tại
-      topic.selected = !topic.selected;
+    if (activity) {
+      // Kiểm tra xem activity tồn tại
+      activity.selected = !activity.selected;
 
       // Cập nhật danh sách các chủ đề đã lọc
-      setFilteredTopics([...updatedItems]);
+      setFilteredActivities([...updatedItems]);
 
       // Tính tổng số giờ nghiên cứu và kiểm tra tất cả checkbox đã được chọn
       const selectedCount = updatedItems.filter(
-        (topic) => topic.selected
+        (activity) => activity.selected
       ).length;
       const totalResearchHours = updatedItems
-        .filter((topic) => topic.selected)
-        .reduce((total, topic) => total + topic.research_hours, 0);
+        .filter((activity) => activity.selected)
+        .reduce((total, activity) => total + activity.research_hours, 0);
 
       setSelectedItemCount(selectedCount);
       setTotalStudyHours(totalResearchHours);
 
       // Kiểm tra nếu tất cả các checkbox đã được chọn
-      const allSelected = updatedItems.every((topic) => topic.selected);
+      const allSelected = updatedItems.every((activity) => activity.selected);
       setSelectAll(allSelected);
     }
   };
@@ -168,17 +173,17 @@ function ResearchTopics() {
   const handleSortByColumn = (column) => {
     if (column === sortByColumn) {
       // Đảo ngược hướng sắp xếp nếu cột đã được sắp xếp
-      const sortedTopics = [...researchTopics].reverse();
-      setResearchTopics(sortedTopics);
+      const sortedActivities = [...researchActivities].reverse();
+      setResearchActivities(sortedActivities);
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
       // Sắp xếp danh sách theo cột mới và đặt cột và hướng sắp xếp
-      const sortedTopics = [...researchTopics].sort((a, b) => {
+      const sortedActivities = [...researchActivities].sort((a, b) => {
         if (column === "research_hours") {
           // Sắp xếp theo số giờ nghiên cứu
           return a.research_hours - b.research_hours;
         } else if (column === "name") {
-          // Sắp xếp theo tên đề tài
+          // Sắp xếp theo tên hoạt động
           return a.name.localeCompare(b.name);
         } else if (column === "category") {
           // Sắp xếp theo danh mục
@@ -188,7 +193,7 @@ function ResearchTopics() {
           return 0;
         }
       });
-      setResearchTopics(sortedTopics);
+      setResearchActivities(sortedActivities);
       setSortByColumn(column);
       setSortOrder("asc"); // Mặc định sắp xếp theo thứ tự tăng dần
     }
@@ -196,17 +201,19 @@ function ResearchTopics() {
 
   // Xử lý khi nút "Đăng ký" được nhấn
   const handleRegistration = () => {
-    const selectedTopics = researchTopics.filter((topic) => topic.selected);
+    const selectedActivities = researchActivities.filter(
+      (activity) => activity.selected
+    );
 
-    // Kiểm tra xem có ít nhất một đề tài được chọn
-    if (selectedTopics.length === 0) {
-      alert("Vui lòng chọn ít nhất một đề tài để đăng ký.");
+    // Kiểm tra xem có ít nhất một hoạt động được chọn
+    if (selectedActivities.length === 0) {
+      alert("Vui lòng chọn ít nhất một hoạt động để đăng ký.");
       return;
     }
 
     // Gửi yêu cầu đăng ký lên API
     const registrationData = {
-      selectedTopics: selectedTopics.map((topic) => topic.id),
+      selectedActivities: selectedActivities.map((activity) => activity.id),
     };
     fetch("http://localhost:8000/api/registration/", {
       method: "POST",
@@ -219,16 +226,16 @@ function ResearchTopics() {
       .then((data) => {
         if (data.message === "Đăng ký thành công!") {
           // Đăng ký thành công, thực hiện các hành động cần thiết
-          alert("Đăng ký đề tài thành công!");
-          // Cập nhật trạng thái đã chọn của các đề tài
-          const updatedTopics = researchTopics.map((topic) => ({
-            ...topic,
+          alert("Đăng ký hoạt động thành công!");
+          // Cập nhật trạng thái đã chọn của các hoạt động
+          const updatedActivities = researchActivities.map((activity) => ({
+            ...activity,
             selected: false,
           }));
-          setResearchTopics(updatedTopics);
+          setResearchActivities(updatedActivities);
         } else {
           // Đăng ký thất bại, xử lý lỗi
-          alert("Đăng ký đề tài thất bại. Vui lòng thử lại sau.");
+          alert("Đăng ký hoạt động thất bại. Vui lòng thử lại sau.");
         }
       })
       .catch((error) => {
@@ -237,8 +244,8 @@ function ResearchTopics() {
       });
   };
 
-  const filteredItems = researchTopics.filter((topic) =>
-    topic.topic_name.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredItems = researchActivities.filter((activity) =>
+    activity.activity_name?.toLowerCase().includes(searchValue?.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -288,7 +295,8 @@ function ResearchTopics() {
   }
 
   // Xử lý Lọc
-  const [filteredTopics, setFilteredTopics] = useState(researchTopics);
+  const [filteredActivities, setFilteredActivities] =
+    useState(researchActivities);
   const [selectedHourRange, setSelectedHourRange] = useState("all");
   const [isFiltering, setIsFiltering] = useState(false);
 
@@ -298,25 +306,26 @@ function ResearchTopics() {
 
   const handleFilterClick = () => {
     setIsFiltering(true);
-    let filteredTopics = [];
+    let filteredActivities = [];
 
     if (selectedHourRange === "all") {
-      filteredTopics = researchTopics;
+      filteredActivities = researchActivities;
     } else if (selectedHourRange === "lessThan100") {
-      filteredTopics = researchTopics.filter(
-        (topic) => topic.research_hours < 100
+      filteredActivities = researchActivities.filter(
+        (activity) => activity.research_hours < 100
       );
     } else if (selectedHourRange === "100to500") {
-      filteredTopics = researchTopics.filter(
-        (topic) => topic.research_hours >= 100 && topic.research_hours <= 500
+      filteredActivities = researchActivities.filter(
+        (activity) =>
+          activity.research_hours >= 100 && activity.research_hours <= 500
       );
     } else if (selectedHourRange === "moreThan500") {
-      filteredTopics = researchTopics.filter(
-        (topic) => topic.research_hours > 500
+      filteredActivities = researchActivities.filter(
+        (activity) => activity.research_hours > 500
       );
     }
 
-    setFilteredTopics(filteredTopics);
+    setFilteredActivities(filteredActivities);
   };
 
   return (
@@ -326,7 +335,7 @@ function ResearchTopics() {
         <Grid container alignItems="center">
           <Grid item xs={6}>
             <Typography variant="h4" style={{ margin: "20px 0" }}>
-              Đăng ký đề tài nghiên cứu
+              Đăng ký hoạt động nghiên cứu
             </Typography>
           </Grid>
         </Grid>
@@ -349,14 +358,14 @@ function ResearchTopics() {
             </Select>
           </FormControl>
 
-          {/* Lọc đề tài */}
+          {/* Lọc hoạt động */}
           <Button
             style={{ margin: "15px 10px", width: "150px" }}
             variant="contained"
             color="primary"
             onClick={handleFilterClick}
           >
-            Lọc Đề Tài
+            Lọc Hoạt Động
           </Button>
 
           {/* Hiển thị kết quả lọc nếu isFiltering là true */}
@@ -367,11 +376,11 @@ function ResearchTopics() {
           )}
         </div>
 
-        <div className="research-topics-list-container">
+        <div className="research-activities-list-container">
           <Grid container alignItems="center">
             <Grid item xs={6}>
               <Typography variant="h6" style={{ margin: "20px 0" }}>
-                Danh sách đề tài
+                Danh sách hoạt động
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -389,7 +398,7 @@ function ResearchTopics() {
             variant="body1"
             style={{ float: "right", marginRight: "10px" }}
           >
-            Số đề tài đã chọn: {selectedItemCount} - Tổng số giờ nghiên cứu:{" "}
+            Số hoạt động đã chọn: {selectedItemCount} - Tổng số giờ nghiên cứu:{" "}
             {totalResearchHours}
           </Typography>
           <div className="pagination">
@@ -407,21 +416,21 @@ function ResearchTopics() {
               ))}
             </Stack>
           </div>
-          {researchTopics.length > 0 ? (
+          {researchActivities.length > 0 ? (
             <TableContainer component={Paper}>
               <Table style={{ cursor: "pointer" }}>
                 <TableHead>
                   <TableRow>
                     <TableCell>STT</TableCell>
                     <TableCell>Năm học</TableCell>
-                    <TableCell>Mã đề tài</TableCell>
+                    <TableCell>Mã hoạt động</TableCell>
                     <TableCell onClick={() => handleSortByColumn("name")}>
-                      Tên đề tài
+                      Tên hoạt động
                       {sortByColumn === "name" && (
                         <span>{sortOrder === "asc" ? "▲" : "▼"}</span>
                       )}
                     </TableCell>
-                    <TableCell>Cấp đề tài</TableCell>
+                    <TableCell>Cấp hoạt động</TableCell>
                     <TableCell>Thời gian bắt đầu</TableCell>
                     <TableCell>Thời gian kết thúc</TableCell>
                     <TableCell>Thời gian thực hiện</TableCell>
@@ -446,52 +455,53 @@ function ResearchTopics() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredTopics.length > 0 ? (
-                    filteredTopics.map((topic, index) => (
-                      <TableRow key={topic.id}>
+                  {filteredActivities.length > 0 ? (
+                    filteredActivities.map((activity, index) => (
+                      <TableRow key={activity.id}>
                         <TableCell>{index + 1}</TableCell>
-                        <TableCell>{topic.academic_year}</TableCell>
-                        <TableCell>{topic.id}</TableCell>
-                        <TableCell>{topic.topic_name}</TableCell>
+                        <TableCell>{activity.academic_year}</TableCell>
+                        <TableCell>{activity.id}</TableCell>
+                        <TableCell>{activity.activity_name}</TableCell>
                         <TableCell>
                           {
                             levels.find(
-                              (status) => status.value === topic.funding_level
+                              (status) =>
+                                status.value === activity.funding_level
                             )?.label
                           }
                         </TableCell>
                         <TableCell>
-                          {dayjs(topic.start_date).format("DD/MM/YYYY")}
+                          {dayjs(activity.start_date).format("DD/MM/YYYY")}
                         </TableCell>
                         <TableCell>
-                          {dayjs(topic.end_date).format("DD/MM/YYYY")}
+                          {dayjs(activity.end_date).format("DD/MM/YYYY")}
                         </TableCell>
                         <TableCell>
                           {calculateExecutionTime(
-                            topic.start_date,
-                            topic.end_date
+                            activity.start_date,
+                            activity.end_date
                           )}{" "}
                           tháng
                         </TableCell>
 
-                        <TableCell>{topic.approved_budget}</TableCell>
+                        <TableCell>{activity.approved_budget}</TableCell>
                         <TableCell>
                           {
                             status.find(
-                              (status) => status.value === topic.status
+                              (status) => status.value === activity.status
                             )?.label
                           }
                         </TableCell>
-                        <TableCell>{topic.research_hours}</TableCell>
+                        <TableCell>{activity.research_hours}</TableCell>
                         <TableCell>
-                          {dayjs(topic.approval_date).format("DD/MM/YYYY")}
+                          {dayjs(activity.approval_date).format("DD/MM/YYYY")}
                         </TableCell>
                         <TableCell>
-                          {dayjs(topic.approval_date).format("DD/MM/YYYY")}
+                          {dayjs(activity.approval_date).format("DD/MM/YYYY")}
                         </TableCell>
                         <TableCell>
                           <Checkbox
-                            checked={topic.selected}
+                            checked={activity.selected}
                             onChange={() => handleCheckboxChange(index)}
                           />
                         </TableCell>
@@ -500,7 +510,7 @@ function ResearchTopics() {
                   ) : (
                     <TableRow>
                       <TableCell colSpan={7} align="center">
-                        Không tìm thấy đề tài nào.
+                        Không tìm thấy hoạt động nào.
                       </TableCell>
                     </TableRow>
                   )}
@@ -521,7 +531,7 @@ function ResearchTopics() {
                   style={{ width: "300px", height: "300px" }}
                 />
                 <Typography variant="h6">
-                  Hiện chưa có đề tài nghiên cứu.
+                  Hiện chưa có hoạt động nghiên cứu.
                 </Typography>
               </Grid>
             </Grid>
@@ -571,4 +581,4 @@ function ResearchTopics() {
   );
 }
 
-export default ResearchTopics;
+export default Registration;

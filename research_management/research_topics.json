@@ -1,0 +1,82 @@
+[
+  {
+    "model": "research_app.researchtopic",
+    "pk": 1,
+    "fields": {
+      "name": "Tên đề tài 1",
+      "activity": 1,
+      "category": 1,
+      "authors": [1],
+      "approved_budget": 5000,
+      "approved_hours": 100,
+      "completion_status": "in_progress",
+      "research_resources": []
+    }
+  },
+  {
+    "model": "research_app.researchtopic",
+    "pk": 2,
+    "fields": {
+      "name": "Tên đề tài 2",
+      "activity": 1,
+      "category": 2,
+      "authors": [1],
+      "approved_budget": 8000,
+      "approved_hours": 150,
+      "completion_status": "completed",
+      "research_resources": []
+    }
+  },
+  {
+    "model": "research_app.researchtopicregistration",
+    "pk": 1,
+    "fields": {
+      "topic": 1,
+      "registrant": 1,
+      "registered_date": "2023-09-30",
+      "assigned_role": "Người thực hiện",
+      "expected_budget": 5000,
+      "expected_hours": 100,
+      "registration_approver": 2,
+      "registration_approved_date": "2023-09-30",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "model": "research_app.researchtopicregistration",
+    "pk": 2,
+    "fields": {
+      "topic": 2,
+      "registrant": 2,
+      "registered_date": "2023-09-30",
+      "assigned_role": "Người thực hiện",
+      "expected_budget": 8000,
+      "expected_hours": 150,
+      "registration_approver": 2,
+      "registration_approved_date": "2023-09-30",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "model": "research_app.researchtopicsubmission",
+    "pk": 1,
+    "fields": {
+      "topic": 1,
+      "submission_date": "2023-09-30",
+      "submission_approver": 2,
+      "submission_approved_date": "2023-09-30",
+      "approval_status": "approved"
+    }
+  },
+  {
+    "model": "research_app.researchtopicsubmission",
+    "pk": 2,
+    "fields": {
+      "topic": 2,
+      "submission_date": "2023-09-30",
+      "submission_approver": 2,
+      "submission_approved_date": "2023-09-30",
+      "approval_status": "approved"
+    }
+  }
+]

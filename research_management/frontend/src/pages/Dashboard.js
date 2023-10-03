@@ -14,7 +14,6 @@ function Dashboard() {
     if (!isLoggedIn) {
       // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
       navigate("/login");
-      console.log(isLoggedIn);
     }
   }, []);
 
