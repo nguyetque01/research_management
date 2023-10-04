@@ -38,7 +38,7 @@ function Header() {
 
   const menu1Items = [
     { to: "/researchs/registration", label: "Đăng ký đề tài" },
-    { to: "/researchs/propose", label: "Đề xuất đề tài" },
+    { to: "/researchs/registered", label: "Các đề tài đã đăng ký" },
     { to: "/researchs", label: "Công trình công bố" },
     { to: "/ai-tool", label: "Công cụ hỗ trợ" },
   ];

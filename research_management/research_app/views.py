@@ -5,7 +5,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth import authenticate
-from .models import CustomUser, ResearchTopic, ResearchTopicRegistrationForm
+from .models import CustomUser, ResearchTopic, ResearchTopicRegistrationForm, RegisteredTopics
 from .serializers import UserSerializer, UserUpdateSerializer, ResearchTopicSerializer, ResearchTopicRegistrationSerializer
 
 ##### LOGIN #####
@@ -305,3 +305,12 @@ class RegistrationTopicAPIView(APIView):
             return Response({"message": "Đăng ký thành công!"})
         except Exception as e:
             return Response({"message": "Đăng ký thất bại!", "error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class RegisteredTopicsAPIView(APIView):
+    def get(self, request):
+        # Xử lý lấy danh sách các đề tài đã đăng ký và trả về dữ liệu
+        registered_topics = RegisteredTopic.objects.all()
+        # Chuyển đổi dữ liệu thành dạng JSON
+        data = [{"id": rt.id, "name": rt.name} for rt in registered_topics]
+        return Response(data, status=status.HTTP_200_OK)
+        

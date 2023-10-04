@@ -71,14 +71,23 @@ class ResearchTopic(models.Model):
     research_hours = models.PositiveIntegerField(null=True)
     selected = models.BooleanField(default=False)
 
-# Lớp Phiếu đề xuất đề tài nghiên cứu (ResearchProposalForm)
-class ResearchProposalForm(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    research_topic_id = models.PositiveIntegerField()
-    submission_date = models.DateField()
-    status = models.CharField(max_length=20, choices=[("pending", "Chờ duyệt"), ("approved", "Đã duyệt"), ("rejected", "Từ chối"), ("in_progress", "Đang thực hiện"), ("completed", "Hoàn thành")])
-    approver_id = models.PositiveIntegerField()
+# Lớp Các đề tài đã đăng ký (RegisteredTopics)
+class RegisteredTopics(models.Model):
+    topic_name = models.CharField(max_length=200)
+    funding_level = models.CharField(max_length=50)
+    research_type = models.CharField(max_length=100)
+    lead_unit = models.CharField(max_length=100, null=True)
+    description = models.TextField(null=True)
+    team_members = models.TextField(null=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
     approval_date = models.DateField(null=True, blank=True)
+    approved_budget = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    status = models.CharField(max_length=20, choices=[("completed", "Đã hoàn thành"), ("in_progress", "Đang thực hiện"), ("not_started", "Chưa thực hiện")])
+    attachments = models.FileField(upload_to="research_topic_attachments/", null=True, blank=True)
+    academic_year = models.CharField(max_length=10, null=True)
+    research_hours = models.PositiveIntegerField(null=True)
+    cancellation_reason = models.TextField(null=True, blank=True)
 
 # Lớp Phiếu đăng ký đề tài nghiên cứu (ResearchTopicRegistrationForm)
 class ResearchTopicRegistrationForm(models.Model):
@@ -146,3 +155,4 @@ class ResearchAward(models.Model):
     award_rank = models.CharField(max_length=20, choices=[("first", "Nhất"), ("second", "Nhì"), ("third", "Ba"), ("encouragement", "Khuyến khích")])
     award_received_date = models.DateField()
     attachments = models.FileField(upload_to="research_award_attachments/")
+    

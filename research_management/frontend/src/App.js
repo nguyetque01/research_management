@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";
 import Login from "./pages/Login";
 import ResearchsRegistration from "./pages/ResearchsRegistration";
+import RegisteredTopicsData from "./pages/RegistedTopicsData";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import AITool from "./pages/AITool";
@@ -45,6 +46,10 @@ function App() {
           <Route
             path="/researchs/registration"
             Component={ResearchsRegistration}
+          />
+          <Route
+            path="/researchs/registered"
+            Component={RegisteredTopicsData}
           />
           <Route path="/profile" Component={Profile} />
           <Route path="/profile/edit" Component={EditProfile} />

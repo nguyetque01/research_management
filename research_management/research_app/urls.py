@@ -20,5 +20,5 @@ urlpatterns = [
     path("research-topic/registration/", views.ResearchTopicRegistrationAPIView.as_view(), name="research-topic-registration"),
     
     path('registration/', views.RegistrationTopicAPIView.as_view(), name='registration'),
-
+    path('registered-topics/', views.RegisteredTopicsAPIView.as_view(), name='registered_topics'),
 ]

@@ -20,7 +20,10 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem, // Thêm Checkbox từ @mui/material
+  MenuItem,
+  Pagination,
+  Divider,
+   // Thêm Checkbox từ @mui/material
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import Header from "../components/Header";
@@ -28,10 +31,13 @@ import Footer from "../components/Footer";
 import researchStatus from "../data/researchStatus";
 import fundingLevels from "../data/fundingLevels";
 import dayjs from "dayjs";
+import "../assets/css/pagination.css";
+import UserSideBar from "../components/user/UserSideBar";
 
 const NO_RESEARCH_IMAGE = require("../assets/img/research.webp");
 
 function ResearchTopics() {
+
   const backendUrl = DEFAULT_BACKEND_URL;
   const [researchTopics, setResearchTopics] = useState([]);
   const [selectedTopics, setSelectedTopics] = useState([]);
@@ -40,9 +46,14 @@ function ResearchTopics() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [selectedItemCount, setSelectedItemCount] = useState(0); // Thêm state cho số lượng item đã chọn
   const [selectAll, setSelectAll] = useState(false);
+  const [atLeastOneTopicSelected, setAtLeastOneTopicSelected] = useState(false);
   const [totalResearchHours, setTotalStudyHours] = useState(0);
   const [sortByColumn, setSortByColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
+  const [filteredTopics, setFilteredTopics] = useState([]);
+  const [selectedHourRange, setSelectedHourRange] = useState("all");
+  const [isFiltering, setIsFiltering] = useState(false);
+  const [totalItems, setTotalItems] = useState(0);
   const [notification, setNotification] = useState({
     type: "success",
     message: "",
@@ -53,6 +64,10 @@ function ResearchTopics() {
     try {
       const response = await axios.get(`${backendUrl}/api/research-topics/`);
       setResearchTopics(response.data);
+
+      // Cập nhật tổng số item trong dataset
+      const totalItems = response.data.length;
+      setTotalItems(totalItems);
     } catch (error) {
       if (error.response) {
         // Nếu có phản hồi từ máy chủ, xử lý lỗi dựa trên mã trạng thái HTTP
@@ -93,6 +108,7 @@ function ResearchTopics() {
     fetchTopics();
     setSelectedHourRange("all");
   }, []);
+  
 
   function calculateExecutionTime(startDate, endDate) {
     const start = dayjs(startDate);
@@ -101,32 +117,28 @@ function ResearchTopics() {
     return months;
   }
 
-  const handleSearchChange = (event) => {
-    setSearchValue(event.target.value);
-    // Thiết lập trang hiện tại về 1 khi thay đổi giá trị tìm kiếm
-    setCurrentPage(1);
-  };
-
+  // Xử lý khi thay đổi số trang
   const handleItemsPerPageChange = (event) => {
-    setItemsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(1); // Reset lại trang hiện tại về 1 khi thay đổi số lượng danh sách trên mỗi trang
+    setItemsPerPage(parseInt(event.target.value));
+    setCurrentPage(1); // Đặt lại trang hiện tại về 1 khi thay đổi số lượng mục trên mỗi trang
   };
 
+  // Xử lý checkbox khi chọn All
   const handleSelectAllChange = () => {
-    const updatedTopics = [...researchTopics];
+    const updatedItems = filteredTopics?.length ? [...filteredTopics] : [...researchTopics];
     const selectAllValue = !selectAll;
 
-    updatedTopics.forEach((topic) => {
+    updatedItems.forEach((topic) => {
       topic.selected = selectAllValue;
     });
 
-    setResearchTopics(updatedTopics);
+    setFilteredTopics([...updatedItems]);
     setSelectAll(selectAllValue);
 
     // Tính tổng số giờ nghiên cứu
-    const selectedCount = selectAllValue ? updatedTopics.length : 0;
+    const selectedCount = selectAllValue ? updatedItems.length : 0;
     const totalResearchHours = selectAllValue
-      ? updatedTopics.reduce((total, topic) => total + topic.research_hours, 0)
+      ? updatedItems.reduce((total, topic) => total + topic.research_hours, 0)
       : 0;
 
     setSelectedItemCount(selectedCount);
@@ -135,10 +147,7 @@ function ResearchTopics() {
 
   // Xử lý khi checkbox thay đổi
   const handleCheckboxChange = (index) => {
-    const updatedItems = filteredTopics?.length
-      ? [...filteredTopics]
-      : [...researchTopics];
-
+    const updatedItems = filteredTopics?.length ? [...filteredTopics] : [...researchTopics];
     const topic = updatedItems[index];
 
     if (topic) {
@@ -149,9 +158,7 @@ function ResearchTopics() {
       setFilteredTopics([...updatedItems]);
 
       // Tính tổng số giờ nghiên cứu và kiểm tra tất cả checkbox đã được chọn
-      const selectedCount = updatedItems.filter(
-        (topic) => topic.selected
-      ).length;
+      const selectedCount = updatedItems.filter((topic) => topic.selected).length;
       const totalResearchHours = updatedItems
         .filter((topic) => topic.selected)
         .reduce((total, topic) => total + topic.research_hours, 0);
@@ -165,32 +172,33 @@ function ResearchTopics() {
     }
   };
 
+  // Xử lý sắp xếp khi nhấn vào cột
   const handleSortByColumn = (column) => {
     if (column === sortByColumn) {
-      // Đảo ngược hướng sắp xếp nếu cột đã được sắp xếp
+      /// Đảo ngược hướng sắp xếp nếu cột đã được sắp xếp
       const sortedTopics = [...researchTopics].reverse();
       setResearchTopics(sortedTopics);
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
-      // Sắp xếp danh sách theo cột mới và đặt cột và hướng sắp xếp
+      /// Sắp xếp danh sách theo cột mới và đặt cột và hướng sắp xếp
       const sortedTopics = [...researchTopics].sort((a, b) => {
         if (column === "research_hours") {
-          // Sắp xếp theo số giờ nghiên cứu
+          //// Sắp xếp theo số giờ nghiên cứu
           return a.research_hours - b.research_hours;
         } else if (column === "name") {
-          // Sắp xếp theo tên đề tài
+          //// Sắp xếp theo tên đề tài
           return a.name.localeCompare(b.name);
         } else if (column === "category") {
-          // Sắp xếp theo danh mục
+          //// Sắp xếp theo danh mục
           return a.category.localeCompare(b.category);
         } else {
-          // Các trường hợp khác, bạn có thể thêm logic sắp xếp cho các trường khác ở đây
+          //// Các trường hợp khác, bạn có thể thêm logic sắp xếp cho các trường khác ở đây
           return 0;
         }
       });
       setResearchTopics(sortedTopics);
       setSortByColumn(column);
-      setSortOrder("asc"); // Mặc định sắp xếp theo thứ tự tăng dần
+      setSortOrder("asc"); /// Mặc định sắp xếp theo thứ tự tăng dần
     }
   };
 
@@ -198,13 +206,13 @@ function ResearchTopics() {
   const handleRegistration = () => {
     const selectedTopics = researchTopics.filter((topic) => topic.selected);
 
-    // Kiểm tra xem có ít nhất một đề tài được chọn
+    /// Kiểm tra xem có ít nhất một đề tài được chọn
     if (selectedTopics.length === 0) {
       alert("Vui lòng chọn ít nhất một đề tài để đăng ký.");
       return;
     }
 
-    // Gửi yêu cầu đăng ký lên API
+    /// Gửi yêu cầu đăng ký lên API
     const registrationData = {
       selectedTopics: selectedTopics.map((topic) => topic.id),
     };
@@ -218,36 +226,46 @@ function ResearchTopics() {
       .then((response) => response.json())
       .then((data) => {
         if (data.message === "Đăng ký thành công!") {
-          // Đăng ký thành công, thực hiện các hành động cần thiết
+          //// Đăng ký thành công, thực hiện các hành động cần thiết
           alert("Đăng ký đề tài thành công!");
-          // Cập nhật trạng thái đã chọn của các đề tài
+          //// Cập nhật trạng thái đã chọn của các đề tài
           const updatedTopics = researchTopics.map((topic) => ({
             ...topic,
             selected: false,
           }));
           setResearchTopics(updatedTopics);
         } else {
-          // Đăng ký thất bại, xử lý lỗi
+          //// Đăng ký thất bại, xử lý lỗi
           alert("Đăng ký đề tài thất bại. Vui lòng thử lại sau.");
         }
       })
       .catch((error) => {
-        // Xử lý lỗi khi không thể kết nối tới API
+        //// Xử lý lỗi khi không thể kết nối tới API
         alert("Có lỗi xảy ra khi kết nối đến máy chủ.");
       });
   };
 
+  // Lọc các mục trong mảng researchTopics dựa trên giá trị tìm kiếm  
   const filteredItems = researchTopics.filter((topic) =>
     topic.topic_name.toLowerCase().includes(searchValue.toLowerCase())
   );
 
+  ////// Tính toán số trang
+  // Tính chỉ số của mục đầu và mục cuối cùng trong trang hiện tại
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  // Lấy danh sách các mục hiện tại từ mảng đã lọc
   const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Tính tổng số trang dựa trên số lượng mục đã lọc và số lượng mục trên mỗi trang
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-  const pageNumbers = [];
+
+  const pageNumbers = [];// Khởi tạo một mảng để lưu trữ số trang
 
   const maxDisplayedPages = 5; // Số trang tối đa được hiển thị
+
+  // Tính giá trị một nửa của số trang cần hiển thị tối đa
   const maxDisplayedPagesHalf = Math.floor(maxDisplayedPages / 2);
 
   if (totalPages <= maxDisplayedPages) {
@@ -286,286 +304,418 @@ function ResearchTopics() {
       pageNumbers.push("...");
     }
   }
+  
+   // Tính số item đầu và cuối trên trang hiện tại
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
 
-  // Xử lý Lọc
-  const [filteredTopics, setFilteredTopics] = useState(researchTopics);
-  const [selectedHourRange, setSelectedHourRange] = useState("all");
-  const [isFiltering, setIsFiltering] = useState(false);
-
+  ///////// Xử lý Lọc
   const handleHourRangeChange = (event) => {
-    setSelectedHourRange(event.target.value);
+    setSelectedHourRange(event.target.value); 
+    setIsFiltering(true); // Thiết lập isFiltering thành true để kích hoạt useEffect
+  };
+
+  // Xử lý sự kiện khi tìm kiếm
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value);
+    setCurrentPage(1);
   };
 
   const handleFilterClick = () => {
     setIsFiltering(true);
     let filteredTopics = [];
+  
+    if (searchValue) {
+      // Tìm kiếm dựa trên giá trị nhập vào
+        filteredTopics = researchTopics.filter((topic) => {
+          const academicYear = topic.academic_year.toLowerCase();
+          const topicName = topic.topic_name.toLowerCase();
+          const fundingLevel = topic.funding_level.toLowerCase();
 
-    if (selectedHourRange === "all") {
-      filteredTopics = researchTopics;
-    } else if (selectedHourRange === "lessThan100") {
-      filteredTopics = researchTopics.filter(
-        (topic) => topic.research_hours < 100
-      );
-    } else if (selectedHourRange === "100to500") {
-      filteredTopics = researchTopics.filter(
-        (topic) => topic.research_hours >= 100 && topic.research_hours <= 500
-      );
-    } else if (selectedHourRange === "moreThan500") {
-      filteredTopics = researchTopics.filter(
-        (topic) => topic.research_hours > 500
-      );
+          // Kiểm tra xem giá trị tìm kiếm có tồn tại trong bất kỳ trường nào hay không
+          return (
+            academicYear.includes(searchValue.toLowerCase()) ||
+            topicName.includes(searchValue.toLowerCase()) ||
+            fundingLevel.includes(searchValue.toLowerCase())
+          );
+        });
+    } else {
+      // Xử lý logic lọc theo giờ ở đây, giữ nguyên phần này nếu bạn cần
+      if (selectedHourRange === "all") {
+        filteredTopics = researchTopics;
+      } else if (selectedHourRange === "lessThan100") {
+        filteredTopics = researchTopics.filter((topic) => topic.research_hours < 100);
+      } else if (selectedHourRange === "100to500") {
+        filteredTopics = researchTopics.filter(
+          (topic) => topic.research_hours >= 100 && topic.research_hours <= 500
+        );
+      } else if (selectedHourRange === "moreThan500") {
+        filteredTopics = researchTopics.filter((topic) => topic.research_hours > 500);
+      }
     }
 
-    setFilteredTopics(filteredTopics);
+    // cắt chiều dài khi đã lọc bằng với số select được chọn
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, filteredTopics.length);
+    const currentItems = filteredTopics.slice(startIndex, endIndex);
+
+    setFilteredTopics(currentItems);
   };
+
+  // Cập nhật trang hiện tại
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Sử dụng useEffect để cập nhật lại danh sách đề tài lọc khi researchTopics thay đổi
+  useEffect(() => {
+    handleFilterClick();
+  }, [researchTopics, currentPage, isFiltering, itemsPerPage]);
 
   return (
     <div>
       <Header />
-      <Container>
-        <Grid container alignItems="center">
-          <Grid item xs={6}>
-            <Typography variant="h4" style={{ margin: "20px 0" }}>
-              Đăng ký đề tài nghiên cứu
-            </Typography>
+        <Grid container spacing={20}>
+          {/* Sidebar */}
+          <Grid item xs={2}>
+            <UserSideBar />
+          </Grid>
+
+          {/* Content */}
+          <Grid item xs={10}>
+            <Container style={{ borderRadius: "5px",
+                          paddingBottom: "10px", boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)"}}>
+              <div className="research-topics-list-container">
+                <div style={{paddingTop:"20px"}}>
+                  <Typography variant="h6" style={{ color:"MediumBlue"}}>
+                    Danh sách đề tài
+                  </Typography>
+                </div>
+                <hr style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)", width: "100%" }} />
+
+                {/* hiển thị phần lọc, phần tìm kiếm và nút tìm kiếm*/}
+                <Paper
+                  component="form"
+                  sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: "100%", marginTop: "20px"}}
+                >
+                  <FormControl
+                    variant="outlined"
+                    size="small"
+                    style={{ margin: "0", width: "300px"}}
+                  >
+                    <InputLabel style={{ color: "Blue" }}>
+                      Chọn khoảng số giờ nghiên cứu
+                    </InputLabel>
+                    <Select
+                      label="Chọn khoảng số giờ nghiên cứu"
+                      value={selectedHourRange}
+                      onChange={handleHourRangeChange}
+                    >
+                      <MenuItem value="all">Tất cả</MenuItem>
+                      <MenuItem value="lessThan100">Dưới 100 giờ</MenuItem>
+                      <MenuItem value="100to500">100 - 500 giờ</MenuItem>
+                      <MenuItem value="moreThan500">Trên 500 giờ</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" /> {/* dấu cách gạch đứng*/}
+                  <TextField
+                    sx={{ flex: 1, height: "30px", marginBottom:"10px" }}
+                    size="small"
+                    placeholder="Tìm kiếm"
+                    inputProps={{ 'aria-label': 'search' }}
+                    value={searchValue}
+                    onChange={handleSearchChange}
+                  />
+                  {/* dấu cách gạch đứng*/}
+                  <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+                  <div>
+                    {/* Nút tìm kiếm */}
+                    <Button
+                      style={{ width: "150px", height: "38px", textAlign: "center" }}
+                      variant="contained"
+                      color="primary"
+                      onClick={handleFilterClick}
+                    >
+                      Tìm kiếm
+                    </Button>
+                    {/* Hiển thị kết quả lọc nếu đang lọc */}
+                    {isFiltering && (
+                      <div className="filtered-results">
+                        {/* Hiển thị kết quả lọc ở đây */}
+                      </div>
+                    )}
+                  </div>
+                </Paper>
+                {/* Hiển thị kết quả item được chọn và tổng số giờ được cộng khi chọn vào item */}
+                <div style={{ marginTop: "20px", display: "flex", alignItems: "center" }}>
+                  {atLeastOneTopicSelected && (
+                    <Typography
+                      variant="body1"
+                      style={{
+                        flex: 1,
+                        marginRight: "10px",
+                        padding: "5px", // Padding cho màu nền
+                      }}
+                    >
+                      Tổng số giờ nghiên cứu: {totalResearchHours}
+                    </Typography>
+                  )}
+                  <Typography variant="body1" 
+                    style={{ 
+                      display: atLeastOneTopicSelected ? "block" : "none", 
+                      backgroundColor: 'PowderBlue' 
+                  }}>
+                    Số đề tài đã chọn: {selectedItemCount}
+                  </Typography>
+                </div>
+                {/* Hiển thị phần bảng*/}
+                {researchTopics.length > 0 ? (
+                  <TableContainer component={Paper}>
+                    <Table style={{ cursor: "pointer" }}>
+                      <TableHead>
+                        <TableRow style={{ backgroundColor: "LightBlue"}}>
+                          <TableCell style={{fontWeight: "bold" }}>STT</TableCell>
+                          <TableCell style={{fontWeight: "bold" }}>Năm học</TableCell>
+                          <TableCell style={{fontWeight: "bold" }}>Mã đề tài</TableCell>
+                          <TableCell onClick={() => handleSortByColumn("topic_name")}
+                            style={{fontWeight: "bold" }}>
+                            Tên đề tài
+                            {sortByColumn === "topic_name" && (
+                              <span>{sortOrder === "asc" ? "▲" : "▼"}</span>
+                            )}
+                          </TableCell>
+                          <TableCell style={{fontWeight: "bold" }}>Cấp đề tài</TableCell>
+                          <TableCell style={{fontWeight: "bold" }}>Thời gian bắt đầu</TableCell>
+                          <TableCell style={{fontWeight: "bold" }}>Thời gian kết thúc</TableCell>
+                          <TableCell style={{fontWeight: "bold" }}>Thời gian thực hiện</TableCell>
+                          <TableCell style={{fontWeight: "bold" }}>Kinh phí được phê duyệt</TableCell>
+                          <TableCell style={{fontWeight: "bold" }}>Trạng thái </TableCell>
+                          <TableCell
+                            onClick={() => handleSortByColumn("research_hours")}
+                            style={{fontWeight: "bold" }}
+                          >
+                            Số Giờ Nghiên Cứu
+                            {sortByColumn === "research_hours" && (
+                              <span>{sortOrder === "asc" ? "▲" : "▼"}</span>
+                            )}
+                          </TableCell>
+                          <TableCell style={{fontWeight: "bold" }}>Ngày kê khai</TableCell>
+                          <TableCell style={{fontWeight: "bold" }}>Ngày phê duyệt</TableCell>
+                          <TableCell style={{fontWeight: "bold" }}>
+                            <Checkbox
+                              checked={selectAll}
+                              onChange={() => {
+                                handleSelectAllChange();
+                                setAtLeastOneTopicSelected(!selectAll); // Đánh dấu rằng có ít nhất một đề tài đã được chọn
+                              }}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {/* Hiển thị Danh sách đã lọc */}
+                        {isFiltering ? (
+                          filteredTopics.length > 0 ? (
+                            filteredTopics.map((topic, index) => (
+                              <TableRow key={topic.id}>
+                                <TableCell>{index + 1}</TableCell>
+                                <TableCell>{topic.academic_year}</TableCell>
+                                <TableCell>{topic.id}</TableCell>
+                                <TableCell>{topic.topic_name}</TableCell>
+                                <TableCell>
+                                  {
+                                    fundingLevels.find(
+                                      (status) => status.value === topic.funding_level
+                                    )?.label
+                                  }
+                                </TableCell>
+                                <TableCell>
+                                  {dayjs(topic.start_date).format("DD/MM/YYYY")}
+                                </TableCell>
+                                <TableCell>
+                                  {dayjs(topic.end_date).format("DD/MM/YYYY")}
+                                </TableCell>
+                                <TableCell>
+                                  {calculateExecutionTime(
+                                    topic.start_date,
+                                    topic.end_date
+                                  )}{" "}
+                                  tháng
+                                </TableCell>
+
+                                <TableCell>{topic.approved_budget}</TableCell>
+                                <TableCell>
+                                  {
+                                    researchStatus.find(
+                                      (status) => status.value === topic.status
+                                    )?.label
+                                  }
+                                </TableCell>
+                                <TableCell>{topic.research_hours}</TableCell>
+                                <TableCell>
+                                  {dayjs(topic.approval_date).format("DD/MM/YYYY")}
+                                </TableCell>
+                                <TableCell>
+                                  {dayjs(topic.approval_date).format("DD/MM/YYYY")}
+                                </TableCell>
+                                <TableCell>
+                                  <Checkbox
+                                    checked={topic.selected}
+                                    onChange={() => {
+                                      handleCheckboxChange(index);
+                                      setAtLeastOneTopicSelected(true); // Đánh dấu rằng có ít nhất một đề tài đã được chọn
+                                    }}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow>
+                              <TableCell colSpan={7} align="center">
+                                Không tìm thấy đề tài nào.
+                              </TableCell>
+                            </TableRow>
+                            )
+                          ) : ( //Danh sách ban đầu
+                            currentItems.length > 0 ? ( 
+                              currentItems.map((topic, index) => (
+                                <TableRow key={topic.id}>
+                                  <TableCell>{index + 1}</TableCell>
+                                  <TableCell>{topic.academic_year}</TableCell>
+                                  <TableCell>{topic.id}</TableCell>
+                                  <TableCell>{topic.topic_name}</TableCell>
+                                  <TableCell>
+                                    {
+                                      fundingLevels.find(
+                                        (status) => status.value === topic.funding_level
+                                      )?.label
+                                    }
+                                  </TableCell>
+                                  <TableCell>
+                                    {dayjs(topic.start_date).format("DD/MM/YYYY")}
+                                  </TableCell>
+                                  <TableCell>
+                                    {dayjs(topic.end_date).format("DD/MM/YYYY")}
+                                  </TableCell>
+                                  <TableCell>
+                                    {calculateExecutionTime(
+                                      topic.start_date,
+                                      topic.end_date
+                                    )}{" "}
+                                    tháng
+                                  </TableCell>
+
+                                  <TableCell>{topic.approved_budget}</TableCell>
+                                  <TableCell>
+                                    {
+                                      researchStatus.find(
+                                        (status) => status.value === topic.status
+                                      )?.label
+                                    }
+                                  </TableCell>
+                                  <TableCell>{topic.research_hours}</TableCell>
+                                  <TableCell>
+                                    {dayjs(topic.approval_date).format("DD/MM/YYYY")}
+                                  </TableCell>
+                                  <TableCell>
+                                    {dayjs(topic.approval_date).format("DD/MM/YYYY")}
+                                  </TableCell>
+                                  <TableCell>
+                                    <Checkbox
+                                      checked={topic.selected}
+                                      onChange={() => {
+                                        handleCheckboxChange(index);
+                                        setAtLeastOneTopicSelected(true); // Đánh dấu rằng có ít nhất một đề tài đã được chọn
+                                      }}
+                                    />
+                                  </TableCell>
+                                </TableRow>
+                              ))
+                            ) : (
+                              <TableRow>
+                                <TableCell colSpan={7} align="center">
+                                  Không tìm thấy đề tài nào.
+                                </TableCell>
+                              </TableRow>
+                            )
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                ) : (
+                  <Grid
+                    container
+                    justifyContent="center"
+                    alignItems="center"
+                    style={{ marginTop: "50px", marginBottom: "50px" }}
+                  >
+                    <Grid item xs={12} textAlign="center">
+                      <img
+                        src={NO_RESEARCH_IMAGE}
+                        alt="No Research"
+                        style={{ width: "300px", height: "300px" }}
+                      />
+                      <Typography variant="h6">
+                        Hiện chưa có đề tài nghiên cứu.
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                )}
+                <div style={{ marginTop: "20px", textAlign: "center" }}>
+                  <Stack direction="row" spacing={1} style={{ marginBottom: "5px", justifyContent: "flex-end" }}>
+                    <Typography variant="body1" style={{ marginTop: "5px", display: "inline-block" }}>
+                      Rows per page:&nbsp;
+                    </Typography>{/* lựa chọn số item được hiển thị */}
+                    <select
+                      value={itemsPerPage}
+                      onChange={handleItemsPerPageChange}
+                      style={{
+                        padding: "5px", 
+                        border: "none", 
+                        borderRadius: "4px",
+                        height: "30px",
+                        marginTop: "2px",
+                        fontSize: "15px",
+                        marginRight:"15px"
+                      }}
+                    >
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                    </select>
+                    {/* Hiển thị số lượng item trên trang hiện tại */}
+                    <p style={{
+                        marginTop: "6px",
+                        fontSize: "15px",
+                        marginRight:"15px"
+                      }}>{`${startIndex + 1}–${endIndex} of ${totalItems}`}</p>
+                    {/* Chuyển trang */}
+                    <Pagination
+                      count={pageNumbers.length}
+                      page={currentPage}
+                      onChange={(event, page) => handlePageChange(page)}
+                      showFirstButton
+                      showLastButton
+                    />
+                  </Stack>
+                </div>
+                <div style={{ marginTop: "20px", textAlign: "right" }}>
+                  <a href="/researchs/registered" style={{ padding: "20px", textDecoration: "none", 
+                      fontStyle: "italic", color: "MediumBlue"}}>
+                    Các đề tài đã đăng ký
+                  </a>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleRegistration}
+                  >
+                    Đăng ký
+                  </Button>
+                </div>
+              </div>
+            </Container>
           </Grid>
         </Grid>
-        <div>
-          {/* Chọn khoảng số giờ nghiên cứu */}
-          <FormControl
-            variant="outlined"
-            style={{ margin: "10px 0", width: "300px" }}
-          >
-            <InputLabel>Chọn khoảng số giờ nghiên cứu</InputLabel>
-            <Select
-              label="Chọn khoảng số giờ nghiên cứu"
-              value={selectedHourRange}
-              onChange={handleHourRangeChange}
-            >
-              <MenuItem value="all">Tất cả</MenuItem>
-              <MenuItem value="lessThan100">Dưới 100 giờ</MenuItem>
-              <MenuItem value="100to500">100 - 500 giờ</MenuItem>
-              <MenuItem value="moreThan500">Trên 500 giờ</MenuItem>
-            </Select>
-          </FormControl>
-
-          {/* Lọc đề tài */}
-          <Button
-            style={{ margin: "15px 10px", width: "150px" }}
-            variant="contained"
-            color="primary"
-            onClick={handleFilterClick}
-          >
-            Lọc Đề Tài
-          </Button>
-
-          {/* Hiển thị kết quả lọc nếu isFiltering là true */}
-          {isFiltering && (
-            <div className="filtered-results">
-              {/* Hiển thị kết quả lọc ở đây */}
-            </div>
-          )}
-        </div>
-
-        <div className="research-topics-list-container">
-          <Grid container alignItems="center">
-            <Grid item xs={6}>
-              <Typography variant="h6" style={{ margin: "20px 0" }}>
-                Danh sách đề tài
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label="Tìm kiếm"
-                variant="outlined"
-                size="small"
-                value={searchValue}
-                onChange={handleSearchChange}
-                style={{ float: "right", marginRight: "10px" }}
-              />
-            </Grid>
-          </Grid>
-          <Typography
-            variant="body1"
-            style={{ float: "right", marginRight: "10px" }}
-          >
-            Số đề tài đã chọn: {selectedItemCount} - Tổng số giờ nghiên cứu:{" "}
-            {totalResearchHours}
-          </Typography>
-          <div className="pagination">
-            <Stack direction="row" spacing={1}>
-              {pageNumbers.map((number, index) => (
-                <button
-                  key={index}
-                  className={`page-number ${
-                    currentPage === number ? "active" : ""
-                  }`}
-                  onClick={() => setCurrentPage(number)}
-                >
-                  {number === "..." ? "..." : number}
-                </button>
-              ))}
-            </Stack>
-          </div>
-          {researchTopics.length > 0 ? (
-            <TableContainer component={Paper}>
-              <Table style={{ cursor: "pointer" }}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>STT</TableCell>
-                    <TableCell>Năm học</TableCell>
-                    <TableCell>Mã đề tài</TableCell>
-                    <TableCell onClick={() => handleSortByColumn("name")}>
-                      Tên đề tài
-                      {sortByColumn === "name" && (
-                        <span>{sortOrder === "asc" ? "▲" : "▼"}</span>
-                      )}
-                    </TableCell>
-                    <TableCell>Cấp đề tài</TableCell>
-                    <TableCell>Thời gian bắt đầu</TableCell>
-                    <TableCell>Thời gian kết thúc</TableCell>
-                    <TableCell>Thời gian thực hiện</TableCell>
-                    <TableCell>Kinh phí được phê duyệt</TableCell>
-                    <TableCell>Trạng thái </TableCell>
-                    <TableCell
-                      onClick={() => handleSortByColumn("research_hours")}
-                    >
-                      Số Giờ Nghiên Cứu
-                      {sortByColumn === "research_hours" && (
-                        <span>{sortOrder === "asc" ? "▲" : "▼"}</span>
-                      )}
-                    </TableCell>
-                    <TableCell>Ngày kê khai</TableCell>
-                    <TableCell>Ngày phê duyệt</TableCell>
-                    <TableCell>
-                      <Checkbox
-                        checked={selectAll}
-                        onChange={handleSelectAllChange}
-                      />
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredTopics.length > 0 ? (
-                    filteredTopics.map((topic, index) => (
-                      <TableRow key={topic.id}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell>{topic.academic_year}</TableCell>
-                        <TableCell>{topic.id}</TableCell>
-                        <TableCell>{topic.topic_name}</TableCell>
-                        <TableCell>
-                          {
-                            fundingLevels.find(
-                              (status) => status.value === topic.funding_level
-                            )?.label
-                          }
-                        </TableCell>
-                        <TableCell>
-                          {dayjs(topic.start_date).format("DD/MM/YYYY")}
-                        </TableCell>
-                        <TableCell>
-                          {dayjs(topic.end_date).format("DD/MM/YYYY")}
-                        </TableCell>
-                        <TableCell>
-                          {calculateExecutionTime(
-                            topic.start_date,
-                            topic.end_date
-                          )}{" "}
-                          tháng
-                        </TableCell>
-
-                        <TableCell>{topic.approved_budget}</TableCell>
-                        <TableCell>
-                          {
-                            researchStatus.find(
-                              (status) => status.value === topic.status
-                            )?.label
-                          }
-                        </TableCell>
-                        <TableCell>{topic.research_hours}</TableCell>
-                        <TableCell>
-                          {dayjs(topic.approval_date).format("DD/MM/YYYY")}
-                        </TableCell>
-                        <TableCell>
-                          {dayjs(topic.approval_date).format("DD/MM/YYYY")}
-                        </TableCell>
-                        <TableCell>
-                          <Checkbox
-                            checked={topic.selected}
-                            onChange={() => handleCheckboxChange(index)}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={7} align="center">
-                        Không tìm thấy đề tài nào.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          ) : (
-            <Grid
-              container
-              justifyContent="center"
-              alignItems="center"
-              style={{ marginTop: "50px", marginBottom: "50px" }}
-            >
-              <Grid item xs={12} textAlign="center">
-                <img
-                  src={NO_RESEARCH_IMAGE}
-                  alt="No Research"
-                  style={{ width: "300px", height: "300px" }}
-                />
-                <Typography variant="h6">
-                  Hiện chưa có đề tài nghiên cứu.
-                </Typography>
-              </Grid>
-            </Grid>
-          )}
-          <div style={{ marginTop: "20px", textAlign: "center" }}>
-            <Typography
-              variant="body1"
-              style={{ float: "right", marginRight: "10px" }}
-            >
-              Hiển thị&nbsp;
-              <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-              </select>
-            </Typography>
-            <div className="pagination">
-              <Stack direction="row" spacing={1}>
-                {pageNumbers.map((number, index) => (
-                  <button
-                    key={index}
-                    className={`page-number ${
-                      currentPage === number ? "active" : ""
-                    }`}
-                    onClick={() => setCurrentPage(number)}
-                  >
-                    {number === "..." ? "..." : number}
-                  </button>
-                ))}
-              </Stack>
-            </div>
-          </div>
-
-          <div style={{ marginTop: "20px", textAlign: "right" }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleRegistration}
-            >
-              Đăng ký
-            </Button>
-          </div>
-        </div>
-      </Container>
       <Footer />
     </div>
   );
