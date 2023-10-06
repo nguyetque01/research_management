@@ -191,24 +191,20 @@ function ResearchRegistrationTable({
       <Table>
         <TableHeader />
         <TableBody>
-          {data.map((activity, index) => (
-            <>
+          {data.length > 0 ? (
+            data.map((activity, index) => (
               <TableRowComponent
                 key={activity?.id}
                 index={index}
                 activity={activity}
                 academicYear={academicYears.find(
-                  (academic_year) =>
-                    academic_year?.id === activity.academic_year
+                  (academic_year) => academic_year?.id === activity.academic_year
                 )}
                 level={levels.find((level) => level?.id === activity.level)}
-                leadUnit={leadUnits.find(
-                  (lead_unit) => lead_unit?.id === activity.lead_unit
-                )}
+                leadUnit={leadUnits.find((lead_unit) => lead_unit?.id === activity.lead_unit)}
                 unit={units.find((unit) => unit?.id === activity.unit)}
                 researchType={researchTypes.find(
-                  (research_type) =>
-                    research_type?.id === activity.research_type
+                  (research_type) => research_type?.id === activity.research_type
                 )}
                 categories={categories}
                 researchActivityDetails={researchActivityDetails}
@@ -216,8 +212,14 @@ function ResearchRegistrationTable({
                 handleCheckboxChange={handleCheckboxChange}
                 registeredListByUser={registeredListByUser}
               />
-            </>
-          ))}
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={10} align="center">
+                Không tìm thấy kết quả phù hợp.
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </TableContainer>

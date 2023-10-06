@@ -24,6 +24,30 @@
     }
   },
   {
+    "model": "research_app.researchactivity",
+    "pk": 3,
+    "fields": {
+      "name": "Cộng tác viên chính các đề tài, dự án cấp Nhà nước có hợp đồng với Chủ nhiệm đề tài, có nộp báo cáo về Sở Khoa học Công nghệ",
+      "academic_year": 4,
+      "level": 4,
+      "lead_unit": 1,
+      "research_type": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivity",
+    "pk": 4,
+    "fields": {
+      "name": "Đề tài NCKH cấp Trường thực hiện đúng tiến độ đăng ký và có nộp báo cáo về Viện NC&UD KHCN (70 giờ/đề tài)",
+      "academic_year": 4,
+      "level": 1,
+      "lead_unit": 3,
+      "research_type": 2,
+      "total_hours": 70,
+      "unit": 1
+    }
+  },
+  {
     "model": "research_app.researchactivitydetail",
     "pk": 1,
     "fields": {
@@ -50,6 +74,235 @@
       "activity": 1,
       "category": 3,
       "total_hours": 1250,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivitydetail",
+    "pk": 4,
+    "fields": {
+      "activity": 3,
+      "category": 1,
+      "total_hours": 150,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivitydetail",
+    "pk": 5,
+    "fields": {
+      "activity": 3,
+      "category": 2,
+      "total_hours": 200,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivitydetail",
+    "pk": 6,
+    "fields": {
+      "activity": 3,
+      "category": 3,
+      "total_hours": 250,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivity",
+    "pk": 5,
+    "fields": {
+      "name": "Cộng tác viên chính các đề tài, dự án cấp Tỉnh, Bộ có hợp đồng với Chủ nhiệm đề tài, có nộp báo cáo về Sở Khoa học Công nghệ",
+      "academic_year": 4,
+      "level": 2,
+      "lead_unit": 1,
+      "research_type": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivitydetail",
+    "pk": 7,
+    "fields": {
+      "activity": 5,
+      "category": 1,
+      "total_hours": 120,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivitydetail",
+    "pk": 8,
+    "fields": {
+      "activity": 5,
+      "category": 2,
+      "total_hours": 150,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivitydetail",
+    "pk": 9,
+    "fields": {
+      "activity": 5,
+      "category": 3,
+      "total_hours": 180,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivity",
+    "pk": 6,
+    "fields": {
+      "name": "Chủ nhiệm đề tài, dự án cấp Bộ, Tỉnh* thực hiện đúng tiến độ đăng ký và có nộp báo cáo về Sở Khoa học Công nghệ",
+      "academic_year": 4,
+      "level": 3,
+      "lead_unit": 1,
+      "research_type": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivitydetail",
+    "pk": 10,
+    "fields": {
+      "activity": 6,
+      "category": 1,
+      "total_hours": 450,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivitydetail",
+    "pk": 11,
+    "fields": {
+      "activity": 6,
+      "category": 2,
+      "total_hours": 600,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivitydetail",
+    "pk": 12,
+    "fields": {
+      "activity": 6,
+      "category": 3,
+      "total_hours": 750,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivity",
+    "pk": 7,
+    "fields": {
+      "name": "Hướng dẫn đề tài NCKH Sinh viên cấp Trường thực hiện đúng tiến độ đăng ký và có nộp báo cáo về Viện NC&UD KHCN (Người hướng dẫn chính)",
+      "academic_year": 4,
+      "level": 1,
+      "lead_unit": 2,
+      "research_type": 2,
+      "total_hours": 50,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivity",
+    "pk": 8,
+    "fields": {
+      "name": "Chuyển giao công nghệ, tư vấn kỹ thuật có doanh thu đứng tên Trường Đại học Công nghệ Đồng Nai",
+      "academic_year": 4,
+      "level": 1,
+      "lead_unit": 2,
+      "research_type": 2,
+      "total_hours": 50,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivity",
+    "pk": 9,
+    "fields": {
+      "name": "Tham gia các cuộc thi khoa học cấp quốc tế",
+      "academic_year": 4,
+      "level": 5,
+      "lead_unit": 2,
+      "research_type": 2,
+      "total_hours": 250,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivity",
+    "pk": 10,
+    "fields": {
+      "name": "Tham gia các cuộc thi khoa học cấp Tỉnh, Bộ, Nhà nước",
+      "academic_year": 4,
+      "level": 2,
+      "lead_unit": 2,
+      "research_type": 2,
+      "total_hours": 100,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivity",
+    "pk": 11,
+    "fields": {
+      "name": "Hướng dẫn sinh viên tham gia các cuộc thi khoa học cấp Trường",
+      "academic_year": 4,
+      "level": 1,
+      "lead_unit": 2,
+      "research_type": 2,
+      "total_hours": 50,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivity",
+    "pk": 12,
+    "fields": {
+      "name": "Hướng dẫn sinh viên tham gia các cuộc thi khoa học cấp quốc tế",
+      "academic_year": 4,
+      "level": 5,
+      "lead_unit": 2,
+      "research_type": 2,
+      "total_hours": 200,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivity",
+    "pk": 13,
+    "fields": {
+      "name": "Sách và giáo trình học tập được Nhà xuất bản phát hành",
+      "academic_year": 4,
+      "level": 1,
+      "lead_unit": 2,
+      "research_type": 2,
+      "total_hours": 200,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivity",
+    "pk": 14,
+    "fields": {
+      "name": "Báo cáo khoa học đăng trong kỷ yếu Hội thảo/Hội nghị khoa học quốc tế có chỉ số do Trường Đại học tổ chức",
+      "academic_year": 4,
+      "level": 1,
+      "lead_unit": 2,
+      "research_type": 2,
+      "total_hours": 50,
+      "unit": 1
+    }
+  },
+  {
+    "model": "research_app.researchactivity",
+    "pk": 15,
+    "fields": {
+      "name": "Bài báo khoa học đăng trong Tạp chí chuyên ngành có chỉ số ISSN trong nước được tính điểm của Hội đồng chức danh GS, PGS Nhà nước công bố",
+      "academic_year": 4,
+      "level": 4,
+      "lead_unit": 3,
+      "research_type": 2,
+      "total_hours": 400,
       "unit": 1
     }
   }

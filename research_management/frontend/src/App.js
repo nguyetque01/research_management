@@ -12,7 +12,6 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import AITool from "./pages/AITool";
-import Registration from "./pages/Registration";
 import ResearchsRegistration from "./pages/ResearchsRegistration";
 
 // Admin Pages
@@ -50,7 +49,6 @@ function App() {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Router>
         <Routes>
-          <Route path="/registration" Component={Registration} />
           <Route path="/" Component={Dashboard} />
           <Route path="/dashboard" Component={Dashboard} />
           <Route path="/about" Component={About} />

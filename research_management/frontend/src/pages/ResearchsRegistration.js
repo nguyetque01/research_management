@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Button, Snackbar, Alert, Container, Typography } from "@mui/material";
+import {
+Button, 
+Snackbar, 
+Alert, 
+Container, 
+Typography,
+Stack,
+Pagination,
+Divider,
+Paper,
+TextField
+} from "@mui/material";
 import ResearchsRegistrationTable from "../components/ResearchsRegistrationTable";
 import DEFAULT_BACKEND_URL from "../config";
 import fetchData from "../utils/apiUtils";
@@ -44,6 +55,9 @@ function ResearchsRegistration() {
 
   const [isRegisterDialogOpen, setIsRegisterDialogOpen] = useState(false);
   // const [isDataModalOpen, setIsDataModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
+  const [perPage, setPerPage] = useState(10); // Số lượng dữ liệu hiển thị trên mỗi trang
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Gửi HTTP request để lấy danh sách data từ backend
   async function fetchDataList() {
@@ -125,6 +139,20 @@ function ResearchsRegistration() {
 
   /////////////////// Các chức năng trên giao diện /////////////////////////
 
+  //////hàm để tính số trang và cắt dữ liệu hiển thị trên trang hiện tại//////
+  const totalPages = Math.ceil(dataList.length / perPage);
+  const indexOfLastItem = currentPage * perPage;
+  const indexOfFirstItem = indexOfLastItem - perPage;
+  const currentItems = dataList.slice(indexOfFirstItem, indexOfLastItem);
+
+  //////hàm để thay đổi trang hiện tại//////
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  const totalTopics = researchTopics.length; //biến để lưu trữ tổng số đề tài
+  const topicsPerPage = currentItems.length; //biến để lưu trữ số đề tài đang hiển thị trên trang
+
   ////// Xử lý chọn hoạt động và phân loại //////
   const handleCheckboxChange = (activityId, categoryId = 0) => {
     const selectedItem = { activityId, categoryId }; // Sử dụng property shorthand để tạo đối tượng
@@ -182,6 +210,26 @@ function ResearchsRegistration() {
 
     return totalHours;
   }
+
+  //////Xử lý tìm kiếm //////
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearch = () => {
+    const searchTerms = searchQuery.split(/[ ,]+/);
+  
+    const filteredProjects = dataList.filter((project) => {
+      const nameMatch = searchTerms.some((term) =>
+        project.name.toLowerCase().includes(term.toLowerCase())
+      );
+  
+      return nameMatch ;
+    });
+  
+    setCurrentPage(1);
+    setDataList(filteredProjects);
+  };
 
   /////////////////// Dialog Đăng Ký /////////////////////////
 
@@ -340,11 +388,34 @@ function ResearchsRegistration() {
         >
           {pageTitle}
         </h2>
+        <Paper
+          component="form"
+          sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: "100%", marginTop: "20px"}}
+        >
+          <TextField
+            label="Tìm kiếm các hoạt động nghiên cứu"
+            variant="outlined"
+            size="small"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            sx={{ flex: 1, height: "30px", marginBottom:"10px" }}
+          />
+          {/* dấu cách gạch đứng*/}
+          <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSearch}
+            style={{ width: "150px", height: "38px", textAlign: "center" }}
+          >
+            Tìm kiếm
+          </Button>
+        </Paper>
 
         {/* Chọn số lượng hoạt động đã chọn và tổng số giờ nghiên cứu */}
         <Typography
           variant="body1"
-          style={{ float: "right", marginRight: "10px" }}
+          style={{ float: "right", marginRight: "10px", marginTop: "20px" }}
         >
           Số hoạt động đã chọn: {selectedList ? selectedList.length : 0} - Tổng
           số giờ nghiên cứu:
@@ -353,7 +424,7 @@ function ResearchsRegistration() {
 
         {/* Bảng danh sách các hoạt động khoa học */}
         <ResearchsRegistrationTable
-          data={dataList}
+          data={currentItems}
           academicYears={academicYears}
           users={users}
           units={units}
@@ -365,7 +436,51 @@ function ResearchsRegistration() {
           handleCheckboxChange={handleCheckboxChange}
           registeredListByUser={registeredListByUser}
         />
-
+        <div style={{ marginTop: "20px", textAlign: "center" }}>
+          <Stack direction="row" spacing={1} style={{ marginBottom: "5px", justifyContent: "flex-end" }}>
+            <Typography variant="body1" style={{ marginTop: "5px", display: "inline-block" }}>
+              Rows per page:&nbsp;
+            </Typography>{/* lựa chọn số item được hiển thị */}
+              <select
+                value={perPage}
+                onChange={(e) => setPerPage(parseInt(e.target.value))}
+                style={{
+                padding: "5px", 
+                border: "none", 
+                borderRadius: "4px",
+                height: "30px",
+                marginTop: "2px",
+                fontSize: "15px",
+                marginRight:"15px"
+                }}
+              >
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
+              {/* biểu thị tổng số đề tài và số đề tài đang hiển thị trên trang hiện tại */}
+              <Typography
+                variant="body1"
+                style={{
+                  marginTop: "6px",
+                  fontSize: "15px",
+                  marginRight:"15px"
+                }}
+              >
+                {`${indexOfFirstItem + 1} - ${indexOfFirstItem + topicsPerPage} of ${totalTopics}`}
+              </Typography>
+              {/* Chuyển trang */}
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={handlePageChange}
+                variant="outlined"
+                shape="rounded"
+                showFirstButton
+                showLastButton
+              />
+          </Stack>
+        </div>
         <div
           style={{
             display: "flex",
