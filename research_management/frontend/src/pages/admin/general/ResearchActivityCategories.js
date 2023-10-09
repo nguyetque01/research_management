@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Grid, Modal, Snackbar, Alert, Container } from "@mui/material";
+import { Button, Grid, Modal, Snackbar, Alert, Container, Pagination, Stack, Typography } from "@mui/material";
 import AdminHeader from "../../../components/admin/AdminHeader";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
 import ResearchActivityCategoryForm from "../../../components/admin/general/ResearchActivityCategoryForm";
@@ -36,6 +36,9 @@ function ResearchActivityCategories() {
     type: "success",
     message: "",
   });
+  
+  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
+  const [perPage, setPerPage] = useState(10); // Số lượng dữ liệu hiển thị trên mỗi trang
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -78,6 +81,18 @@ function ResearchActivityCategories() {
     setEditingCategoryResearchType(researchType);
     setIsModalOpen(true);
   };
+
+  //////hàm để thay đổi trang hiện tại//////
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  //////hàm để tính số trang và cắt dữ liệu hiển thị trên trang hiện tại//////
+  const totalPages = Math.ceil(researchTypes.length / perPage);
+  const indexOfLastItem = currentPage * perPage;
+  const indexOfFirstItem = indexOfLastItem - perPage;
+  const currentItems = researchTypes.slice(indexOfFirstItem, indexOfLastItem);
+
 
   // // Mở dialog xác nhận xóa phân loại
   // const openDeleteDialog = (category) => {
@@ -163,7 +178,7 @@ function ResearchActivityCategories() {
               />
             </Modal>
             <ResearchActivityCategoriesTable
-              researchTypes={researchTypes}
+              researchTypes={currentItems}
               researchActivityCategories={researchActivityCategories}
               handleAddCategory={handleAddCategory}
               editingCategoryResearchType={editingCategoryResearchType}
@@ -171,6 +186,40 @@ function ResearchActivityCategories() {
               // handleEditItem={handleEditResearchType}
               // openDeleteDialog={openDeleteDialog}
             />
+            <div style={{ marginTop: "20px", textAlign: "center" }}>
+              <Stack direction="row" spacing={1} style={{ marginBottom: "5px", justifyContent: "flex-end" }}>
+                <Typography variant="body1" style={{ marginTop: "5px", display: "inline-block" }}>
+                  Rows per page:&nbsp;
+                </Typography>{/* lựa chọn số item được hiển thị */}
+                  <select
+                    value={perPage}
+                    onChange={(e) => setPerPage(parseInt(e.target.value))}
+                    style={{
+                    padding: "5px", 
+                    border: "none", 
+                    borderRadius: "4px",
+                    height: "30px",
+                    marginTop: "2px",
+                    fontSize: "15px",
+                    marginRight:"15px"
+                    }}
+                  >
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={50}>50</option>
+                  </select>
+                  {/* Chuyển trang */}
+                  <Pagination
+                    count={totalPages}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                    variant="outlined"
+                    shape="rounded"
+                    showFirstButton
+                    showLastButton
+                  />
+              </Stack>
+            </div>
           </Container>
         </Grid>
       </Grid>

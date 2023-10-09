@@ -150,7 +150,7 @@ function ResearchsRegistration() {
     setCurrentPage(value);
   };
 
-  const totalTopics = researchTopics.length; //biến để lưu trữ tổng số đề tài
+  const totalTopics = dataList.length; //biến để lưu trữ tổng số đề tài
   const topicsPerPage = currentItems.length; //biến để lưu trữ số đề tài đang hiển thị trên trang
 
   ////// Xử lý chọn hoạt động và phân loại //////

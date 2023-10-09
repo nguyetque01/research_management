@@ -1,5 +1,16 @@
 import React, { useState, useEffect, forwardRef } from "react";
-import { Button, Grid, Modal, Snackbar, Alert, Container } from "@mui/material";
+import { 
+Button, 
+Grid, 
+Modal, 
+Snackbar, 
+Alert, 
+Container,
+Stack,
+Typography,
+Select,
+Pagination, 
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import AdminHeader from "../../components/admin/AdminHeader";
 import AdminSidebar from "../../components/admin/AdminSidebar";
@@ -47,6 +58,8 @@ function ResearchActivities() {
   const [categories, setCategories] = useState([]);
   const [researchActivityDetails, setResearchActivityDetails] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
+  const [perPage, setPerPage] = useState(10); // Số lượng dữ liệu hiển thị trên mỗi trang
 
   // Gửi HTTP request để lấy danh sách data từ backend
   async function fetchDataList() {
@@ -162,6 +175,17 @@ function ResearchActivities() {
     <ResearchActivityForm {...props} ref={ref} />
   ));
 
+  //////hàm để thay đổi trang hiện tại//////
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  //////hàm để tính số trang và cắt dữ liệu hiển thị trên trang hiện tại//////
+  const totalPages = Math.ceil(dataList.length / perPage);
+  const indexOfLastItem = currentPage * perPage;
+  const indexOfFirstItem = indexOfLastItem - perPage;
+  const currentItems = dataList.slice(indexOfFirstItem, indexOfLastItem);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -221,7 +245,7 @@ function ResearchActivities() {
               />
             </Modal>
             <ResearchActivitiesTable
-              data={dataList}
+              data={currentItems}
               handleEditItem={handleEditData}
               openDeleteDialog={openDeleteDialog}
               academicYears={academicYears}
@@ -234,6 +258,40 @@ function ResearchActivities() {
               researchActivityDetails={researchActivityDetails}
               setCategories={setCategories}
             />
+            <div style={{ marginTop: "20px", textAlign: "center" }}>
+              <Stack direction="row" spacing={1} style={{ marginBottom: "5px", justifyContent: "flex-end" }}>
+                <Typography variant="body1" style={{ marginTop: "5px", display: "inline-block" }}>
+                  Rows per page:&nbsp;
+                </Typography>{/* lựa chọn số item được hiển thị */}
+                  <select
+                    value={perPage}
+                    onChange={(e) => setPerPage(parseInt(e.target.value))}
+                    style={{
+                    padding: "5px", 
+                    border: "none", 
+                    borderRadius: "4px",
+                    height: "30px",
+                    marginTop: "2px",
+                    fontSize: "15px",
+                    marginRight:"15px"
+                    }}
+                  >
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={50}>50</option>
+                  </select>
+                  {/* Chuyển trang */}
+                  <Pagination
+                    count={totalPages}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                    variant="outlined"
+                    shape="rounded"
+                    showFirstButton
+                    showLastButton
+                  />
+              </Stack>
+            </div>
           </Container>
         </Grid>
       </Grid>

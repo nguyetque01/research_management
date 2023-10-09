@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { Container, Grid, Typography } from "@mui/material";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import SlideShow from "../components/SlideShow";
+import News from "../components/News";
+import StudentPortal from "../components/StudentPortal";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -20,21 +23,17 @@ function Dashboard() {
   return (
     <div>
       <Header />
-      <Container maxWidth="lg" className="dashboard-container">
+      <SlideShow />
+      <Container maxWidth="lg" className="dashboard-container" sx={{ marginTop: "15px" }}>
         <Grid
           container
-          spacing={20}
-          sx={{
-            minHeight: "100vh",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+          spacing={2}
         >
-          <Grid item xs={12}>
-            <Container>
-              <Typography variant="h4"> Dashboard</Typography>
-            </Container>
+          <Grid item xs={8}>
+              <News />
+          </Grid>
+          <Grid item xs={4}>
+              <StudentPortal />
           </Grid>
         </Grid>
       </Container>
