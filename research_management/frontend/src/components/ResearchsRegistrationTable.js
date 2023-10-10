@@ -191,8 +191,8 @@ function ResearchRegistrationTable({
       <Table>
         <TableHeader />
         <TableBody>
-          {data.map((activity, index) => (
-            <>
+          {data.length > 0 ? (
+            data.map((activity, index) => (
               <TableRowComponent
                 key={activity?.id}
                 index={index}
@@ -216,8 +216,14 @@ function ResearchRegistrationTable({
                 handleCheckboxChange={handleCheckboxChange}
                 registeredListByUser={registeredListByUser}
               />
-            </>
-          ))}
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={10} align="center">
+                Không tìm thấy kết quả phù hợp.
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </TableContainer>
