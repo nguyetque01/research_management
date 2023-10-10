@@ -13,10 +13,10 @@ import {
   Alert,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 import dayjs from "dayjs";
-import DEFAULT_BACKEND_URL from "../config.js";
+import DEFAULT_BACKEND_URL from "../../config.js";
 
 const degrees = [
   {

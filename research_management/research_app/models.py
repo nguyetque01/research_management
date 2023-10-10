@@ -198,7 +198,6 @@ class ResearchTopicSubmission(models.Model):
     def __str__(self):
         return f"Submission #{self.pk}"
 
-
 # Tài nguyên nghiên cứu (ResearchResource)
 class ResearchResource(models.Model):
     title = models.CharField(max_length=255)
@@ -207,21 +206,12 @@ class ResearchResource(models.Model):
     created_date = models.DateField(auto_now_add=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
     type = models.CharField(max_length=100)
-    attachments = models.ManyToManyField('File', blank=True)
+    attachments = models.FileField(upload_to='pdfs/', null=True, blank=True)
+    image = models.ImageField(upload_to='images/', null=True, blank=True)
     url = models.URLField(blank=True)
 
     def __str__(self):
         return self.title
-
-# Tập tin (File)
-class File(models.Model):
-    name = models.CharField(max_length=255)
-    file = models.FileField(upload_to='files/')
-    type = models.CharField(max_length=100)
-    size = models.PositiveIntegerField()
-
-    def __str__(self):
-        return self.name
 
 # Lớp Bài báo/báo cáo đăng trong tạp chí/kỷ yếu (Article)
 class Article(ResearchResource):

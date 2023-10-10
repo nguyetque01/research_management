@@ -244,9 +244,9 @@
     "model": "research_app.academicprofile",
     "pk": 1,
     "fields": {
-      "user": 1,
-      "academic_degree": "Tiến sĩ Khoa học Máy tính",
-      "position": "Giảng viên",
+      "user": 2,
+      "academic_degree": 3,
+      "position": 3,
       "education_history": "Tiến sĩ Khoa học Máy tính, Đại học XYZ, 2015\nThạc sĩ Khoa học Máy tính, Đại học ABC, 2010",
       "work_history": "Kỹ sư phần mềm chính, Công ty A, 2015-nay\nKỹ sư phần mềm, Công ty B, 2010-2015",
       "research_activities": "Đã công bố 10 bài báo nghiên cứu tại các hội thảo và tạp chí hàng đầu"

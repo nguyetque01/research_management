@@ -9,11 +9,14 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";
 import Login from "./pages/Login";
-import Profile from "./pages/Profile";
-import EditProfile from "./pages/EditProfile";
 import AITool from "./pages/AITool";
 import Registration from "./pages/Registration";
 import ResearchsRegistration from "./pages/ResearchsRegistration";
+
+// Profile Pages
+import Profile from "./pages/profile/Profile";
+import EditProfile from "./pages/profile/EditProfile";
+import ResearchActivitiesProfile from "./pages/profile/ResearchActivities";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -21,12 +24,21 @@ import Users from "./pages/admin/Users";
 import AcademicProfiles from "./pages/admin/AcademicProfiles";
 import ResearchActivities from "./pages/admin/ResearchActivities";
 import ResearchTopics from "./pages/admin/ResearchTopics";
+
+// Admin General Pages
 import AcademicYears from "./pages/admin/general/AcademicYears";
 import Units from "./pages/admin/general/Units";
 import LeadUnits from "./pages/admin/general/LeadUnits";
 import Levels from "./pages/admin/general/Levels";
 import ResearchTypes from "./pages/admin/general/ResearchTypes";
 import ResearchActivityCategories from "./pages/admin/general/ResearchActivityCategories";
+
+// Admin Resource Pages
+import Researchs from "./pages/admin/resources/Researchs";
+import Articles from "./pages/admin/resources/Articles";
+import Books from "./pages/admin/resources/Books";
+import Awards from "./pages/admin/resources/Awards";
+import Tranfers from "./pages/admin/resources/Tranfers";
 
 function App() {
   const dispatch = useDispatch();
@@ -57,13 +69,13 @@ function App() {
           <Route path="/login" Component={Login} />
           <Route path="/profile" Component={Profile} />
           <Route path="/profile/edit" Component={EditProfile} />
+          <Route
+            path="/profile/activities"
+            Component={ResearchActivitiesProfile}
+          />
           <Route path="/ai-tool" Component={AITool} />
           <Route
             path="/research-activities/registration"
-            Component={ResearchsRegistration}
-          />
-          <Route
-            path="/researchs/registration"
             Component={ResearchsRegistration}
           />
 
@@ -86,6 +98,11 @@ function App() {
             path="/admin/research-activity-categories"
             Component={ResearchActivityCategories}
           />
+          <Route path="/admin/resourses/researchs" Component={Researchs} />
+          <Route path="/admin/resourses/articles" Component={Articles} />
+          <Route path="/admin/resourses/books" Component={Books} />
+          <Route path="/admin/resourses/awards" Component={Awards} />
+          <Route path="/admin/resourses/tranfers" Component={Tranfers} />
         </Routes>
       </Router>
     </LocalizationProvider>

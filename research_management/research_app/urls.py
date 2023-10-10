@@ -63,10 +63,6 @@ urlpatterns = [
     path('research-resource/<int:pk>/', views.ResearchResourceAPIView.as_view(), name='research-resource-id'),
     path('research-resource/', views.ResearchResourceAPIView.as_view(), name='research-resource'),
 
-    path('files/', views.FileListAPIView.as_view(), name='files'),
-    path('file/<int:pk>/', views.FileAPIView.as_view(), name='file-id'),
-    path('file/', views.FileAPIView.as_view(), name='file'),
-
     path('articles/', views.ArticleListAPIView.as_view(), name='articles'),
     path('article/<int:pk>/', views.ArticleAPIView.as_view(), name='article-id'),
     path('article/', views.ArticleAPIView.as_view(), name='article'),
@@ -83,4 +79,5 @@ urlpatterns = [
     path('research-award/<int:pk>/', views.ResearchAwardAPIView.as_view(), name='research-award-id'),
     path('research-award/', views.ResearchAwardAPIView.as_view(), name='research-award'),
 
+    path('api/upload_pdf/', views.UploadPDFView.as_view(), name='upload_pdf'),
 ]

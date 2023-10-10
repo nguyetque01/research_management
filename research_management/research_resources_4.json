@@ -1,0 +1,104 @@
+[
+  {
+    "model": "research_app.researchresource",
+    "pk": 1,
+    "fields": {
+      "title": "Tiêu đề bài báo 1",
+      "description": "Mô tả bài báo 1",
+      "authors": "Tác giả bài báo 1",
+      "created_date": "2023-09-30",
+      "creator": 1,
+      "type": "article",
+      "attachments": "pdfs/bai_bao_1.pdf",
+      "image": "images/bai_bao_1.jpg",
+      "url": "https://example.com/article1"
+    }
+  },
+  {
+    "model": "research_app.article",
+    "pk": 1,
+    "fields": {
+      "journal_name": "Tên tạp chí 1",
+      "issn_isbn": "1234567890",
+      "classification": "Phân loại 1",
+      "published_date": "2023-09-30",
+      "published_type": "Loại xuất bản 1"
+    }
+  },
+  {
+    "model": "research_app.researchresource",
+    "pk": 2,
+    "fields": {
+      "title": "Tiêu đề dự án chuyển giao công nghệ 1",
+      "description": "Mô tả dự án chuyển giao công nghệ 1",
+      "authors": "Tác giả dự án 1",
+      "created_date": "2023-09-30",
+      "creator": 1,
+      "type": "technologytransferproject",
+      "attachments": "pdfs/du_an_1.pdf",
+      "image": "images/du_an_1.jpg",
+      "url": "https://example.com/techproject1"
+    }
+  },
+  {
+    "model": "research_app.technologytransferproject",
+    "pk": 2,
+    "fields": {
+      "transfer_company": "Công ty chuyển giao 1",
+      "transfer_contract_id": "ContractID1",
+      "signed_contract_id": "SignedContractID1",
+      "signed_contract_date": "2023-09-30",
+      "contract_value": 100000
+    }
+  },
+  {
+    "model": "research_app.researchresource",
+    "pk": 3,
+    "fields": {
+      "title": "Tiêu đề sách 1",
+      "description": "Mô tả sách 1",
+      "authors": "Tác giả sách 1",
+      "created_date": "2023-09-30",
+      "creator": 1,
+      "type": "publishedbook",
+      "attachments": "pdfs/sach_1.pdf",
+      "image": "images/sach_1.jpg",
+      "url": "https://example.com/book1"
+    }
+  },
+  {
+    "model": "research_app.publishedbook",
+    "pk": 3,
+    "fields": {
+      "publisher": "NXB 1",
+      "published_date": "2023-09-30",
+      "isbn": "ISBN1",
+      "field_of_study": "Lĩnh vực 1"
+    }
+  },
+  {
+    "model": "research_app.researchresource",
+    "pk": 4,
+    "fields": {
+      "title": "Tiêu đề giải thưởng 1",
+      "description": "Mô tả giải thưởng 1",
+      "authors": "Tác giả giải thưởng 1",
+      "created_date": "2023-09-30",
+      "creator": 1,
+      "type": "researchaward",
+      "attachments": "pdfs/giai_thuong_1.pdf",
+      "image": "images/giai_thuong_1.jpg",
+      "url": "https://example.com/award1"
+    }
+  },
+  {
+    "model": "research_app.researchaward",
+    "pk": 4,
+    "fields": {
+      "award_level": "school",
+      "award_category": "participation",
+      "award_rank": "first",
+      "award_received_date": "2023-09-30"
+    }
+  }
+]

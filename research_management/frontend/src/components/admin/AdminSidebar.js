@@ -140,20 +140,20 @@ const menuData = [
     icon: <CategoryIcon />,
     link: "/admin/resourses",
     children: [
-      {
-        text: "Công trình nghiên cứu",
-        link: "/admin/resourses/researchs",
-      },
+      // {
+      //   text: "Công trình nghiên cứu",
+      //   link: "/admin/resourses/researchs",
+      // },
       {
         text: "Bài báo khoa học",
         link: "/admin/resourses/articles",
       },
       {
-        text: "Sách do NXB phát hành",
+        text: "Sách NXB phát hành",
         link: "/admin/resourses/books",
       },
       {
-        text: "Đề tài chuyển giao công nghệ",
+        text: "Chuyển giao công nghệ",
         link: "/admin/resourses/tranfers",
       },
       {

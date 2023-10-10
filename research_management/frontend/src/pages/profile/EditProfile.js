@@ -22,10 +22,10 @@ import {
   Alert,
 } from "@mui/material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import { setUserData } from "../actions/userActions";
-import DEFAULT_BACKEND_URL from "../config.js";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import { setUserData } from "../../actions/userActions";
+import DEFAULT_BACKEND_URL from "../../config.js";
 
 const degrees = [
   {

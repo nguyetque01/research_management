@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, AcademicProfile, AcademicYear, Unit, LeadUnit, Level, ResearchType, ResearchActivity, ResearchActivityCategory, ResearchActivityDetail, ResearchTopic, ResearchTopicRegistration, ResearchTopicSubmission, ResearchResource, File, Article, TechnologyTransferProject, PublishedBook, ResearchAward
+from .models import User, AcademicProfile, AcademicYear, Unit, LeadUnit, Level, ResearchType, ResearchActivity, ResearchActivityCategory, ResearchActivityDetail, ResearchTopic, ResearchTopicRegistration, ResearchTopicSubmission, ResearchResource, Article, TechnologyTransferProject, PublishedBook, ResearchAward
 
 ##### USERS #####
 class UserSerializer(serializers.ModelSerializer):
@@ -84,12 +84,6 @@ class ResearchTopicSubmissionSerializer(serializers.ModelSerializer):
 class ResearchResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResearchResource
-        fields = '__all__'
-
-##### File #####
-class FileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = File
         fields = '__all__'
 
 ##### Article #####

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -141,3 +142,11 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
+
+# Đường dẫn đến thư mục sử dụng cho việc lưu trữ tệp tải lên
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+
+# URL để truy cập các tệp tải lên từ giao diện người dùng
+MEDIA_URL = '/uploads/'
+
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'

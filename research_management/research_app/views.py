@@ -1,12 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.parsers import FileUploadParser
 from rest_framework import status, generics
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth import authenticate, login
-from .models import User, AcademicProfile, AcademicYear, Unit, LeadUnit, Level, ResearchType, ResearchActivity, ResearchActivityCategory, ResearchActivityDetail, ResearchTopic, ResearchTopicRegistration, ResearchTopicSubmission, ResearchResource, File, Article, TechnologyTransferProject, PublishedBook, ResearchAward
-from .serializers import UserSerializer, AcademicProfileSerializer, AcademicYearSerializer, UnitSerializer, LeadUnitSerializer, LevelSerializer, ResearchTypeSerializer, ResearchActivitySerializer, ResearchActivityCategorySerializer, ResearchActivityDetailSerializer, ResearchTopicSerializer, ResearchTopicRegistrationSerializer, ResearchTopicSubmissionSerializer, ResearchResourceSerializer, FileSerializer, ArticleSerializer, TechnologyTransferProjectSerializer, PublishedBookSerializer, ResearchAwardSerializer
+from .models import User, AcademicProfile, AcademicYear, Unit, LeadUnit, Level, ResearchType, ResearchActivity, ResearchActivityCategory, ResearchActivityDetail, ResearchTopic, ResearchTopicRegistration, ResearchTopicSubmission, ResearchResource, Article, TechnologyTransferProject, PublishedBook, ResearchAward
+from .serializers import UserSerializer, AcademicProfileSerializer, AcademicYearSerializer, UnitSerializer, LeadUnitSerializer, LevelSerializer, ResearchTypeSerializer, ResearchActivitySerializer, ResearchActivityCategorySerializer, ResearchActivityDetailSerializer, ResearchTopicSerializer, ResearchTopicRegistrationSerializer, ResearchTopicSubmissionSerializer, ResearchResourceSerializer, ArticleSerializer, TechnologyTransferProjectSerializer, PublishedBookSerializer, ResearchAwardSerializer
 
 # COMMON API VIEW
 class CommonAPIView(APIView):
@@ -526,32 +527,6 @@ class ResearchResourceAPIView(CommonAPIView):
     
 ########################################################################
 
-##### File #####
-class FileListAPIView(CommonAPIView):
-    model = File
-    serializer_class = FileSerializer
-
-    def get(self, request):
-        return super().get(request, self.model, self.serializer_class)
-
-class FileAPIView(CommonAPIView):
-    model = File
-    serializer_class = FileSerializer
-
-    def get(self, request, pk):
-        return super().get(request, self.model, self.serializer_class, pk)
-
-    def put(self, request, pk):
-        return super().put(request, self.model, self.serializer_class, pk)
-
-    def delete(self, request, pk):
-        return super().delete(request, self.model, pk)
-
-    def post(self, request):
-        return super().post(request, self.model, self.serializer_class)
-    
-########################################################################
-
 ##### Article #####
 class ArticleListAPIView(CommonAPIView):
     model = Article
@@ -653,3 +628,17 @@ class ResearchAwardAPIView(CommonAPIView):
 
     def post(self, request):
         return super().post(request, self.model, self.serializer_class)
+    
+########################################################################
+
+##### Upload PDFView #####
+class UploadPDFView(APIView):
+    parser_class = (FileUploadParser,)
+
+    def post(self, request):
+        pdf_file = request.data.get('pdf')
+        if not pdf_file:
+            return Response({'error': 'No file received.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        resource = ResearchResource.objects.create(pdf=pdf_file)
+        return Response({'success': 'File uploaded successfully.'}, status=status.HTTP_201_CREATED)
