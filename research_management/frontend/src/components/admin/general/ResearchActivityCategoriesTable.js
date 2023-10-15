@@ -45,8 +45,6 @@ const TableRowComponent = ({
           researchActivityCategories,
           researchType.id
         );
-        console.log(researchType);
-        console.log(categoriesByTypeList);
         setCategoriesByType(categoriesByTypeList);
         setCategoriesByTypeLength(categoriesByTypeList.length);
       } catch (error) {

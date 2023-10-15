@@ -37,7 +37,8 @@ function Header() {
   };
 
   const menu1Items = [
-    { to: "/research-activities/registration", label: "Đăng ký đề tài" },
+    { to: "/research-activities/registration", label: "Đăng ký hoạt động" },
+    { to: "/research-activities/registrated", label: "Hoạt động đã đăng ký" },
     { to: "/research-activities/declare", label: "Nộp minh chứng" },
     { to: "/ai-tool", label: "Công cụ hỗ trợ" },
   ];

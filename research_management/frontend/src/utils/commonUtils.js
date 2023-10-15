@@ -13,6 +13,15 @@ export default function getCategoriesByActivityId(categories, activityId) {
   return result;
 }
 
+export function getResearchCategoriesByActivityId(
+  categories,
+  activities,
+  activityId
+) {
+  const activity = getActivityByID(activities, activityId);
+  return getCategoriesByResearchTypeId(categories, activity.research_type);
+}
+
 export function getCategoriesByResearchTypeId(categories, typeId) {
   // Tạo một mảng để lưu trữ kết quả
   const result = [];
@@ -41,4 +50,77 @@ export function getDetailsByActivityId(details, activityId) {
     }
   }
   return result;
+}
+
+export function getActivityDetail(activityID, categoryID, details) {
+  return details.find(
+    (detail) => detail.activity === activityID && detail.category === categoryID
+  );
+}
+
+export function getRegistrationsByUserID(researchTopicRegistrations, userID) {
+  return researchTopicRegistrations.filter(
+    (registration) => registration.registrant === userID
+  );
+}
+export function getRegistrationByTopicID(
+  researchTopicRegistrations,
+  researchtopicID
+) {
+  return researchTopicRegistrations.find(
+    (registration) => registration.topic === researchtopicID
+  );
+}
+
+export function getSubmissionByTopicID(
+  researchTopicSubmissions,
+  researchtopicID
+) {
+  return researchTopicSubmissions.find(
+    (submission) => submission.topic === researchtopicID
+  );
+}
+
+export function getUserByID(users, userID) {
+  return users.find((user) => user.id === userID);
+}
+export function getAcademicProfileByUserID(profiles, userID) {
+  return profiles.find((profile) => profile.user === userID);
+}
+export function getActivityByID(activities, activityID) {
+  return activities.find((activity) => activity.id === activityID);
+}
+export function getCategoryByID(categories, categoryID) {
+  return categories.find((category) => category.id === categoryID);
+}
+export function getTopicByID(topics, topicID) {
+  return topics ? topics.find((topic) => topic.id === topicID) : null;
+}
+
+export function getPositionByID(positions, positionID) {
+  return positions.find((position) => position.value === positionID)?.label;
+}
+export function getStatusByID(statuss, statusID) {
+  return statuss.find((status) => status.value === statusID)?.label;
+}
+
+export function getResearchHours(
+  activityID,
+  categoryID,
+  activities,
+  activityDetails
+) {
+  const activity = activities?.find((activity) => activity.id === activityID);
+  if (activity?.total_hours) {
+    return activity?.total_hours;
+  } else {
+    const detail = getActivityDetail(activityID, categoryID, activityDetails);
+    return detail?.total_hours;
+  }
+}
+export function getAuthorsName(authorIDs, users) {
+  const authorsName = authorIDs
+    ? authorIDs.map((authorID) => getUserByID(users, authorID)?.full_name)
+    : [];
+  return authorsName;
 }

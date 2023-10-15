@@ -281,7 +281,7 @@ function ResearchsRegistration() {
               }
               // Tạo đề tài nghiên cứu mới
               const newResearchTopic = {
-                name: "Tên đề tài mới", // Thay đổi tên đề tài
+                name: "Chưa nhập",
                 activity: selectedItem.activityId,
                 category: selectedItem.categoryId || null,
                 authors: [userData.id],
@@ -310,6 +310,7 @@ function ResearchsRegistration() {
                   registrant: userData.id,
                   registered_date: dayjs().format("YYYY-MM-DD"),
                   assigned_role: null,
+                  author_position: "Vị trí 1",
                   expected_budget: 0,
                   expected_hours: 0,
                   registration_approver: null,

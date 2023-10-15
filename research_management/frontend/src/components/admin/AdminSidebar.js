@@ -122,17 +122,17 @@ const menuData = [
         link: "/admin/research-activities",
       },
       {
-        text: "Đề tài",
+        text: "Danh sách đăng ký",
         link: "/admin/research-topics",
       },
-      {
-        text: "Danh sách đăng ký",
-        link: "/admin/research-activities/registration",
-      },
-      {
-        text: "Danh sách nộp",
-        link: "/admin/research-activities/submition",
-      },
+      // {
+      //   text: "Danh sách đăng ký",
+      //   link: "/admin/research-activities/registration",
+      // },
+      // {
+      //   text: "Danh sách nộp",
+      //   link: "/admin/research-activities/submition",
+      // },
     ],
   },
   {

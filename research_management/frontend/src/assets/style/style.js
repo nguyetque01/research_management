@@ -57,6 +57,15 @@ const closeButtonStyle = {
   height: "30px",
 };
 
+const iconButtonStyle = {
+  paddingTop: "6px",
+  paddingBottom: "6px",
+  paddingLeft: "6px",
+  paddingRight: "6px",
+  minHeight: 0,
+  minWidth: 0,
+};
+
 export {
   VisuallyHiddenInput,
   formContainerStyle,
@@ -65,4 +74,5 @@ export {
   formInputStyle,
   imageContainerStyle,
   closeButtonStyle,
+  iconButtonStyle,
 };

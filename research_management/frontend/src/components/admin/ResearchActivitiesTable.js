@@ -198,6 +198,7 @@ function ResearchActivitiesTable({
   researchTypes,
   categories,
   researchActivityDetails,
+  handleEditItem,
 }) {
   return (
     <TableContainer component={Paper}>
@@ -224,6 +225,7 @@ function ResearchActivitiesTable({
                 categories={categories}
                 researchActivityDetails={researchActivityDetails}
                 units={units}
+                handleEditItem={handleEditItem}
               />
             </>
           ))}

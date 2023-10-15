@@ -17,6 +17,10 @@ import {
   buttonContainerStyle,
   formInputStyle,
 } from "../../assets/style/style";
+import getCategoriesByActivityId, {
+  getResearchCategoriesByActivityId,
+  getResearchHours,
+} from "../../utils/commonUtils";
 
 const customFormContainerStyle = {
   ...formContainerStyle,
@@ -24,16 +28,27 @@ const customFormContainerStyle = {
 };
 
 function ResearchTopicForm({
-  newTopic,
-  setNewTopic,
-  editingTopic,
-  setEditingTopic,
+  newResearchTopic,
+  editingResearchTopic,
+  setEditingResearchTopic,
+  researchActivities,
+  researchCategories,
+  researchActivityDetails,
+  users,
   handleSubmit,
   onClose,
 }) {
   const [formData, setFormData] = useState(
-    editingTopic ? { ...editingTopic } : { ...newTopic }
+    editingResearchTopic ? { ...editingResearchTopic } : { ...newResearchTopic }
   );
+  const defaultCategories = getResearchCategoriesByActivityId(
+    researchCategories,
+    researchActivities,
+    formData?.activity
+  );
+
+  const [currentCategories, setCurrentCategories] = useState(defaultCategories);
+  console.log(currentCategories);
 
   // Xử lý khi người dùng thay đổi giá trị trường nhập liệu
   const handleChange = (e) => {
@@ -45,28 +60,25 @@ function ResearchTopicForm({
       [name]: value,
     }));
 
-    if (editingTopic) {
-      // Nếu đang chỉnh sửa đề tài
-      setEditingTopic((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
-    } else {
-      // Nếu đang thêm đề tài mới
-      setNewTopic((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
-    }
+    // Nếu đang chỉnh sửa đề tài
+    setEditingResearchTopic((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+
+    const categories = getResearchCategoriesByActivityId(
+      researchCategories,
+      researchActivities,
+      editingResearchTopic?.activity
+    );
+    setCurrentCategories(categories);
   };
 
   return (
     <div style={customFormContainerStyle}>
       {/* Phần tiêu đề */}
       <div style={headerStyle}>
-        <Typography variant="h6">
-          {editingTopic ? "Chỉnh sửa" : "Thêm"} đề tài nghiên cứu khoa học
-        </Typography>
+        <Typography variant="h6">Thông tin đề tài nghiên cứu</Typography>
       </div>
 
       {/* Form nhập liệu */}
@@ -77,128 +89,131 @@ function ResearchTopicForm({
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  name="id"
-                  label="Mã đề tài"
-                  value={formData.id}
-                  onChange={handleChange}
-                  required
-                  style={formInputStyle}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
                   name="name"
                   label="Tên đề tài"
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  style={formInputStyle}
                 />
               </Grid>
+
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <InputLabel id="activity-label">Hoạt động</InputLabel>
+                  <Select
+                    labelId="activity-label"
+                    id="activity"
+                    name="activity"
+                    value={formData?.activity}
+                    onChange={handleChange}
+                    label="Hoạt động"
+                    maxHeight={200}
+                  >
+                    {researchActivities.map((option) => (
+                      <MenuItem
+                        key={option.id}
+                        value={option.id}
+                        style={{ maxWidth: 400, maxHeight: 200 }}
+                      >
+                        {option.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              {currentCategories.length !== 0 && (
+                <Grid item xs={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id="category-label">
+                      Phân loại hoạt động
+                    </InputLabel>
+                    <Select
+                      labelId="category-label"
+                      id="category"
+                      name="category"
+                      value={formData?.category}
+                      onChange={handleChange}
+                      label="Phân loại hoạt động"
+                      maxHeight={200}
+                    >
+                      {currentCategories.map((option) => (
+                        <MenuItem
+                          key={option.id}
+                          value={option.id}
+                          style={{ maxWidth: 400, maxHeight: 200 }}
+                        >
+                          {option.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              )}
+
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  name="research_activity"
-                  label="Hoạt động nghiên cứu"
-                  value={formData.research_activity}
-                  onChange={handleChange}
-                  style={formInputStyle}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  name="registrant"
-                  label="Người đăng ký"
-                  value={formData.registrant}
-                  onChange={handleChange}
-                  style={formInputStyle}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  name="approver"
-                  label="Người phê duyệt"
-                  value={formData.approver}
-                  onChange={handleChange}
-                  style={formInputStyle}
+                  name="research_hours"
+                  label="Số giờ"
+                  value={getResearchHours(
+                    editingResearchTopic?.activity,
+                    editingResearchTopic?.category,
+                    researchActivities,
+                    researchActivityDetails
+                  )}
+                  disabled
                 />
               </Grid>
             </Grid>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <DatePicker
-                  label="Ngày đăng ký"
-                  format="DD/MM/YYYY"
-                  value={dayjs(formData.registered_date)}
-                  onChange={(date) =>
-                    handleChange({
-                      target: { name: "registered_date", value: date },
-                    })
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <DatePicker
-                  label="Ngày phê duyệt"
-                  format="DD/MM/YYYY"
-                  value={dayjs(formData.approved_date)}
-                  onChange={(date) =>
-                    handleChange({
-                      target: { name: "approved_date", value: date },
-                    })
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sx={{ marginTop: "10px" }}>
+              <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel id="approval-status-label">
-                    Trạng thái phê duyệt
-                  </InputLabel>
+                  <InputLabel id="author-label">Tác giả</InputLabel>
                   <Select
-                    labelId="approval-status-label"
-                    id="approval-status"
-                    name="approval_status"
-                    value={formData.approval_status}
+                    labelId="author-label"
+                    id="author"
+                    name="author"
+                    value={formData?.authors[0]}
                     onChange={handleChange}
-                    label="Trạng thái phê duyệt"
+                    label="Tác giả"
+                    maxHeight={200}
                   >
-                    <MenuItem value="Chờ duyệt">Chờ duyệt</MenuItem>
-                    <MenuItem value="Đã duyệt">Đã duyệt</MenuItem>
-                    <MenuItem value="Từ chối">Từ chối</MenuItem>
+                    {users.map((option) => (
+                      <MenuItem
+                        key={option.id}
+                        value={option.id}
+                        style={{ maxWidth: 400, maxHeight: 200 }}
+                      >
+                        {option.full_name}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sx={{ marginTop: "10px" }}>
-                <FormControl fullWidth>
-                  <InputLabel id="completion-status-label">
-                    Trạng thái hoàn thành
-                  </InputLabel>
-                  <Select
-                    labelId="completion-status-label"
-                    id="completion-status"
-                    name="completion_status"
-                    value={formData.completion_status}
-                    onChange={handleChange}
-                    label="Trạng thái hoàn thành"
-                  >
-                    <MenuItem value="Đang thực hiện">Đang thực hiện</MenuItem>
-                    <MenuItem value="Đã hoàn thành">Đã hoàn thành</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sx={{ marginTop: "10px" }}>
+
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  name="research_resource"
-                  label="Tài nguyên nghiên cứu"
-                  value={formData.research_resource}
+                  name="description"
+                  label="Mô tả"
+                  value={formData.description}
                   onChange={handleChange}
-                  style={formInputStyle}
+                  multiline
+                  rows={2}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  name="abstract"
+                  label="Tóm tắt"
+                  value={formData.abstract}
+                  onChange={handleChange}
+                  multiline
+                  rows={3}
                 />
               </Grid>
             </Grid>
