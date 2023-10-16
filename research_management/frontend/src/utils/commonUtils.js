@@ -18,8 +18,13 @@ export function getResearchCategoriesByActivityId(
   activities,
   activityId
 ) {
-  const activity = getActivityByID(activities, activityId);
-  return getCategoriesByResearchTypeId(categories, activity.research_type);
+  const activity =
+    activities.length !== 0 && activityId
+      ? getActivityByID(activities, activityId)
+      : null;
+  return activity
+    ? getCategoriesByResearchTypeId(categories, activity.research_type)
+    : null;
 }
 
 export function getCategoriesByResearchTypeId(categories, typeId) {
@@ -87,8 +92,15 @@ export function getUserByID(users, userID) {
 export function getAcademicProfileByUserID(profiles, userID) {
   return profiles.find((profile) => profile.user === userID);
 }
+export function getTypeByID(types, typeID) {
+  return types?.length !== 0 && typeID
+    ? types?.find((type) => type.id === typeID)
+    : null;
+}
 export function getActivityByID(activities, activityID) {
-  return activities.find((activity) => activity.id === activityID);
+  return activities?.length !== 0 && activityID
+    ? activities.find((activity) => activity.id === activityID)
+    : null;
 }
 export function getCategoryByID(categories, categoryID) {
   return categories.find((category) => category.id === categoryID);

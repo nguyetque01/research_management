@@ -156,9 +156,11 @@ function ResearchTopicsTable({
                     )}
                   </TableCell>
                   <TableCell>
-                    {authorsName?.map((name, index) =>
-                      index > 0 ? `, ${name}` : name
-                    )}
+                    {authorsName.length !== 0
+                      ? authorsName.map((name, index) =>
+                          index > 0 ? `, ${name}` : name
+                        )
+                      : ""}
                   </TableCell>
                   <TableCell>{registration?.author_position}</TableCell>
                   <TableCell>{topic?.name}</TableCell>

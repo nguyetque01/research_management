@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Button, Grid, Modal, Snackbar, Alert, Container } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import IosShareIcon from "@mui/icons-material/IosShare";
-import AdminHeader from "../../components/admin/AdminHeader";
-import AdminSidebar from "../../components/admin/AdminSidebar";
-import ResearchTopicAddEditForm from "../../components/admin/ResearchTopicAddEditForm";
-import ResearchTopicForm from "../../components/admin/ResearchTopicForm";
-import ResearchTopicRegistrationForm from "../../components/admin/ResearchTopicRegistrationForm";
-import ResearchTopicSubmissionForm from "../../components/admin/ResearchTopicSubmissionForm";
-import DeleteConfirmationDialog from "../../components/DeleteConfirmationDialog";
-import ResearchTopicsTable from "../../components/admin/ResearchTopicsTable";
-import DEFAULT_BACKEND_URL from "../../config";
+import ResearchTopicForm from "../components/admin/ResearchTopicForm";
+import ResearchTopicRegistrationForm from "../components/admin/ResearchTopicRegistrationForm";
+import ResearchTopicSubmissionForm from "../components/admin/ResearchTopicSubmissionForm";
+import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog";
+import ResearchRegistedTable from "../components/ResearchRegistedTable";
+import DEFAULT_BACKEND_URL from "../config";
 import fetchData, {
   fetchDataById,
   addUpdateData,
   deleteDataById,
-} from "../../utils/apiUtils";
+} from "../utils/apiUtils";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
+import Header from "../components/Header";
+import { getRegisteredTopicsByUserId } from "../utils/registerUtils";
 
-function ResearchTopics() {
+function ResearchsRegistrated() {
   const backendUrl = DEFAULT_BACKEND_URL;
   const userData = useSelector((state) => state.user.userData);
 
@@ -91,6 +89,13 @@ function ResearchTopics() {
     message: "",
   });
 
+  const registeredTopicsByUserId = userData?.id
+    ? getRegisteredTopicsByUserId(
+        userData.id,
+        researchTopicRegistrations,
+        researchTopics
+      )
+    : [];
   // Gửi HTTP request để lấy danh sách đề tài từ backend
   const fetchResearchTopics = () =>
     fetchData(
@@ -317,157 +322,105 @@ function ResearchTopics() {
 
   // Hiển thị giao diện
   return (
-    <div>
-      <Grid container spacing={20}>
-        <Grid item xs={2}>
-          <AdminSidebar />
-        </Grid>
-        <Grid item xs={10}>
-          <AdminHeader />
-          <Container>
-            <h2>Danh sách đăng ký</h2>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleOpenAddEditModel}
-                sx={{ marginBottom: "24px" }}
-                startIcon={<AddIcon />}
-              >
-                Thêm mới
-              </Button>
-              <Button
-                variant="contained"
-                color="success"
-                onClick={null}
-                sx={{ marginBottom: "24px" }}
-                startIcon={<IosShareIcon />}
-              >
-                Xuất Excel
-              </Button>
-            </div>
-            <Modal
-              open={isAddEditModalOpen}
-              onClose={handleCloseAddEditModal}
-              aria-labelledby="add-researchTopic-modal-title"
-              aria-describedby="add-researchTopic-modal-description"
-            >
-              <ResearchTopicAddEditForm
-                newResearchTopic={newResearchTopic}
-                setNewResearchTopic={setNewResearchTopic}
-                editingResearchTopic={editingResearchTopic}
-                setEditingResearchTopic={setEditingResearchTopic}
-                handleSubmit={handleSubmitTopic}
-                onClose={handleCloseAddEditModal}
-              />
-            </Modal>
+    <>
+      <Header />
+      <Container sx={{ paddingBottom: "40px" }}>
+        <h2>Danh sách đề tài đã đăng ký</h2>
 
-            <Modal
-              open={isTopicModalOpen}
-              onClose={handleCloseTopicModal}
-              aria-labelledby="add-researchTopic-modal-title"
-              aria-describedby="add-researchTopic-modal-description"
-            >
-              <ResearchTopicForm
-                isUser={true}
-                newResearchTopic={newResearchTopic}
-                setNewResearchTopic={setNewResearchTopic}
-                editingResearchTopic={editingResearchTopic}
-                setEditingResearchTopic={setEditingResearchTopic}
-                researchTypes={researchTypes}
-                researchActivities={researchActivities}
-                researchCategories={researchCategories}
-                researchActivityDetails={researchActivityDetails}
-                users={users}
-                handleSubmit={handleSubmitTopic}
-                onClose={handleCloseTopicModal}
-              />
-            </Modal>
+        <Modal
+          open={isTopicModalOpen}
+          onClose={handleCloseTopicModal}
+          aria-labelledby="add-researchTopic-modal-title"
+          aria-describedby="add-researchTopic-modal-description"
+        >
+          <ResearchTopicForm
+            isUser={true}
+            newResearchTopic={newResearchTopic}
+            setNewResearchTopic={setNewResearchTopic}
+            editingResearchTopic={editingResearchTopic}
+            setEditingResearchTopic={setEditingResearchTopic}
+            researchActivities={researchActivities}
+            researchCategories={researchCategories}
+            researchActivityDetails={researchActivityDetails}
+            users={users}
+            handleSubmit={handleSubmitTopic}
+            onClose={handleCloseTopicModal}
+          />
+        </Modal>
 
-            <Modal
-              open={isRegistrationModalOpen}
-              onClose={handleCloseRegistrationModal}
-              aria-labelledby="add-researchTopic-modal-title"
-              aria-describedby="add-researchTopic-modal-description"
-            >
-              <ResearchTopicRegistrationForm
-                isUser={false}
-                newResearchTopic={newResearchTopic}
-                setNewResearchTopic={setNewResearchTopic}
-                editingResearchTopic={editingResearchTopic}
-                setEditingResearchTopic={setEditingResearchTopic}
-                newResearchTopicRegistration={newResearchTopicRegistration}
-                setNewResearchTopicRegistration={
-                  setNewResearchTopicRegistration
-                }
-                editingResearchTopicRegistration={
-                  editingResearchTopicRegistration
-                }
-                setEditingResearchTopicRegistration={
-                  setEditingResearchTopicRegistration
-                }
-                researchTypes={researchTypes}
-                researchActivities={researchActivities}
-                researchCategories={researchCategories}
-                researchActivityDetails={researchActivityDetails}
-                users={users}
-                handleSubmit={handleSubmitRegistration}
-                onClose={handleCloseRegistrationModal}
-              />
-            </Modal>
+        <Modal
+          open={isRegistrationModalOpen}
+          onClose={handleCloseRegistrationModal}
+          aria-labelledby="add-researchTopic-modal-title"
+          aria-describedby="add-researchTopic-modal-description"
+        >
+          <ResearchTopicRegistrationForm
+            isUser={true}
+            newResearchTopic={newResearchTopic}
+            setNewResearchTopic={setNewResearchTopic}
+            editingResearchTopic={editingResearchTopic}
+            setEditingResearchTopic={setEditingResearchTopic}
+            newResearchTopicRegistration={newResearchTopicRegistration}
+            setNewResearchTopicRegistration={setNewResearchTopicRegistration}
+            editingResearchTopicRegistration={editingResearchTopicRegistration}
+            setEditingResearchTopicRegistration={
+              setEditingResearchTopicRegistration
+            }
+            researchTypes={researchTypes}
+            researchActivities={researchActivities}
+            researchCategories={researchCategories}
+            researchActivityDetails={researchActivityDetails}
+            users={users}
+            handleSubmit={handleSubmitRegistration}
+            onClose={handleCloseRegistrationModal}
+          />
+        </Modal>
 
-            <Modal
-              open={isSubmissionModalOpen}
-              onClose={handleCloseSubmissionModal}
-              aria-labelledby="add-researchTopic-modal-title"
-              aria-describedby="add-researchTopic-modal-description"
-            >
-              <ResearchTopicSubmissionForm
-                isUser={false}
-                newResearchTopic={newResearchTopic}
-                setNewResearchTopic={setNewResearchTopic}
-                editingResearchTopic={editingResearchTopic}
-                setEditingResearchTopic={setEditingResearchTopic}
-                newResearchTopicSubmission={newResearchTopicSubmission}
-                setNewResearchTopicSubmission={setNewResearchTopicSubmission}
-                editingResearchTopicSubmission={editingResearchTopicSubmission}
-                setEditingResearchTopicSubmission={
-                  setEditingResearchTopicSubmission
-                }
-                researchTypes={researchTypes}
-                researchActivities={researchActivities}
-                researchCategories={researchCategories}
-                researchActivityDetails={researchActivityDetails}
-                users={users}
-                handleSubmit={handleSubmitSubmission}
-                onClose={handleCloseSubmissionModal}
-              />
-            </Modal>
+        <Modal
+          open={isSubmissionModalOpen}
+          onClose={handleCloseSubmissionModal}
+          aria-labelledby="add-researchTopic-modal-title"
+          aria-describedby="add-researchTopic-modal-description"
+        >
+          <ResearchTopicSubmissionForm
+            isUser={true}
+            newResearchTopic={newResearchTopic}
+            setNewResearchTopic={setNewResearchTopic}
+            editingResearchTopic={editingResearchTopic}
+            setEditingResearchTopic={setEditingResearchTopic}
+            newResearchTopicSubmission={newResearchTopicSubmission}
+            setNewResearchTopicSubmission={setNewResearchTopicSubmission}
+            editingResearchTopicSubmission={editingResearchTopicSubmission}
+            setEditingResearchTopicSubmission={
+              setEditingResearchTopicSubmission
+            }
+            researchTypes={researchTypes}
+            researchActivities={researchActivities}
+            researchCategories={researchCategories}
+            researchActivityDetails={researchActivityDetails}
+            users={users}
+            handleSubmit={handleSubmitSubmission}
+            onClose={handleCloseSubmissionModal}
+          />
+        </Modal>
 
-            <ResearchTopicsTable
-              data={researchTopics}
-              users={users}
-              academicProfiles={academicProfiles}
-              researchActivities={researchActivities}
-              researchActivityDetails={researchActivityDetails}
-              researchCategories={researchCategories}
-              researchTopicRegistrations={researchTopicRegistrations}
-              researchTopicSubmissions={researchTopicSubmissions}
-              handleEditItem={handleEditItem}
-              handleEditResearchTopic={handleEditResearchTopic}
-              handleEditRegistration={handleEditRegistration}
-              handleEditSubmission={handleEditSubmission}
-              openDeleteDialog={openDeleteDialog}
-            />
-          </Container>
-        </Grid>
-      </Grid>
+        <ResearchRegistedTable
+          data={registeredTopicsByUserId}
+          users={users}
+          academicProfiles={academicProfiles}
+          researchActivities={researchActivities}
+          researchActivityDetails={researchActivityDetails}
+          researchCategories={researchCategories}
+          researchTopicRegistrations={researchTopicRegistrations}
+          researchTopicSubmissions={researchTopicSubmissions}
+          handleEditItem={handleEditItem}
+          handleEditResearchTopic={handleEditResearchTopic}
+          handleEditRegistration={handleEditRegistration}
+          handleEditSubmission={handleEditSubmission}
+          openDeleteDialog={openDeleteDialog}
+        />
+      </Container>
+
       <DeleteConfirmationDialog
         isOpen={isDeleteDialogOpen}
         onClose={closeDeleteDialog}
@@ -486,8 +439,8 @@ function ResearchTopics() {
           {notification.message}
         </Alert>
       </Snackbar>
-    </div>
+    </>
   );
 }
 
-export default ResearchTopics;
+export default ResearchsRegistrated;

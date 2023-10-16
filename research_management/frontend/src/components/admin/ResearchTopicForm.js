@@ -28,6 +28,7 @@ const customFormContainerStyle = {
 };
 
 function ResearchTopicForm({
+  isUser,
   newResearchTopic,
   editingResearchTopic,
   setEditingResearchTopic,
@@ -94,6 +95,7 @@ function ResearchTopicForm({
                   value={formData.name}
                   onChange={handleChange}
                   required
+                  disabled={!isUser}
                 />
               </Grid>
 
@@ -108,6 +110,7 @@ function ResearchTopicForm({
                     onChange={handleChange}
                     label="Hoạt động"
                     maxHeight={200}
+                    disabled={!isUser}
                   >
                     {researchActivities.map((option) => (
                       <MenuItem
@@ -135,6 +138,7 @@ function ResearchTopicForm({
                       onChange={handleChange}
                       label="Phân loại hoạt động"
                       maxHeight={200}
+                      disabled={!isUser}
                     >
                       {currentCategories.map((option) => (
                         <MenuItem
@@ -179,6 +183,7 @@ function ResearchTopicForm({
                     onChange={handleChange}
                     label="Tác giả"
                     maxHeight={200}
+                    disabled={!isUser}
                   >
                     {users.map((option) => (
                       <MenuItem
@@ -202,6 +207,7 @@ function ResearchTopicForm({
                   onChange={handleChange}
                   multiline
                   rows={2}
+                  disabled={!isUser}
                 />
               </Grid>
 
@@ -214,6 +220,7 @@ function ResearchTopicForm({
                   onChange={handleChange}
                   multiline
                   rows={3}
+                  disabled={!isUser}
                 />
               </Grid>
             </Grid>

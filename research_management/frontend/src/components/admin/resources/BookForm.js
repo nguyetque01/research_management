@@ -35,6 +35,7 @@ function BookForm({
   setEditingBook,
   handleSubmit,
   onClose,
+  small,
 }) {
   const [formData, setFormData] = useState({});
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -66,6 +67,16 @@ function BookForm({
     setSelectedFile(null);
   };
 
+  function formatFileSize(size) {
+    if (size === 0) return "0 Bytes";
+
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+    const i = parseInt(Math.floor(Math.log(size) / Math.log(k)));
+
+    return Math.round((size / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
+  }
+
   useEffect(() => {
     // Tạo một hàm để kiểm soát việc load dữ liệu từ editingBook
     const loadFormData = async () => {
@@ -84,16 +95,6 @@ function BookForm({
     // Gọi hàm loadFormData
     loadFormData();
   }, [editingBook, newBook]);
-
-  function formatFileSize(size) {
-    if (size === 0) return "0 Bytes";
-
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-    const i = parseInt(Math.floor(Math.log(size) / Math.log(k)));
-
-    return Math.round((size / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
-  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -125,105 +126,261 @@ function BookForm({
   }
 
   return (
-    <div style={customFormContainerStyle}>
-      <div style={headerStyle}>
-        <Typography variant="h6">
-          {editingBook
-            ? "Chỉnh sửa sách do NXB phát hành"
-            : "Thêm sách do NXB phát hành"}
-        </Typography>
-      </div>
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+    <>
+      {!small ? (
+        <div style={customFormContainerStyle}>
+          <div style={headerStyle}>
+            <Typography variant="h6">
+              {editingBook
+                ? "Chỉnh sửa sách do NXB phát hành"
+                : "Thêm sách do NXB phát hành"}
+            </Typography>
+          </div>
+
+          <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  name="title"
-                  label="Tiêu đề"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                  style={formInputStyle}
-                />
+              <Grid item xs={12} sm={6}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      name="title"
+                      label="Tiêu đề"
+                      value={formData.title}
+                      onChange={handleChange}
+                      style={formInputStyle}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      fullWidth
+                      name="description"
+                      label="Mô tả"
+                      value={formData.description}
+                      onChange={handleChange}
+                      style={formInputStyle}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      fullWidth
+                      name="authors"
+                      label="Danh sách tác giả"
+                      value={formData.authors}
+                      onChange={handleChange}
+                      style={formInputStyle}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      fullWidth
+                      name="url"
+                      label="Đường dẫn"
+                      value={formData.url}
+                      onChange={handleChange}
+                      style={formInputStyle}
+                    />
+                  </Grid>
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={12}>
-                <TextField
-                  fullWidth
-                  name="description"
-                  label="Mô tả"
-                  value={formData.description}
-                  onChange={handleChange}
-                  style={formInputStyle}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={12}>
-                <TextField
-                  fullWidth
-                  name="authors"
-                  label="Danh sách tác giả"
-                  value={formData.authors}
-                  onChange={handleChange}
-                  style={formInputStyle}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={12}>
-                <TextField
-                  fullWidth
-                  name="url"
-                  label="Đường dẫn"
-                  value={formData.url}
-                  onChange={handleChange}
-                  style={formInputStyle}
-                  required
-                />
+
+              <Grid item xs={12} sm={6}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      fullWidth
+                      name="publisher"
+                      label="Nhà xuất bản"
+                      value={formData.publisher}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12} sx={{ mt: 1 }}>
+                    <TextField
+                      fullWidth
+                      name="field_of_study"
+                      label="Lĩnh vực"
+                      value={formData.field_of_study}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} sx={{ mt: 1 }}>
+                    <DatePicker
+                      label="Ngày xuất bản"
+                      format="DD/MM/YYYY"
+                      value={dayjs(formData.published_date)}
+                      onChange={(date) =>
+                        handleChange({
+                          target: { name: "published_date", value: date },
+                        })
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} sx={{ mt: 1 }}>
+                    <TextField
+                      fullWidth
+                      name="isbn"
+                      label="ISBN"
+                      value={formData.isbn}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormControl fullWidth style={formInputStyle}>
+                      <FormLabel
+                        htmlFor="pdf-input"
+                        style={{ marginBottom: "4px" }}
+                      >
+                        File PDF đính kèm
+                      </FormLabel>
+                      {!formData?.attachments?.name && (
+                        <Button
+                          component="label"
+                          variant="contained"
+                          startIcon={<CloudUploadIcon />}
+                        >
+                          Tải file PDF đính kèm lên
+                          <VisuallyHiddenInput
+                            type="file"
+                            id="pdf-input"
+                            onChange={handleFileChange}
+                            accept=".pdf" // Chỉ cho phép tải file PDF
+                          />
+                        </Button>
+                      )}
+                    </FormControl>
+
+                    {formData?.attachments?.name && (
+                      <Grid container spacing={2} alignItems="center">
+                        <Grid item>
+                          <AttachmentIcon />
+                        </Grid>
+                        <Grid item xs>
+                          <Typography variant="body1">
+                            {formData.attachments.name}
+                          </Typography>
+                          <Typography
+                            variant="subtitle1"
+                            fontSize={12}
+                            color={"#333"}
+                          >
+                            {formatFileSize(formData.attachments.size)}
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <IconButton onClick={handleFileClear}>
+                            <CloseIcon fontSize="small" />
+                          </IconButton>
+                        </Grid>
+                      </Grid>
+                    )}
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
 
-          <Grid item xs={12} sm={6}>
+            <div style={buttonContainerStyle}>
+              <Button type="submit" variant="contained" color="primary">
+                Lưu
+              </Button>
+              <Button
+                onClick={onClose}
+                variant="contained"
+                color="secondary"
+                sx={{ marginLeft: "10px" }}
+              >
+                Hủy
+              </Button>
+            </div>
+          </form>
+        </div>
+      ) : (
+        <div>
+          <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={12}>
-                <TextField
-                  fullWidth
-                  name="publisher"
-                  label="Nhà xuất bản"
-                  value={formData.publisher}
-                  onChange={handleChange}
-                />
+              <Grid item xs={12} sm={6}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      name="title"
+                      label="Tiêu đề"
+                      value={formData.title}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      fullWidth
+                      name="description"
+                      label="Mô tả"
+                      value={formData.description}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      fullWidth
+                      name="authors"
+                      label="Danh sách tác giả"
+                      value={formData.authors}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      fullWidth
+                      name="url"
+                      label="Đường dẫn"
+                      value={formData.url}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={12} sx={{ mt: 1 }}>
-                <TextField
-                  fullWidth
-                  name="field_of_study"
-                  label="Lĩnh vực"
-                  value={formData.field_of_study}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} sx={{ mt: 1 }}>
-                <DatePicker
-                  label="Ngày xuất bản"
-                  format="DD/MM/YYYY"
-                  value={dayjs(formData.published_date)}
-                  onChange={(date) =>
-                    handleChange({
-                      target: { name: "published_date", value: date },
-                    })
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} sx={{ mt: 1 }}>
-                <TextField
-                  fullWidth
-                  name="isbn"
-                  label="ISBN"
-                  value={formData.isbn}
-                  onChange={handleChange}
-                />
+
+              <Grid item xs={12} sm={6}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      fullWidth
+                      name="publisher"
+                      label="Nhà xuất bản"
+                      value={formData.publisher}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      fullWidth
+                      name="field_of_study"
+                      label="Lĩnh vực"
+                      value={formData.field_of_study}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <DatePicker
+                      label="Ngày xuất bản"
+                      format="DD/MM/YYYY"
+                      value={dayjs(formData.published_date)}
+                      onChange={(date) =>
+                        handleChange({
+                          target: { name: "published_date", value: date },
+                        })
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      fullWidth
+                      name="isbn"
+                      label="ISBN"
+                      value={formData.isbn}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                </Grid>
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth style={formInputStyle}>
@@ -276,25 +433,10 @@ function BookForm({
                 )}
               </Grid>
             </Grid>
-          </Grid>
-        </Grid>
-
-        {/* Nút lưu và nút hủy */}
-        <div style={buttonContainerStyle}>
-          <Button type="submit" variant="contained" color="primary">
-            Lưu
-          </Button>
-          <Button
-            onClick={onClose}
-            variant="contained"
-            color="secondary"
-            sx={{ marginLeft: "10px" }}
-          >
-            Hủy
-          </Button>
+          </form>
         </div>
-      </form>
-    </div>
+      )}
+    </>
   );
 }
 

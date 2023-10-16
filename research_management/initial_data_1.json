@@ -17,7 +17,7 @@
     "model": "research_app.academicyear",
     "pk": 3,
     "fields": {
-      "name": "202 - 2023"
+      "name": "2022 - 2023"
     }
   },
   {
@@ -211,7 +211,7 @@
       "password": "123123123",
       "role": "admin",
       "full_name": "Nguyễn Thị Nguyệt Quế",
-      "birthday": "2001-06-20",
+      "birthday": "1993-06-20",
       "gender": "female",
       "phone": "0939469412",
       "address": "Biên Hòa, Đồng Nai",
@@ -225,15 +225,167 @@
     "model": "research_app.user",
     "pk": 2,
     "fields": {
-      "username": "nguyen_van_a",
-      "email": "nguyenvana@example.com",
+      "username": "mialoan",
+      "email": "mialoan@gmail.com",
+      "password": "123456789",
+      "role": "admin",
+      "full_name": "Nguyễn Vũ Phương Loan",
+      "birthday": "1992-10-06",
+      "gender": "female",
+      "phone": "0368457305",
+      "address": "Biên Hòa, Đồng Nai",
+      "profile_image": "",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2023-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "research_app.user",
+    "pk": 3,
+    "fields": {
+      "username": "thuyvi",
+      "email": "thuyvi@gmail.com",
       "password": "123456789",
       "role": "user",
-      "full_name": "Nguyễn Văn A",
-      "birthday": "1990-01-01",
+      "full_name": "Trần Thị Thúy Vi",
+      "birthday": "1995-06-20",
+      "gender": "female",
+      "phone": "0508482351",
+      "address": "Biên Hòa, Đồng Nai",
+      "profile_image": "",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2023-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "research_app.user",
+    "pk": 4,
+    "fields": {
+      "username": "ritaphuong",
+      "email": "rtphuong@gmail.com",
+      "password": "123456789",
+      "role": "user",
+      "full_name": "Nguyễn Vũ Phương",
+      "birthday": "1994-01-01",
+      "gender": "female",
+      "phone": "0378543201",
+      "address": "Biên Hòa, Đồng Nai",
+      "profile_image": "",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2023-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "research_app.user",
+    "pk": 5,
+    "fields": {
+      "username": "saratrinh",
+      "email": "saratrinh@gmail.com",
+      "password": "123456789",
+      "role": "user",
+      "full_name": "Nguyễn Vũ Phương Trinh",
+      "birthday": "1997-04-14",
+      "gender": "female",
+      "phone": "0197423456",
+      "address": "Biên Hòa, Đồng Nai",
+      "profile_image": "",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2023-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "research_app.user",
+    "pk": 6,
+    "fields": {
+      "username": "uyentran",
+      "email": "uyentran@gmail.com",
+      "password": "123456789",
+      "role": "user",
+      "full_name": "Trần Ngọc Uyên",
+      "birthday": "1993-05-18",
+      "gender": "female",
+      "phone": "078371435",
+      "address": "Biên Hòa, Đồng Nai",
+      "profile_image": "",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2023-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "research_app.user",
+    "pk": 7,
+    "fields": {
+      "username": "linhtran",
+      "email": "linhtran@gmail.com",
+      "password": "123456789",
+      "role": "user",
+      "full_name": "Trần Văn Linh",
+      "birthday": "1993-09-28",
       "gender": "male",
-      "phone": "1234567890",
-      "address": "123 Đường ABC, Quận XYZ",
+      "phone": "0567237452",
+      "address": "Biên Hòa, Đồng Nai",
+      "profile_image": "",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2023-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "research_app.user",
+    "pk": 8,
+    "fields": {
+      "username": "anhnguyen",
+      "email": "anhnguyen@gmail.com",
+      "password": "123456789",
+      "role": "user",
+      "full_name": "Nguyễn Hoàng Anh",
+      "birthday": "1994-11-23",
+      "gender": "male",
+      "phone": "0916476425",
+      "address": "Biên Hòa, Đồng Nai",
+      "profile_image": "",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2023-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "research_app.user",
+    "pk": 9,
+    "fields": {
+      "username": "namnguyen",
+      "email": "namnguyen@gmail.com",
+      "password": "123456789",
+      "role": "user",
+      "full_name": "Nguyễn Hoàng Nam",
+      "birthday": "1992-12-27",
+      "gender": "male",
+      "phone": "0367837625",
+      "address": "Biên Hòa, Đồng Nai",
+      "profile_image": "",
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2023-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "research_app.user",
+    "pk": 10,
+    "fields": {
+      "username": "lepham",
+      "email": "lepham@gmail.com",
+      "password": "123456789",
+      "role": "user",
+      "full_name": "Phạm Nhật Lệ",
+      "birthday": "1995-10-23",
+      "gender": "male",
+      "phone": "09269837629",
+      "address": "Biên Hòa, Đồng Nai",
       "profile_image": "",
       "is_active": true,
       "is_staff": false,
@@ -244,12 +396,96 @@
     "model": "research_app.academicprofile",
     "pk": 1,
     "fields": {
-      "user": 2,
+      "user": 3,
+      "academic_degree": 4,
+      "position": 3,
+      "education_history": "Tiến sĩ Khoa học Máy tính, Đại học FPT, 2015\nThạc sĩ Khoa học Máy tính, Đại học FPT, 2010",
+      "work_history": "Chuyên gia phân tích dữ liệu, Công ty A, 2015-nay\nKỹ sư phần mềm, Công ty B, 2010-2015",
+      "research_activities": "Đã công bố 10 bài báo nghiên cứu tại các hội thảo và tạp chí hàng đầu"
+    }
+  },
+  {
+    "model": "research_app.academicprofile",
+    "pk": 2,
+    "fields": {
+      "user": 4,
       "academic_degree": 3,
       "position": 3,
-      "education_history": "Tiến sĩ Khoa học Máy tính, Đại học XYZ, 2015\nThạc sĩ Khoa học Máy tính, Đại học ABC, 2010",
+      "education_history": "Tiến sĩ Kỹ thuật phần mềm, Đại học Bách Khoa, 2018\nThạc sĩ Kỹ thuật phần mềm, Đại học Bách Khoa, 2012",
       "work_history": "Kỹ sư phần mềm chính, Công ty A, 2015-nay\nKỹ sư phần mềm, Công ty B, 2010-2015",
+      "research_activities": "Đã công bố 8 bài báo nghiên cứu tại các hội thảo và tạp chí hàng đầu"
+    }
+  },
+  {
+    "model": "research_app.academicprofile",
+    "pk": 3,
+    "fields": {
+      "user": 5,
+      "academic_degree": 3,
+      "position": 3,
+      "education_history": "Thạc sĩ An ninh mạng, Đại học Công nghệ, 2017\nThạc sĩ An toàn thông tin, Đại học Công nghệ, 2015",
+      "work_history": "Quản trị mạng, Công ty A, 2015-nay",
+      "research_activities": "Đã công bố 15 bài báo nghiên cứu tại các hội thảo và tạp chí hàng đầu"
+    }
+  },
+  {
+    "model": "research_app.academicprofile",
+    "pk": 4,
+    "fields": {
+      "user": 6,
+      "academic_degree": 3,
+      "position": 3,
+      "education_history": "Tiến sĩ Trí tuệ nhân tạo, Đại học Công nghệ, 2019\nThạc sĩ An ninh mạng, Đại học Công nghệ, 2015",
+      "work_history": "Quản trị mạng, Công ty B, 2016-nay",
+      "research_activities": "Đã công bố 12 bài báo nghiên cứu tại các hội thảo và tạp chí hàng đầu"
+    }
+  },
+  {
+    "model": "research_app.academicprofile",
+    "pk": 5,
+    "fields": {
+      "user": 7,
+      "academic_degree": 3,
+      "position": 3,
+      "education_history": "Tiến sĩ Kỹ thuật phần mềm, Đại học Công nghệ thông tin, 2018\nThạc sĩ An ninh mạng, Đại học Công nghệ, 2016",
+      "work_history": "Quản trị mạng, Công ty C, 2014-nay",
       "research_activities": "Đã công bố 10 bài báo nghiên cứu tại các hội thảo và tạp chí hàng đầu"
+    }
+  },
+  {
+    "model": "research_app.academicprofile",
+    "pk": 6,
+    "fields": {
+      "user": 8,
+      "academic_degree": 3,
+      "position": 3,
+      "education_history": "Tiến sĩ Kỹ thuật phần mềm, Đại học Công nghệ thông tin, 2018\nThạc sĩ Khoa học máy, Đại học Công nghệ, 2016",
+      "work_history": "Kỹ sư phần mềm chính, Công ty D, 2017-nay",
+      "research_activities": "Đã công bố 13 bài báo nghiên cứu tại các hội thảo và tạp chí hàng đầu"
+    }
+  },
+  {
+    "model": "research_app.academicprofile",
+    "pk": 7,
+    "fields": {
+      "user": 9,
+      "academic_degree": 3,
+      "position": 3,
+      "education_history": "Tiến sĩ Kỹ thuật phần mềm, Đại học Công nghệ thông tin, 2018\nThạc sĩ An toàn thông tin, Đại học Công nghệ, 2016",
+      "work_history": "Kỹ sư phần mềm chính, Công ty D, 2017-nay",
+      "research_activities": "Đã công bố 18 bài báo nghiên cứu tại các hội thảo và tạp chí hàng đầu"
+    }
+  },
+  {
+    "model": "research_app.academicprofile",
+    "pk": 8,
+    "fields": {
+      "user": 10,
+      "academic_degree": 3,
+      "position": 3,
+      "education_history": "Tiến sĩ Kỹ thuật phần mềm, Đại học Công nghệ thông tin, 2015\nThạc sĩ An toàn thông tin, Đại học Công nghệ, 2013",
+      "work_history": "Kỹ sư phần mềm chính, Công ty D, 2017-nay",
+      "research_activities": "Đã công bố 20 bài báo nghiên cứu tại các hội thảo và tạp chí hàng đầu"
     }
   },
   {

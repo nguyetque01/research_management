@@ -230,8 +230,8 @@ class Article(ResearchResource):
 # Lớp Đề tài chuyển giao công nghệ (TechnologyTransferProject)
 class TechnologyTransferProject(ResearchResource):
     transfer_company = models.CharField(max_length=255)
-    transfer_contract_id = models.CharField(max_length=100, unique=True)
-    signed_contract_id = models.CharField(max_length=100, unique=True)
+    transfer_contract_id = models.CharField(max_length=100)
+    signed_contract_id = models.CharField(max_length=100)
     signed_contract_date = models.DateField()
     contract_value = models.IntegerField()
 
@@ -242,7 +242,7 @@ class TechnologyTransferProject(ResearchResource):
 class PublishedBook(ResearchResource):
     publisher = models.CharField(max_length=255)
     published_date = models.DateField()
-    isbn = models.CharField(max_length=20, unique=True)
+    isbn = models.CharField(max_length=20)
     field_of_study = models.CharField(max_length=100)
 
     def __str__(self):

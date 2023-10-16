@@ -3,9 +3,9 @@
     "model": "research_app.researchresource",
     "pk": 1,
     "fields": {
-      "title": "Tiêu đề bài báo 1",
+      "title": "Khám phá các ứng dụng Internet of Things (IoT) trong chăm sóc sức khỏe",
       "description": "Mô tả bài báo 1",
-      "authors": "Tác giả bài báo 1",
+      "authors": "Trần Thị Thúy Vi",
       "created_date": "2023-09-30",
       "creator": 1,
       "type": "article",
@@ -18,7 +18,7 @@
     "model": "research_app.article",
     "pk": 1,
     "fields": {
-      "journal_name": "Tên tạp chí 1",
+      "journal_name": "Khoa học và sức khỏe",
       "issn_isbn": "1234567890",
       "classification": "Phân loại 1",
       "published_date": "2023-09-30",
@@ -29,9 +29,9 @@
     "model": "research_app.researchresource",
     "pk": 2,
     "fields": {
-      "title": "Tiêu đề dự án chuyển giao công nghệ 1",
+      "title": "Tăng cường an ninh mạng bằng công nghệ chuỗi khối",
       "description": "Mô tả dự án chuyển giao công nghệ 1",
-      "authors": "Tác giả dự án 1",
+      "authors": "Nguyễn Vũ Phương",
       "created_date": "2023-09-30",
       "creator": 1,
       "type": "technologytransferproject",
@@ -44,7 +44,7 @@
     "model": "research_app.technologytransferproject",
     "pk": 2,
     "fields": {
-      "transfer_company": "Công ty chuyển giao 1",
+      "transfer_company": "Công ty FPT",
       "transfer_contract_id": "ContractID1",
       "signed_contract_id": "SignedContractID1",
       "signed_contract_date": "2023-09-30",
@@ -55,9 +55,9 @@
     "model": "research_app.researchresource",
     "pk": 3,
     "fields": {
-      "title": "Tiêu đề sách 1",
+      "title": "Bảo mật thiết bị Internet vạn vật (IoT): Thách thức và giải pháp",
       "description": "Mô tả sách 1",
-      "authors": "Tác giả sách 1",
+      "authors": "Nguyễn Vũ Phương Trinh",
       "created_date": "2023-09-30",
       "creator": 1,
       "type": "publishedbook",
@@ -70,7 +70,7 @@
     "model": "research_app.publishedbook",
     "pk": 3,
     "fields": {
-      "publisher": "NXB 1",
+      "publisher": "NXB Giáo dục",
       "published_date": "2023-09-30",
       "isbn": "ISBN1",
       "field_of_study": "Lĩnh vực 1"
@@ -80,15 +80,219 @@
     "model": "research_app.researchresource",
     "pk": 4,
     "fields": {
-      "title": "Tiêu đề giải thưởng 1",
-      "description": "Mô tả giải thưởng 1",
-      "authors": "Tác giả giải thưởng 1",
+      "title": "Giải thưởng Sao Khuê",
+      "description": "Giải thưởng Hiệp hội Phần mềm và Dịch vụ CNTT Việt Nam (VINASA) tổ chức Giải thưởng hàng năm, khuyến khích vinh quang và khuyến khích phát triển ngành công nghệ thông tin và phần mềm.",
+      "authors": "Nguyễn Vũ Phương",
       "created_date": "2023-09-30",
       "creator": 1,
       "type": "researchaward",
       "attachments": "pdfs/giai_thuong_1.pdf",
       "image": "images/giai_thuong_1.jpg",
       "url": "https://example.com/award1"
+    }
+  },
+  {
+    "model": "research_app.researchaward",
+    "pk": 4,
+    "fields": {
+      "award_level": "school",
+      "award_category": "participation",
+      "award_rank": "first",
+      "award_received_date": "2023-09-30"
+    }
+  },
+  {
+    "model": "research_app.researchresource",
+    "pk": 5,
+    "fields": {
+      "title": "Tăng cường an ninh mạng bằng kỹ thuật học sâu",
+      "description": "Mô tả bài báo 2",
+      "authors": "Trần Thị Thúy Vi",
+      "created_date": "2023-09-30",
+      "creator": 1,
+      "type": "article",
+      "attachments": "pdfs/bai_bao_2.pdf",
+      "image": "images/bai_bao_2.jpg",
+      "url": "https://example.com/article1"
+    }
+  },
+  {
+    "model": "research_app.article",
+    "pk": 5,
+    "fields": {
+      "journal_name": "An ninh mạng",
+      "issn_isbn": "1234567890",
+      "classification": "Phân loại 2",
+      "published_date": "2023-09-30",
+      "published_type": "Loại xuất bản 2"
+    }
+  },
+  {
+    "model": "research_app.researchresource",
+    "pk": 6,
+    "fields": {
+      "title": "Đánh giá hiệu suất của thuật toán nhận dạng hình ảnh cho xe tự hành",
+      "description": "Mô tả dự án chuyển giao công nghệ 2",
+      "authors": "Nguyễn Vũ Phương",
+      "created_date": "2023-09-30",
+      "creator": 1,
+      "type": "technologytransferproject",
+      "attachments": "pdfs/du_an_2.pdf",
+      "image": "images/du_an_2.jpg",
+      "url": "https://example.com/techproject2"
+    }
+  },
+  {
+    "model": "research_app.technologytransferproject",
+    "pk": 6,
+    "fields": {
+      "transfer_company": "Công ty Toyota",
+      "transfer_contract_id": "ContractID2",
+      "signed_contract_id": "SignedContractID2",
+      "signed_contract_date": "2023-09-30",
+      "contract_value": 100000
+    }
+  },
+  {
+    "model": "research_app.researchresource",
+    "pk": 7,
+    "fields": {
+      "title": "Nâng cao quyền riêng tư trong khai thác dữ liệu: Kỹ thuật bảo mật khác biệt",
+      "description": "Mô tả sách 2",
+      "authors": "Nguyễn Vũ Phương Trinh",
+      "created_date": "2023-09-30",
+      "creator": 1,
+      "type": "publishedbook",
+      "attachments": "pdfs/sach_2.pdf",
+      "image": "images/sach_2.jpg",
+      "url": "https://example.com/book1"
+    }
+  },
+  {
+    "model": "research_app.publishedbook",
+    "pk": 7,
+    "fields": {
+      "publisher": "NXB Hà Nội",
+      "published_date": "2023-09-30",
+      "isbn": "ISBN1",
+      "field_of_study": "Lĩnh vực 2"
+    }
+  },
+  {
+    "model": "research_app.researchresource",
+    "pk": 8,
+    "fields": {
+      "title": "Giải thưởng Nhà nước về Khoa học và Công nghệ",
+      "description": "Được trao hàng năm bởi Chính phủ Việt Nam, giải pháp này nhằm tôn vinh những thành tựu nghiên cứu, đổi mới và đóng góp quan trọng cho sự phát triển của khoa học và công nghệ tại Việt Nam.",
+      "authors": "Nguyễn Vũ Phương",
+      "created_date": "2023-09-30",
+      "creator": 1,
+      "type": "researchaward",
+      "attachments": "pdfs/giai_thuong_2.pdf",
+      "image": "images/giai_thuong_2.jpg",
+      "url": "https://example.com/award1"
+    }
+  },
+  {
+    "model": "research_app.researchaward",
+    "pk": 8,
+    "fields": {
+      "award_level": "school",
+      "award_category": "participation",
+      "award_rank": "first",
+      "award_received_date": "2023-09-30"
+    }
+  },
+  {
+    "model": "research_app.researchresource",
+    "pk": 9,
+    "fields": {
+      "title": "Khảo sát các thuật toán học máy để phát hiện gian lận trong giao dịch tài chính",
+      "description": "Mô tả bài báo 3",
+      "authors": "Trần Ngọc Uyên ",
+      "created_date": "2023-09-30",
+      "creator": 1,
+      "type": "article",
+      "attachments": "pdfs/bai_bao_3.pdf",
+      "image": "images/bai_bao_3.jpg",
+      "url": "https://example.com/article3"
+    }
+  },
+  {
+    "model": "research_app.article",
+    "pk": 9,
+    "fields": {
+      "journal_name": "Công nghệ & Tài chính",
+      "issn_isbn": "1234567890",
+      "classification": "Phân loại 3",
+      "published_date": "2023-09-30",
+      "published_type": "Loại xuất bản 3"
+    }
+  },
+  {
+    "model": "research_app.researchresource",
+    "pk": 10,
+    "fields": {
+      "title": "Kỹ thuật học sâu để nhận dạng và phân loại hình ảnh",
+      "description": "Mô tả dự án chuyển giao công nghệ 3",
+      "authors": "Nguyễn Hoàng Anh",
+      "created_date": "2023-09-30",
+      "creator": 1,
+      "type": "technologytransferproject",
+      "attachments": "pdfs/du_an_3.pdf",
+      "image": "images/du_an_3.jpg",
+      "url": "https://example.com/techproject3"
+    }
+  },
+  {
+    "model": "research_app.technologytransferproject",
+    "pk": 10,
+    "fields": {
+      "transfer_company": "Công ty VNPT",
+      "transfer_contract_id": "ContractID3",
+      "signed_contract_id": "SignedContractID3",
+      "signed_contract_date": "2023-09-30",
+      "contract_value": 100000
+    }
+  },
+  {
+    "model": "research_app.researchresource",
+    "pk": 11,
+    "fields": {
+      "title": "Khám phá tiềm năng của công nghệ Blockchain trong quản lý chuỗi cung ứng",
+      "description": "Mô tả sách 3",
+      "authors": "Phạm Nhật Lệ",
+      "created_date": "2023-09-30",
+      "creator": 1,
+      "type": "publishedbook",
+      "attachments": "pdfs/sach_3.pdf",
+      "image": "images/sach_3.jpg",
+      "url": "https://example.com/book3"
+    }
+  },
+  {
+    "model": "research_app.publishedbook",
+    "pk": 11,
+    "fields": {
+      "publisher": "NXB Đồng Nai",
+      "published_date": "2023-09-30",
+      "isbn": "ISBN1",
+      "field_of_study": "Lĩnh vực 3"
+    }
+  },
+  {
+    "model": "research_app.researchresource",
+    "pk": 12,
+    "fields": {
+      "title": "Giải thưởng Hoàng Trọng Lâm",
+      "description": "Khen thưởng Hội Tin học Việt Nam (VIA) trao hàng năm cho các cá nhân, giải thưởng tổ chức và doanh nghiệp có những đóng góp nổi bật trong lĩnh vực công nghệ thông tin và truyền thông.",
+      "authors": "Trần Văn Linh",
+      "created_date": "2023-09-30",
+      "creator": 1,
+      "type": "researchaward",
+      "attachments": "pdfs/giai_thuong_3.pdf",
+      "image": "images/giai_thuong_3.jpg",
+      "url": "https://example.com/award3"
     }
   },
   {

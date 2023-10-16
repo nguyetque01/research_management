@@ -24,8 +24,11 @@ import Header from "../components/Header";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import RegisterConfirmationDialog from "../components/RegisterConfirmationDialog";
 import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
 
 function ResearchsRegistration() {
+  const navigate = useNavigate();
+
   const backendUrl = DEFAULT_BACKEND_URL;
   const pageTitle = "Đăng ký hoạt động nghiên cứu khoa học";
   const dataLabel = "hoạt động";
@@ -251,117 +254,122 @@ function ResearchsRegistration() {
     const urlTopic = `${backendUrl}/api/research-topic`;
     const urlRegistration = `${backendUrl}/api/research-topic-registration`;
     const successMessage = "Đăng ký thành công";
+    let allSuccessful = true;
 
-    if (selectedList.length !== 0) {
-      try {
-        for (const selectedItem of selectedList) {
-          if (selectedItem) {
-            try {
-              await fetchResearchTopics();
-              await fetchResearchTopicRegistrations();
-
-              // Kiểm tra xem người dùng đã đăng ký cho hoạt động và phân loại này chưa
-              const alreadyRegistered = await isAlreadyRegistered(
-                researchTopicRegistrations,
-                researchTopics,
-                userData.id,
-                selectedItem.activityId,
-                selectedItem.categoryId || null
-              );
-              console.log(alreadyRegistered);
-
-              if (alreadyRegistered) {
-                // Hiển thị thông báo lỗi và không thực hiện đăng ký mới
-                setNotification({
-                  type: "error",
-                  message:
-                    "Bạn đã đăng ký cho hoạt động và phân loại này trước đó.",
-                });
-                continue;
-              }
-              // Tạo đề tài nghiên cứu mới
-              const newResearchTopic = {
-                name: "Chưa nhập",
-                activity: selectedItem.activityId,
-                category: selectedItem.categoryId || null,
-                authors: [userData.id],
-                approved_budget: 0,
-                approved_hours: 0,
-                completion_status: "in_progress",
-                research_resources: [],
-              };
-
-              // Thêm mới đề tài nghiên cứu và lấy response
-              const topicResponse = await addDataToRegister(
-                urlTopic,
-                newResearchTopic,
-                successMessage,
-                fetchResearchTopics,
-                setNotification
-              );
-
-              if (topicResponse && topicResponse.id) {
-                // Lấy ID của đề tài nghiên cứu mới được thêm vào
-                const newTopicId = topicResponse.id;
-
-                // Tạo đăng ký đề tài nghiên cứu mới
-                const newResearchTopicRegistration = {
-                  topic: newTopicId,
-                  registrant: userData.id,
-                  registered_date: dayjs().format("YYYY-MM-DD"),
-                  assigned_role: null,
-                  author_position: "Vị trí 1",
-                  expected_budget: 0,
-                  expected_hours: 0,
-                  registration_approver: null,
-                  registration_approved_date: null,
-                  approval_status: "pending",
-                };
-                console.log(newResearchTopicRegistration);
-
-                // Thêm mới phiếu đăng ký đề tài nghiên cứu và lấy response
-                const topicRegistrationResponse = await addDataToRegister(
-                  urlRegistration,
-                  newResearchTopicRegistration,
-                  successMessage,
-                  fetchResearchTopicRegistrations,
-                  setNotification
-                );
-
-                if (!topicRegistrationResponse) {
-                  // Xử lý lỗi khi thêm mới phiếu đăng ký đề tài nghiên cứu
-                  setNotification({
-                    type: "error",
-                    message: "Lỗi thêm mới phiếu đăng ký đề tài nghiên cứu",
-                  });
-                  // Xóa đề tài nghiên cứu nếu thất bại
-                  deleteDataRegister(
-                    `${backendUrl}/api/research-topic`,
-                    newTopicId,
-                    fetchResearchTopics
-                  );
-                }
-              } else {
-                // Xử lý lỗi khi thêm mới đề tài nghiên cứu
-                setNotification({
-                  type: "error",
-                  message: "Lỗi thêm mới đề tài nghiên cứu",
-                });
-              }
-            } catch (error) {
-              // Xử lý lỗi trong quá trình thêm mới đề tài nghiên cứu hoặc phiếu đăng ký
-              console.error(
-                `Lỗi khi thêm mới đề tài nghiên cứu hoặc phiếu đăng ký: ${error.message}`
-              );
-            }
-          }
-        }
-      } catch (error) {
-        // Xử lý lỗi chung khi đăng ký đề tài nghiên cứu
-        console.error(`Lỗi khi đăng ký đề tài nghiên cứu: ${error.message}`);
-      } finally {
-        closeRegisterDialog();
+    try {
+      if (selectedList.length === 0) {
+        return;
       }
+
+      for (const selectedItem of selectedList) {
+        if (!selectedItem) {
+          continue;
+        }
+
+        try {
+          await fetchResearchTopics();
+          await fetchResearchTopicRegistrations();
+
+          const alreadyRegistered = await isAlreadyRegistered(
+            researchTopicRegistrations,
+            researchTopics,
+            userData.id,
+            selectedItem.activityId,
+            selectedItem.categoryId || null
+          );
+
+          console.log(alreadyRegistered);
+
+          if (alreadyRegistered) {
+            setNotification({
+              type: "error",
+              message:
+                "Bạn đã đăng ký cho hoạt động và phân loại này trước đó.",
+            });
+            continue;
+          }
+
+          const newResearchTopic = {
+            name: "Chưa nhập",
+            activity: selectedItem.activityId,
+            category: selectedItem.categoryId || null,
+            authors: [userData.id],
+            approved_budget: 0,
+            approved_hours: 0,
+            completion_status: "in_progress",
+            research_resources: [],
+          };
+
+          const topicResponse = await addDataToRegister(
+            urlTopic,
+            newResearchTopic,
+            successMessage,
+            fetchResearchTopics,
+            setNotification
+          );
+
+          if (topicResponse && topicResponse.id) {
+            const newTopicId = topicResponse.id;
+
+            const newResearchTopicRegistration = {
+              topic: newTopicId,
+              registrant: userData.id,
+              registered_date: dayjs().format("YYYY-MM-DD"),
+              assigned_role: null,
+              author_position: "Vị trí 1",
+              expected_budget: 0,
+              expected_hours: 0,
+              registration_approver: null,
+              registration_approved_date: null,
+              approval_status: "pending",
+            };
+
+            console.log(newResearchTopicRegistration);
+
+            const topicRegistrationResponse = await addDataToRegister(
+              urlRegistration,
+              newResearchTopicRegistration,
+              successMessage,
+              fetchResearchTopicRegistrations,
+              setNotification
+            );
+
+            if (!topicRegistrationResponse) {
+              setNotification({
+                type: "error",
+                message: "Lỗi thêm mới phiếu đăng ký đề tài nghiên cứu",
+              });
+
+              deleteDataRegister(
+                `${backendUrl}/api/research-topic`,
+                newTopicId,
+                fetchResearchTopics
+              );
+              allSuccessful = false;
+            }
+          } else {
+            setNotification({
+              type: "error",
+              message: "Lỗi thêm mới đề tài nghiên cứu",
+            });
+            allSuccessful = false;
+          }
+        } catch (error) {
+          console.error(
+            `Lỗi khi thêm mới đề tài nghiên cứu hoặc phiếu đăng ký: ${error.message}`
+          );
+          allSuccessful = false;
+        }
+      }
+    } catch (error) {
+      console.error(`Lỗi khi đăng ký đề tài nghiên cứu: ${error.message}`);
+      allSuccessful = false;
+    } finally {
+      closeRegisterDialog();
+    }
+
+    if (allSuccessful) {
+      navigate("/research-activities/registrated");
     }
   };
 

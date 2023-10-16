@@ -11,6 +11,7 @@ import About from "./pages/About";
 import Login from "./pages/Login";
 import AITool from "./pages/AITool";
 import ResearchsRegistration from "./pages/ResearchsRegistration";
+import ResearchsRegistrated from "./pages/ResearchsRegistrated";
 
 // Profile Pages
 import Profile from "./pages/profile/Profile";
@@ -75,6 +76,10 @@ function App() {
           <Route
             path="/research-activities/registration"
             Component={ResearchsRegistration}
+          />
+          <Route
+            path="/research-activities/registrated"
+            Component={ResearchsRegistrated}
           />
 
           {/* Admin */}

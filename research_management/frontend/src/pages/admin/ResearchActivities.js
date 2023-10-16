@@ -12,6 +12,7 @@ import {
   Pagination,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import IosShareIcon from "@mui/icons-material/IosShare";
 import AdminHeader from "../../components/admin/AdminHeader";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import DeleteConfirmationDialog from "../../components/DeleteConfirmationDialog";
@@ -212,15 +213,32 @@ function ResearchActivities() {
             >
               {pageTitle}
             </h2>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleOpenModel}
-              sx={{ marginBottom: "24px" }}
-              startIcon={<AddIcon />}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
             >
-              Thêm {dataLabel}
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleOpenModel}
+                sx={{ marginBottom: "24px" }}
+                startIcon={<AddIcon />}
+              >
+                Thêm {dataLabel}
+              </Button>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={null}
+                sx={{ marginBottom: "24px" }}
+                startIcon={<IosShareIcon />}
+              >
+                Xuất Excel
+              </Button>
+            </div>
             <Modal
               open={isDataModalOpen}
               onClose={handleCloseModal}
