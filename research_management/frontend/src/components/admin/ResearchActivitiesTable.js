@@ -8,6 +8,8 @@ import {
   TableRow,
   Paper,
   Button,
+  setDataToExport,
+  dataToExport,
 } from "@mui/material";
 
 function TableHeader() {
@@ -199,7 +201,68 @@ function ResearchActivitiesTable({
   categories,
   researchActivityDetails,
   handleEditItem,
+  setDataToExport,
+  dataToExport,
 }) {
+  // Khởi tạo mảng exportDataExcel với hàng tiêu đề
+  const exportDataExcel = [
+    [
+      "STT",
+      "Tên hoạt động",
+      "Năm học",
+      "Cấp đề tài",
+      "Đơn vị chủ trì",
+      "Loại hình nghiên cứu",
+      "Phân loại",
+      "Tổng số giờ",
+      "Đơn vị tính",
+    ],
+  ];
+
+  data.forEach((activity, index) => {
+    const academicYear = academicYears.find(
+      (academic_year) => academic_year.id === activity.academic_year
+    );
+    const level = levels.find((level) => level.id === activity.level);
+    const leadUnit = leadUnits.find(
+      (lead_unit) => lead_unit.id === activity.lead_unit
+    );
+    const unit = units.find((unit) => unit.id === activity.unit);
+    const researchType = researchTypes.find(
+      (research_type) => research_type.id === activity.research_type
+    );
+
+    const categoriesByResearchType = categories.filter(
+      (category) => category.research_type === activity.research_type
+    );
+
+    categoriesByResearchType.forEach((category, categoryIndex) => {
+      const detail = researchActivityDetails.find(
+        (detail) =>
+          detail.category === category.id && detail.activity === activity.id
+      );
+
+      exportDataExcel.push([
+        categoryIndex === 0 ? index + 1 : "",
+        categoryIndex === 0 ? activity.name : "",
+        categoryIndex === 0 ? academicYear?.name : "",
+        categoryIndex === 0 ? level?.name : "",
+        categoryIndex === 0 ? leadUnit?.name : "",
+        categoryIndex === 0 ? researchType?.name : "",
+        category.name,
+        detail?.total_hours || "",
+        units.find((unit) => unit.id === detail?.unit)?.name || "",
+      ]);
+    });
+  });
+
+  // In mảng dữ liệu xuống console để kiểm tra
+  console.log(exportDataExcel);
+
+  useEffect(() => {
+    setDataToExport([...exportDataExcel]);
+  }, [dataToExport]);
+
   return (
     <TableContainer component={Paper}>
       <Table>

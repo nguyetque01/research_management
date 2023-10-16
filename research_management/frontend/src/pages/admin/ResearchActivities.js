@@ -1,4 +1,6 @@
 import React, { useState, useEffect, forwardRef } from "react";
+import { saveAs } from "file-saver";
+import ExcelJS from "exceljs";
 import {
   Button,
   Grid,
@@ -8,7 +10,6 @@ import {
   Container,
   Stack,
   Typography,
-  Select,
   Pagination,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -61,6 +62,7 @@ function ResearchActivities() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
   const [perPage, setPerPage] = useState(5); // Số lượng dữ liệu hiển thị trên mỗi trang
+  const [dataToExport, setDataToExport] = useState([]);
 
   // Gửi HTTP request để lấy danh sách data từ backend
   async function fetchDataList() {
@@ -191,6 +193,58 @@ function ResearchActivities() {
     return <div>Loading...</div>;
   }
 
+  const handleExportToExcel = () => {
+    // Tạo một bảng mới với dữ liệu
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("ResearchActivities");
+
+    // Thêm dữ liệu từ mảng exportDataExcel
+    dataToExport.forEach((rowData, index) => {
+      const rowNumber = index + 1;
+
+      worksheet.addRow(rowData);
+
+      // Cài đặt kiểu dữ liệu và định dạng cho các ô dữ liệu (nếu cần)
+      // Ví dụ:
+      worksheet.getCell(`C${rowNumber}`).alignment = {
+        vertical: "middle",
+        horizontal: "center",
+      };
+      // worksheet.getCell(`F${rowNumber}`).numFmt = "0.00%";
+    });
+
+    // Đặt kiểu dữ liệu và định dạng cho tiêu đề
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).alignment = {
+      vertical: "middle",
+      horizontal: "center",
+    };
+    worksheet.getRow(1).fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFADD8E6" },
+    };
+
+    // Thiết lập các kiểu dữ liệu cho các cột
+    worksheet.getColumn(1).width = 5;
+    worksheet.getColumn(2).width = 30;
+    worksheet.getColumn(3).width = 15;
+    worksheet.getColumn(4).width = 15;
+    worksheet.getColumn(5).width = 25;
+    worksheet.getColumn(6).width = 25;
+    worksheet.getColumn(7).width = 25;
+    worksheet.getColumn(8).width = 15;
+    worksheet.getColumn(9).width = 15;
+
+    // Lưu tệp Excel
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, "research_activities_export.xlsx");
+    });
+  };
+
   // Hiển thị giao diện
   return (
     <div>
@@ -232,7 +286,7 @@ function ResearchActivities() {
               <Button
                 variant="contained"
                 color="success"
-                onClick={null}
+                onClick={handleExportToExcel}
                 sx={{ marginBottom: "24px" }}
                 startIcon={<IosShareIcon />}
               >
@@ -275,6 +329,8 @@ function ResearchActivities() {
               categories={categories}
               researchActivityDetails={researchActivityDetails}
               setCategories={setCategories}
+              setDataToExport={setDataToExport}
+              dataToExport={dataToExport}
             />
             <div style={{ marginTop: "20px", textAlign: "center" }}>
               <Stack

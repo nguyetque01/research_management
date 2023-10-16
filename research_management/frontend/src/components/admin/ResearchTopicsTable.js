@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -26,7 +26,6 @@ import positions from "../../data/positions";
 import approvalStatus from "../../data/approvalStatus";
 import completionStatus from "../../data/completionStatus";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { iconButtonStyle } from "../../assets/style/style";
 
@@ -39,12 +38,105 @@ function ResearchTopicsTable({
   researchActivityDetails,
   researchTopicRegistrations,
   researchTopicSubmissions,
-  handleEditItem,
   handleEditResearchTopic,
   handleEditRegistration,
   handleEditSubmission,
   openDeleteDialog,
+  setDataToExport,
+  dataToExport,
 }) {
+  const exportDataExcel = [];
+
+  // Add the header row
+  const headerRow = [
+    "STT",
+    "Họ và tên",
+    "Chức vụ",
+    "Hoạt động nghiên cứu KH & CN",
+    "",
+    "",
+    "Chi tiết thông tin đăng ký",
+    "",
+    "",
+    "",
+    "",
+  ];
+
+  // Add the subheader row
+  const subheaderRow = [
+    "",
+    "",
+    "",
+    "Hoạt động",
+    "Phân loại",
+    "Số giờ",
+    "Tên tác giả",
+    "Vị trí tác giả",
+    "Tên đề tài",
+    "Số giờ dự kiến",
+    "Kinh phí dự kiến",
+  ];
+
+  exportDataExcel.push(headerRow);
+  exportDataExcel.push(subheaderRow);
+
+  // Loop through the table rows and add data to the exportDataExcel array
+  users.forEach((user, userIndex) => {
+    const userRegistrations = getRegistrationsByUserID(
+      researchTopicRegistrations,
+      user?.id
+    );
+    userRegistrations.forEach((registration, registrationIndex) => {
+      const topic = getTopicByID(data, registration?.topic);
+      const activity = topic
+        ? getActivityByID(researchActivities, topic.activity)
+        : "";
+      const category = topic
+        ? getCategoryByID(researchCategories, topic.category)
+        : "";
+      const authorsName = topic ? getAuthorsName(topic.authors, users) : "";
+      const registrant = getUserByID(users, registration?.registrant);
+      const registrantProfile = getAcademicProfileByUserID(
+        academicProfiles,
+        registration?.registrant
+      );
+      const registrantPosition = registrantProfile
+        ? getPositionByID(positions, registrantProfile.position)
+        : "";
+      const submission = getSubmissionByTopicID(
+        researchTopicSubmissions,
+        topic?.id
+      );
+
+      const row = [
+        registrationIndex === 0 ? userIndex + 1 : "",
+        registrationIndex === 0 ? registrant?.full_name : "",
+        registrationIndex === 0 ? registrantPosition : "",
+        activity?.name || "",
+        category?.name || "",
+        getResearchHours(
+          activity?.id,
+          category?.id,
+          researchActivities,
+          researchActivityDetails
+        ) || "",
+        authorsName.length !== 0 ? authorsName.join(", ") : "",
+        registration?.author_position || "",
+        topic?.name || "",
+        registration?.expected_hours || "",
+        registration?.expected_budget || "",
+      ];
+
+      exportDataExcel.push(row);
+    });
+  });
+
+  console.log(exportDataExcel);
+
+  useEffect(() => {
+    setDataToExport([...exportDataExcel]);
+  }, [dataToExport]);
+
   return (
     <TableContainer component={Paper}>
       <Table>

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { saveAs } from "file-saver";
+import ExcelJS from "exceljs";
 import { Button, Grid, Modal, Snackbar, Alert, Container } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import IosShareIcon from "@mui/icons-material/IosShare";
@@ -90,6 +92,7 @@ function ResearchTopics() {
     type: "success",
     message: "",
   });
+  const [dataToExport, setDataToExport] = useState([]);
 
   // Gửi HTTP request để lấy danh sách đề tài từ backend
   const fetchResearchTopics = () =>
@@ -315,6 +318,81 @@ function ResearchTopics() {
     setIsSubmissionModalOpen(false);
   };
 
+  const handleExportToExcel = () => {
+    // Tạo một bảng mới với dữ liệu
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("ResearchTopics");
+
+    // Thêm dữ liệu từ mảng dataToExport
+    dataToExport.forEach((rowData, index) => {
+      const rowNumber = index + 1;
+
+      worksheet.addRow(rowData);
+
+      // Cài đặt kiểu dữ liệu và định dạng cho các ô dữ liệu (nếu cần)
+      // Ví dụ:
+      worksheet.getCell(`C${rowNumber}`).alignment = {
+        vertical: "middle",
+        horizontal: "center",
+      };
+      // worksheet.getCell(`F${rowNumber}`).numFmt = "0.00%";
+    });
+
+    // Đặt kiểu dữ liệu và định dạng cho tiêu đề
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).alignment = {
+      vertical: "middle",
+      horizontal: "center",
+    };
+    worksheet.getRow(1).fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFADD8E6" },
+    };
+    worksheet.getRow(2).font = { bold: true };
+    worksheet.getRow(2).alignment = {
+      vertical: "middle",
+      horizontal: "center",
+    };
+    worksheet.getRow(2).fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFADD8E6" },
+    };
+    worksheet.getColumn(1).alignment = {
+      vertical: "middle",
+      horizontal: "center",
+    };
+
+    // Merge cells from D1 to F1
+    worksheet.mergeCells("D1:F1");
+    worksheet.mergeCells("G1:K1");
+    worksheet.mergeCells("A1:A2");
+    worksheet.mergeCells("B1:B2");
+    worksheet.mergeCells("C1:C2");
+
+    // Thiết lập các kiểu dữ liệu cho các cột
+    worksheet.getColumn(1).width = 5; // STT
+    worksheet.getColumn(2).width = 20; // Họ và tên
+    worksheet.getColumn(3).width = 15; // Chức vụ
+    worksheet.getColumn(4).width = 25; // Hoạt động nghiên cứu KH & CN - Hoạt động
+    worksheet.getColumn(5).width = 20; // Hoạt động nghiên cứu KH & CN - Phân loại
+    worksheet.getColumn(6).width = 10; // Hoạt động nghiên cứu KH & CN - Số giờ
+    worksheet.getColumn(7).width = 20; // Chi tiết thông tin đăng ký - Tên tác giả
+    worksheet.getColumn(8).width = 15; // Chi tiết thông tin đăng ký - Vị trí tác giả
+    worksheet.getColumn(9).width = 20; // Chi tiết thông tin đăng ký - Tên đề tài
+    worksheet.getColumn(10).width = 15; // Chi tiết thông tin đăng ký - Số giờ dự kiến
+    worksheet.getColumn(11).width = 15; // Chi tiết thông tin đăng ký - Kinh phí dự kiến
+
+    // Lưu tệp Excel
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, "research_topics_export.xlsx");
+    });
+  };
+
   // Hiển thị giao diện
   return (
     <div>
@@ -345,7 +423,7 @@ function ResearchTopics() {
               <Button
                 variant="contained"
                 color="success"
-                onClick={null}
+                onClick={handleExportToExcel}
                 sx={{ marginBottom: "24px" }}
                 startIcon={<IosShareIcon />}
               >
@@ -464,6 +542,8 @@ function ResearchTopics() {
               handleEditRegistration={handleEditRegistration}
               handleEditSubmission={handleEditSubmission}
               openDeleteDialog={openDeleteDialog}
+              setDataToExport={setDataToExport}
+              dataToExport={dataToExport}
             />
           </Container>
         </Grid>
