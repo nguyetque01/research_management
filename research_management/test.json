@@ -1,32 +1,17 @@
 [
   {
-    "model": "research_app.researchactivitydetail",
-    "pk": 1,
+    "model": "research_app.researchresource",
+    "pk": 4,
     "fields": {
-      "activity": 1,
-      "category": 2,
-      "total_hours": 750,
-      "unit": 1
-    }
-  },
-  {
-    "model": "research_app.researchactivitydetail",
-    "pk": 2,
-    "fields": {
-      "activity": 1,
-      "category": 2,
-      "total_hours": 1000,
-      "unit": 1
-    }
-  },
-  {
-    "model": "research_app.researchactivitydetail",
-    "pk": 3,
-    "fields": {
-      "activity": 1,
-      "category": 3,
-      "total_hours": 1250,
-      "unit": 1
+      "title": "Giải Thưởng NCKH Công Nghệ Số DNTU",
+      "description": "Giải Thưởng được tổ chức nhằm tìm ra những giải pháp về công nghệ số",
+      "authors": "Nguyễn Văn A",
+      "created_date": "2023-09-30",
+      "creator": 1,
+      "type": "researchaward",
+      "attachments": "pdfs/giai_thuong_1.pdf",
+      "image": "images/giai_thuong_1.jpg",
+      "url": "https://example.com/award1"
     }
   }
 ]

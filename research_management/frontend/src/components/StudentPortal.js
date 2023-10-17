@@ -7,7 +7,7 @@ const StudentPortal = () => {
     borderRadius: "10px", // Đặt border radius
     boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Đặt đổ bóng
     padding: "20px", // Đặt khoảng cách bên trong border
-    backgroundColor: "blue",
+    backgroundColor: "#53A6D8",
   };
 
   const contentStyle = {
@@ -30,17 +30,16 @@ const StudentPortal = () => {
     <div style={containerStyle}>
       <div
         style={{
-          border: "1px solid #ccc",
-          borderRadius: "5px",
+          border: "1px solid #5BA8A0",
           backgroundColor: "white",
         }}
       >
         <h2 style={{ textAlign: "center", color: "#3f51b5" }}>
           Cổng thông tin DNTU
         </h2>
-        <p style={contentStyle}>Sinh viên DNTU</p>
-        <a href="https://sv.dntu.edu.vn" style={content}>
-          https://sv.dntu.edu.vn
+        <p style={contentStyle}>Giảng viên DNTU</p>
+        <a href="https://qldt.dntu.edu.vn/" style={content}>
+          https://qldt.dntu.edu.vn
         </a>
         <Divider style={acontent} />
         <p style={contentStyle}>Canvas Instructure</p>

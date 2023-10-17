@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import dntuIrastImage from '../assets/img/dntu-irast.jpg';
 import dntu2Image from '../assets/img/dntu-2.jpg';
+import dntu3Image from '../assets/img/dntu-3.jpg';
 import '../assets/css/Slider.css';
 
 const SlideShow = () => {
@@ -10,6 +11,7 @@ const SlideShow = () => {
   const images = [
     dntuIrastImage,
     dntu2Image,
+    dntu3Image,
     // Thêm các hình ảnh khác nếu cần
   ];
 
@@ -50,7 +52,7 @@ const SlideShow = () => {
         <img
           src={images[currentIndex]}
           alt={`Slide ${currentIndex + 1}`}
-          style={{ maxWidth: '100%', maxHeight: '100%' }}
+          style={{ maxWidth: '100%', maxHeight: '100%', marginTop: "0" }}
         />
         {showArrows && (
           <button className="arrow arrow-right" onClick={goToNextSlide}>

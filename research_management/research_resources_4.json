@@ -80,9 +80,9 @@
     "model": "research_app.researchresource",
     "pk": 4,
     "fields": {
-      "title": "Tiêu đề giải thưởng 1",
-      "description": "Mô tả giải thưởng 1",
-      "authors": "Tác giả giải thưởng 1",
+      "title": "Giải Thưởng NCKH Công Nghệ Số DNTU",
+      "description": "Giải Thưởng được tổ chức nhằm tìm ra những giải pháp về công nghệ số",
+      "authors": "Nguyễn Văn A",
       "created_date": "2023-09-30",
       "creator": 1,
       "type": "researchaward",
