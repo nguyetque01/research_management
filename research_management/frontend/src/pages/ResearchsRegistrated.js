@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Grid, Modal, Snackbar, Alert, Container } from "@mui/material";
+import { Button, Grid, Modal, Snackbar, Alert, Container, Stack, Typography, Pagination, } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ResearchTopicForm from "../components/admin/ResearchTopicForm";
 import ResearchTopicRegistrationForm from "../components/admin/ResearchTopicRegistrationForm";
@@ -84,6 +84,8 @@ function ResearchsRegistrated() {
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [isSubmissionModalOpen, setIsSubmissionModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
+  const [perPage, setPerPage] = useState(5);
   const [notification, setNotification] = useState({
     type: "success",
     message: "",
@@ -320,6 +322,20 @@ function ResearchsRegistrated() {
     setIsSubmissionModalOpen(false);
   };
 
+  //////hàm để tính số trang và cắt dữ liệu hiển thị trên trang hiện tại//////
+  const totalPages = Math.ceil(registeredTopicsByUserId.length / perPage);
+  const indexOfLastItem = currentPage * perPage;
+  const indexOfFirstItem = indexOfLastItem - perPage;
+  const currentItems = registeredTopicsByUserId.slice(indexOfFirstItem, indexOfLastItem);
+
+  //////hàm để thay đổi trang hiện tại//////
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  const totalTopics = registeredTopicsByUserId.length; //biến để lưu trữ tổng số đề tài
+  const topicsPerPage = currentItems.length; //biến để lưu trữ số đề tài đang hiển thị trên trang
+
   // Hiển thị giao diện
   return (
     <>
@@ -405,7 +421,7 @@ function ResearchsRegistrated() {
         </Modal>
 
         <ResearchRegistedTable
-          data={registeredTopicsByUserId}
+          data={currentItems}
           users={users}
           academicProfiles={academicProfiles}
           researchActivities={researchActivities}
@@ -419,6 +435,61 @@ function ResearchsRegistrated() {
           handleEditSubmission={handleEditSubmission}
           openDeleteDialog={openDeleteDialog}
         />
+        <div style={{ marginTop: "20px", textAlign: "center" }}>
+          <Stack
+            direction="row"
+            spacing={1}
+            style={{ marginBottom: "5px", justifyContent: "flex-end" }}
+          >
+            <Typography
+              variant="body1"
+              style={{ marginTop: "5px", display: "inline-block" }}
+            >
+              Rows per page:&nbsp;
+            </Typography>
+            {/* lựa chọn số item được hiển thị */}
+            <select
+              value={perPage}
+              onChange={(e) => setPerPage(parseInt(e.target.value))}
+              style={{
+                padding: "5px",
+                border: "none",
+                borderRadius: "4px",
+                height: "30px",
+                marginTop: "2px",
+                fontSize: "15px",
+                marginRight: "15px",
+              }}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+            </select>
+            {/* biểu thị tổng số đề tài và số đề tài đang hiển thị trên trang hiện tại */}
+            <Typography
+              variant="body1"
+              style={{
+                marginTop: "6px",
+                fontSize: "15px",
+                marginRight: "15px",
+              }}
+            >
+              {`${indexOfFirstItem + 1} - ${
+                indexOfFirstItem + topicsPerPage
+              } of ${totalTopics}`}
+            </Typography>
+            {/* Chuyển trang */}
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              variant="outlined"
+              shape="rounded"
+              showFirstButton
+              showLastButton
+            />
+          </Stack>
+        </div>
       </Container>
 
       <DeleteConfirmationDialog

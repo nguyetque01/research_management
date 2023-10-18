@@ -199,10 +199,9 @@ function News() {
                   </a>
                 </Grid>
               </Grid>
-            </TabPanel>
-            {index !== articles.length - 1 && (
               <Divider style={{ margin: "5px 0" }} />
-            )}
+            </TabPanel>
+            {index !== notifications.length - 1}
           </div>
         ))}
         {awards?.slice(0, 10).map((award, index) => (
@@ -258,11 +257,11 @@ function News() {
                     Xem chi tiết
                   </a>
                 </Grid>
+                
               </Grid>
-            </TabPanel>
-            {index !== awards.length - 1 && (
               <Divider style={{ margin: "5px 0" }} />
-            )}
+            </TabPanel>
+            {index !== awards.length - 1}
           </div>
         ))}
         <div style={{ textAlign: "right" }}>
