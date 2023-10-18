@@ -23,6 +23,7 @@ import {
   ExpandMore,
 } from "@mui/icons-material";
 import Logo from "../../assets/img/logo-dntu.webp";
+import { useSelector } from "react-redux";
 
 const sidebarStyle = {
   width: 240,
@@ -59,139 +60,183 @@ const captionStyle = {
   textAlign: "center",
 };
 
-const menuData = [
-  {
-    text: "Dashboard",
-    icon: <DashboardIcon />,
-    link: "/admin/dashboard",
-    children: [],
-  },
-  {
-    text: "Người dùng",
-    icon: <AccountIcon />,
-    link: "/admin/users",
-    children: [
-      {
-        text: "Danh sách tài khoản",
-        link: "/admin/users",
-      },
-      {
-        text: "Lý lịch khoa học",
-        link: "/admin/academic-profiles",
-      },
-    ],
-  },
-  {
-    text: "Thông tin chung",
-    icon: <CategoryIcon />,
-    link: "/admin",
-    children: [
-      {
-        text: "Năm học",
-        link: "/admin/academic-years",
-      },
-      {
-        text: "Cấp đề tài",
-        link: "/admin/levels",
-      },
-      {
-        text: "Loại nghiên cứu",
-        link: "/admin/research-types",
-      },
-      {
-        text: "Phân loại hoạt động",
-        link: "/admin/research-activity-categories",
-      },
-      {
-        text: "Đơn vị tính",
-        link: "/admin/units",
-      },
-      {
-        text: "Đơn vị chủ trì",
-        link: "/admin/lead-units",
-      },
-    ],
-  },
-  {
-    text: "Hoạt động NCKH",
-    icon: <LocalActivityIcon />,
-    link: "/admin/research-activities",
-    children: [
-      {
-        text: "Hoạt động",
-        link: "/admin/research-activities",
-      },
-      {
-        text: "Danh sách đăng ký",
-        link: "/admin/research-topics",
-      },
-      // {
-      //   text: "Danh sách đăng ký",
-      //   link: "/admin/research-activities/registration",
-      // },
-      // {
-      //   text: "Danh sách nộp",
-      //   link: "/admin/research-activities/submition",
-      // },
-    ],
-  },
-  {
-    text: "Tài nguyên",
-    icon: <CategoryIcon />,
-    link: "/admin/resourses",
-    children: [
-      // {
-      //   text: "Công trình nghiên cứu",
-      //   link: "/admin/resourses/researchs",
-      // },
-      {
-        text: "Bài báo khoa học",
-        link: "/admin/resourses/articles",
-      },
-      {
-        text: "Sách NXB phát hành",
-        link: "/admin/resourses/books",
-      },
-      {
-        text: "Chuyển giao công nghệ",
-        link: "/admin/resourses/tranfers",
-      },
-      {
-        text: "Giải thưởng NCKH",
-        link: "/admin/resourses/awards",
-      },
-    ],
-  },
-  {
-    text: "Báo cáo",
-    icon: <AssessmentIcon />,
-    link: "/admin/reports",
-    children: [
-      {
-        text: "HĐKH cá nhân",
-        link: "/admin/reports/personal",
-      },
-      {
-        text: "HĐKH đơn vị",
-        link: "/admin/reports/department",
-      },
-      {
-        text: "Báo cáo tổng hợp",
-        link: "/admin/reports/general",
-      },
-    ],
-  },
-
-  {
-    text: "Cài đặt",
-    icon: <SettingsIcon />,
-    link: "/admin/settings",
-    children: [],
-  },
-];
-
-const AdminSidebar = () => {
+const AdminSidebar = ({ isAdmin = true }) => {
   const [openMenus, setOpenMenus] = useState({});
+  const menuData = isAdmin
+    ? [
+        {
+          text: "Dashboard",
+          icon: <DashboardIcon />,
+          link: "/admin/dashboard",
+          children: [],
+        },
+        {
+          text: "Người dùng",
+          icon: <AccountIcon />,
+          link: "/admin/users",
+          children: [
+            {
+              text: "Danh sách tài khoản",
+              link: "/admin/users",
+            },
+            {
+              text: "Lý lịch khoa học",
+              link: "/admin/academic-profiles",
+            },
+          ],
+        },
+        {
+          text: "Thông tin chung",
+          icon: <CategoryIcon />,
+          link: "/admin",
+          children: [
+            {
+              text: "Năm học",
+              link: "/admin/academic-years",
+            },
+            {
+              text: "Cấp đề tài",
+              link: "/admin/levels",
+            },
+            {
+              text: "Loại nghiên cứu",
+              link: "/admin/research-types",
+            },
+            {
+              text: "Phân loại hoạt động",
+              link: "/admin/research-activity-categories",
+            },
+            {
+              text: "Đơn vị tính",
+              link: "/admin/units",
+            },
+            {
+              text: "Đơn vị chủ trì",
+              link: "/admin/lead-units",
+            },
+          ],
+        },
+        {
+          text: "Hoạt động NCKH",
+          icon: <LocalActivityIcon />,
+          link: "/admin/research-activities",
+          children: [
+            {
+              text: "Hoạt động",
+              link: "/admin/research-activities",
+            },
+            {
+              text: "Danh sách đăng ký",
+              link: "/admin/research-topics",
+            },
+            // {
+            //   text: "Danh sách đăng ký",
+            //   link: "/admin/research-activities/registration",
+            // },
+            // {
+            //   text: "Danh sách nộp",
+            //   link: "/admin/research-activities/submition",
+            // },
+          ],
+        },
+        {
+          text: "Tài nguyên",
+          icon: <CategoryIcon />,
+          link: "/admin/resourses",
+          children: [
+            // {
+            //   text: "Công trình nghiên cứu",
+            //   link: "/admin/resourses/researchs",
+            // },
+            {
+              text: "Bài báo khoa học",
+              link: "/admin/resourses/articles",
+            },
+            {
+              text: "Sách NXB phát hành",
+              link: "/admin/resourses/books",
+            },
+            {
+              text: "Chuyển giao công nghệ",
+              link: "/admin/resourses/tranfers",
+            },
+            {
+              text: "Giải thưởng NCKH",
+              link: "/admin/resourses/awards",
+            },
+          ],
+        },
+        {
+          text: "Báo cáo",
+          icon: <AssessmentIcon />,
+          link: "/admin/reports",
+          children: [
+            {
+              text: "HĐKH cá nhân",
+              link: "/admin/reports/personal",
+            },
+            {
+              text: "HĐKH đơn vị",
+              link: "/admin/reports/department",
+            },
+            {
+              text: "Báo cáo tổng hợp",
+              link: "/admin/reports/general",
+            },
+          ],
+        },
+
+        {
+          text: "Cài đặt",
+          icon: <SettingsIcon />,
+          link: "/admin/settings",
+          children: [],
+        },
+      ]
+    : [
+        {
+          text: "Hoạt động NCKH",
+          icon: <LocalActivityIcon />,
+          link: "/admin/research-activities-manager",
+          children: [
+            {
+              text: "Hoạt động",
+              link: "/admin/research-activities-manager",
+            },
+            {
+              text: "Danh sách đăng ký",
+              link: "/admin/research-topics-manager",
+            },
+            // {
+            //   text: "Danh sách đăng ký",
+            //   link: "/admin/research-activities/registration",
+            // },
+            // {
+            //   text: "Danh sách nộp",
+            //   link: "/admin/research-activities/submition",
+            // },
+          ],
+        },
+        {
+          text: "Báo cáo",
+          icon: <AssessmentIcon />,
+          link: "/admin/reports",
+          children: [
+            {
+              text: "HĐKH cá nhân",
+              link: "/admin/reports/personal-manager",
+            },
+            {
+              text: "HĐKH đơn vị",
+              link: "/admin/reports/department-manager",
+            },
+            {
+              text: "Báo cáo tổng hợp",
+              link: "/admin/reports/general-manager",
+            },
+          ],
+        },
+      ];
 
   const handleSubmenuClick = (menuKey) => {
     const newOpenMenus = { ...openMenus };

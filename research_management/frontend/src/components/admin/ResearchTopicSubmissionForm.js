@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   Button,
@@ -27,6 +27,7 @@ import getCategoriesByActivityId, {
   getActivityByID,
   getResearchCategoriesByActivityId,
   getResearchHours,
+  getSubmissionByTopicID,
   getTypeByID,
 } from "../../utils/commonUtils";
 import approvalStatus from "../../data/approvalStatus";
@@ -65,6 +66,8 @@ function ResearchTopicSubmissionForm({
   const activity = getActivityByID(researchActivities, formData.activity);
   const researchType = getTypeByID(researchTypes, activity.research_type);
   console.log(researchType);
+  const [isLoading, setIsLoading] = useState(true);
+
   // const defaultCategories = getResearchCategoriesByActivityId(
   //   researchCategories,
   //   researchActivities,
@@ -97,6 +100,30 @@ function ResearchTopicSubmissionForm({
     // );
     // setCurrentCategories(categories);
   };
+
+  // Khi component được tạo hoặc cập nhật
+  const getSubmission = () =>
+    editingResearchTopic
+      ? getSubmissionByTopicID(editingResearchTopic.id)
+      : newResearchTopicSubmission;
+  const submission = getSubmission();
+  useEffect(() => {
+    // Hàm fetch tất cả dữ liệu từ API
+    const fetchAllData = async () => {
+      setIsLoading(true);
+      try {
+        // Sử dụng Promise.all để đợi cho tất cả các cuộc gọi bất đồng bộ hoàn thành
+        await Promise.all([
+          getSubmission(),
+          setEditingResearchTopicSubmission({ ...submission }),
+        ]);
+      } catch (error) {
+        console.log(error);
+      }
+      setIsLoading(false);
+    };
+    fetchAllData();
+  }, [editingResearchTopicSubmission]);
 
   const [selectedFile, setSelectedFile] = useState(null);
 

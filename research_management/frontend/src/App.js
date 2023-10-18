@@ -39,6 +39,8 @@ import Articles from "./pages/admin/resources/Articles";
 import Books from "./pages/admin/resources/Books";
 import Awards from "./pages/admin/resources/Awards";
 import Tranfers from "./pages/admin/resources/Tranfers";
+import ResearchActivitiesManager from "./pages/admin/ResearchActivitiesManager";
+import ResearchTopicsManager from "./pages/admin/ResearchTopicsManager";
 
 function App() {
   const dispatch = useDispatch();
@@ -92,6 +94,14 @@ function App() {
             Component={ResearchActivities}
           />
           <Route path="/admin/research-topics" Component={ResearchTopics} />
+          <Route
+            path="/admin/research-activities-manager"
+            Component={ResearchActivitiesManager}
+          />
+          <Route
+            path="/admin/research-topics-manager"
+            Component={ResearchTopicsManager}
+          />
           <Route path="/admin/academic-years" Component={AcademicYears} />
           <Route path="/admin/units" Component={Units} />
           <Route path="/admin/lead-units" Component={LeadUnits} />

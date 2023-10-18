@@ -88,6 +88,7 @@ function ResearchsRegistrated() {
     type: "success",
     message: "",
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   const registeredTopicsByUserId = userData?.id
     ? getRegisteredTopicsByUserId(
@@ -119,36 +120,50 @@ function ResearchsRegistrated() {
     );
 
   // Sử dụng useEffect để tự động gọi hàm fetchResearchTopics khi component được tạo
+  // Khi component được tạo hoặc cập nhật
   useEffect(() => {
-    fetchResearchTopics();
-    fetchResearchTopicRegistrations();
-    fetchResearchTopicSubmissions();
-    fetchData(
-      `${backendUrl}/api/research-types/`,
-      setResearchTypes,
-      setNotification
-    );
-    fetchData(
-      `${backendUrl}/api/research-activities/`,
-      setResearchActivities,
-      setNotification
-    );
-    fetchData(
-      `${backendUrl}/api/research-activity-categories/`,
-      setResearchCategories,
-      setNotification
-    );
-    fetchData(
-      `${backendUrl}/api/research-activity-details/`,
-      setResearchActivityDetails,
-      setNotification
-    );
-    fetchData(`${backendUrl}/api/users/`, setUsers, setNotification);
-    fetchData(
-      `${backendUrl}/api/academic-profiles/`,
-      setAcademicProfiles,
-      setNotification
-    );
+    // Hàm fetch tất cả dữ liệu từ API
+    const fetchAllData = async () => {
+      setIsLoading(true);
+      try {
+        // Sử dụng Promise.all để đợi cho tất cả các cuộc gọi bất đồng bộ hoàn thành
+        await Promise.all([
+          fetchResearchTopics(),
+          fetchResearchTopicRegistrations(),
+          fetchResearchTopicSubmissions(),
+          fetchData(
+            `${backendUrl}/api/research-types/`,
+            setResearchTypes,
+            setNotification
+          ),
+          fetchData(
+            `${backendUrl}/api/research-activities/`,
+            setResearchActivities,
+            setNotification
+          ),
+          fetchData(
+            `${backendUrl}/api/research-activity-categories/`,
+            setResearchCategories,
+            setNotification
+          ),
+          fetchData(
+            `${backendUrl}/api/research-activity-details/`,
+            setResearchActivityDetails,
+            setNotification
+          ),
+          fetchData(`${backendUrl}/api/users/`, setUsers, setNotification),
+          fetchData(
+            `${backendUrl}/api/academic-profiles/`,
+            setAcademicProfiles,
+            setNotification
+          ),
+        ]);
+      } catch (error) {
+        console.log(error);
+      }
+      setIsLoading(false);
+    };
+    fetchAllData();
   }, []);
 
   // Mở modal hiển thị form thêm/sửa đề tài
@@ -319,6 +334,10 @@ function ResearchsRegistrated() {
 
     setIsSubmissionModalOpen(false);
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   // Hiển thị giao diện
   return (

@@ -177,6 +177,15 @@ function Header() {
               <>
                 <Button
                   color="inherit"
+                  component={Link}
+                  to="/admin/research-activities-manager"
+                  className="header-button"
+                >
+                  Quản lý hoạt động NCKH
+                </Button>
+
+                {/* <Button
+                  color="inherit"
                   className="header-button"
                   onClick={handleMenuOpen("menu4Anchor")}
                 >
@@ -196,7 +205,7 @@ function Header() {
                   }}
                 >
                   {renderMenuItems(menu4Items)}
-                </Menu>
+                </Menu> */}
               </>
             ) : (
               <></>

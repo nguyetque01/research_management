@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   Button,
@@ -19,10 +19,12 @@ import {
 } from "../../assets/style/style";
 import getCategoriesByActivityId, {
   getActivityByID,
+  getRegistrationByTopicID,
   getResearchCategoriesByActivityId,
   getResearchHours,
   getTopicByID,
   getTypeByID,
+  getUserByID,
 } from "../../utils/commonUtils";
 import approvalStatus from "../../data/approvalStatus";
 import BookForm from "./resources/BookForm";
@@ -59,7 +61,33 @@ function ResearchTopicRegistrationForm({
   );
   const activity = getActivityByID(researchActivities, formData.activity);
   const researchType = getTypeByID(researchTypes, activity.research_type);
-  console.log(researchType);
+  const [isLoading, setIsLoading] = useState(true);
+
+  console.log(formData);
+
+  // Khi component được tạo hoặc cập nhật
+  const getRegistration = () =>
+    editingResearchTopic
+      ? getRegistrationByTopicID(editingResearchTopic.id)
+      : newResearchTopicRegistration;
+  const registration = getRegistration();
+  useEffect(() => {
+    // Hàm fetch tất cả dữ liệu từ API
+    const fetchAllData = async () => {
+      setIsLoading(true);
+      try {
+        // Sử dụng Promise.all để đợi cho tất cả các cuộc gọi bất đồng bộ hoàn thành
+        await Promise.all([
+          getRegistration(),
+          setEditingResearchTopicRegistration({ ...registration }),
+        ]);
+      } catch (error) {
+        console.log(error);
+      }
+      setIsLoading(false);
+    };
+    fetchAllData();
+  }, [editingResearchTopicRegistration]);
 
   // const defaultCategories = getResearchCategoriesByActivityId(
   //   researchCategories,
@@ -93,6 +121,10 @@ function ResearchTopicRegistrationForm({
     // );
     // setCurrentCategories(categories);
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
   return (
     <div style={customFormContainerStyle}>
       {/* Phần tiêu đề */}
@@ -107,22 +139,22 @@ function ResearchTopicRegistrationForm({
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12}>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <TextField
                   fullWidth
                   name="topic"
                   label="Tên đề tài"
-                  value={editingResearchTopicRegistration?.title}
+                  value={formData?.name}
                   onChange={handleChange}
                   disabled
                 />
-              </Grid>
+              </Grid> */}
 
               <Grid item xs={12} sm={6}>
                 <DatePicker
                   label="Ngày đăng ký"
                   format="DD/MM/YYYY"
-                  value={dayjs(formData.registered_date)}
+                  value={dayjs(formDataRegistration.registered_date)}
                   disabled
                 />
               </Grid>
@@ -131,7 +163,10 @@ function ResearchTopicRegistrationForm({
                   fullWidth
                   name="registrant"
                   label="Người đăng ký"
-                  value={formData.registrant}
+                  value={
+                    getUserByID(users, formDataRegistration.registrant)
+                      ?.full_name
+                  }
                   disabled={isUser}
                 />
               </Grid>
@@ -141,7 +176,7 @@ function ResearchTopicRegistrationForm({
                   fullWidth
                   name="expected_budget"
                   label="Kinh phí dự kiến"
-                  value={formData.expected_budget}
+                  value={formDataRegistration.expected_budget}
                   onChange={handleChange}
                 />
               </Grid>
@@ -150,7 +185,7 @@ function ResearchTopicRegistrationForm({
                   fullWidth
                   name="expected_hours"
                   label="Số giờ dự kiến"
-                  value={formData.expected_hours}
+                  value={formDataRegistration.expected_hours}
                   onChange={handleChange}
                 />
               </Grid>
@@ -162,7 +197,7 @@ function ResearchTopicRegistrationForm({
                     labelId="approval_status-label"
                     id="approval_status"
                     name="approval_status"
-                    value={formData.approval_status}
+                    value={formDataRegistration.approval_status}
                     onChange={handleChange}
                     label="Trạng thái"
                     disabled={isUser}
@@ -175,13 +210,15 @@ function ResearchTopicRegistrationForm({
                   </Select>
                 </FormControl>
               </Grid>
-              {formData.approval_status === "approved" && (
+              {formDataRegistration.approval_status === "approved" && (
                 <>
                   <Grid item xs={12} sm={6}>
                     <DatePicker
                       label="Ngày phê duyệt đăng ký"
                       format="DD/MM/YYYY"
-                      value={dayjs(formData.registration_approved_date)}
+                      value={dayjs(
+                        formDataRegistration.registration_approved_date
+                      )}
                       disabled
                     />
                   </Grid>
@@ -190,7 +227,7 @@ function ResearchTopicRegistrationForm({
                       fullWidth
                       name="registration_approver"
                       label="Người phê duyệt đăng ký"
-                      value={formData.registration_approver}
+                      value={formDataRegistration.registration_approver}
                       disabled
                     />
                   </Grid>

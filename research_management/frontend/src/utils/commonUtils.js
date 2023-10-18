@@ -72,22 +72,28 @@ export function getRegistrationByTopicID(
   researchTopicRegistrations,
   researchtopicID
 ) {
-  return researchTopicRegistrations.find(
-    (registration) => registration.topic === researchtopicID
-  );
+  return researchTopicRegistrations.length !== 0 && researchtopicID
+    ? researchTopicRegistrations.find(
+        (registration) => registration.topic === researchtopicID
+      )
+    : null;
 }
 
 export function getSubmissionByTopicID(
   researchTopicSubmissions,
   researchtopicID
 ) {
-  return researchTopicSubmissions.find(
-    (submission) => submission.topic === researchtopicID
-  );
+  return researchTopicSubmissions.length !== 0 && researchtopicID
+    ? researchTopicSubmissions.find(
+        (submission) => submission.topic === researchtopicID
+      )
+    : null;
 }
 
 export function getUserByID(users, userID) {
-  return users.find((user) => user.id === userID);
+  return users?.length !== 0 && userID
+    ? users.find((user) => user.id === userID)
+    : null;
 }
 export function getAcademicProfileByUserID(profiles, userID) {
   return profiles.find((profile) => profile.user === userID);
