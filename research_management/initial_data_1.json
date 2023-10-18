@@ -489,6 +489,18 @@
     }
   },
   {
+    "model": "research_app.academicprofile",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "academic_degree": 4,
+      "position": 3,
+      "education_history": "Thạc sĩ Khoa học Máy tính, Đại học Công nghệ, 2015\nThạc sĩ Khoa học Máy tính, Đại học FPT, 2010",
+      "work_history": "Chuyên gia phân tích dữ liệu, Công ty A, 2015-nay\nKỹ sư phần mềm, Công ty B, 2010-2015",
+      "research_activities": "Đã công bố 10 bài báo nghiên cứu tại các hội thảo và tạp chí hàng đầu"
+    }
+  },
+  {
     "model": "research_app.researchactivitycategory",
     "pk": 1,
     "fields": {

@@ -106,7 +106,9 @@ export function getCategoryByID(categories, categoryID) {
   return categories.find((category) => category.id === categoryID);
 }
 export function getTopicByID(topics, topicID) {
-  return topics ? topics.find((topic) => topic.id === topicID) : null;
+  return topics?.length !== 0
+    ? topics.find((topic) => topic.id === topicID)
+    : null;
 }
 
 export function getPositionByID(positions, positionID) {

@@ -368,9 +368,9 @@ function ResearchsRegistration() {
       closeRegisterDialog();
     }
 
-    if (allSuccessful) {
-      navigate("/research-activities/registrated");
-    }
+    // if (allSuccessful) {
+    //   navigate("/research-activities/registrated");
+    // }
   };
 
   ///////////////////////////////////////////////////////////////////////////
